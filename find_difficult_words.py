@@ -14,7 +14,7 @@ class Word_lists:
         self.misued_words_array = []
 
 
-    def take_academic_wordlst(self):
+    def take_academic_wordlist(self):
         """
         Parse oxford word academic list online. Takes words from
         http://www.oxfordlearnersdictionaries.com/wordlist/english/academic/AcademicWordList_sublist_1
@@ -70,6 +70,6 @@ class Word_lists:
 
 if __name__ == '__main__':
     w_list = Word_lists()
-    academic_word_list = w_list.take_academic_wordlst()
+    academic_word_list = w_list.take_academic_wordlist()
     misspell_dictionary = w_list.takes_misspel_words()
     misused_words = w_list.takes_misued_words()
