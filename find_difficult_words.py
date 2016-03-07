@@ -10,8 +10,10 @@ class Word_lists:
         self.oxford_words_list = set()
         self.oxford_li = './/ul[@class="result-list1 wordlist-oxford3000 list-plain"]//li//a'
         self.wikipedia_link = 'https://en.wikipedia.org/wiki/Wikipedia:List_of_commonly_misused_English_words'
+        self.wordform_link = 'https://simple.wiktionary.org/wiki/Wiktionary:BNC_spoken_freq_01'
         self.misspell_dictionary = {}
         self.misued_words_array = []
+        self.wordform_dictionary = {}
 
 
     def take_academic_wordlist(self):
@@ -53,7 +55,7 @@ class Word_lists:
     def takes_misued_words(self):
         """
         Misued words from wikipeia list
-        :return:
+        :return: array of arrays
         """
         parser = etree.HTMLParser()
         with urllib.request.urlopen(self.wikipedia_link) as f:
@@ -63,13 +65,25 @@ class Word_lists:
                 for word in li.findall('.//b//a'):
                     confused_words.append(word.text)
                 if confused_words!=[]:
-                    self.misued_words_array.append(confused_words)
+                    self.misued_words_array.append(confused_words) #[woman, women]
         return self.misued_words_array
 
+    def takes_wordforms(self):
+        parser = etree.HTMLParser()
+        with urllib.request.urlopen(self.wordform_link) as f:
+            tree = etree.parse(f, parser)
+            for li in tree.findall('.//li'):
+                for a in li.findall('./a'):
+                    words = []
+                    for word in li.findall('.//dl//dd/a'):
+                        words.append(word.text)
+                    self.wordform_dictionary[a.text] = words
 
 
 if __name__ == '__main__':
     w_list = Word_lists()
-    academic_word_list = w_list.take_academic_wordlist()
-    misspell_dictionary = w_list.takes_misspel_words()
-    misused_words = w_list.takes_misued_words()
+    #academic_word_list = w_list.take_academic_wordlist()
+    #misspell_dictionary = w_list.takes_misspel_words()
+    #misused_words = w_list.takes_misued_words()
+    w_list.takes_wordforms()
+    print(w_list.wordform_dictionary)
