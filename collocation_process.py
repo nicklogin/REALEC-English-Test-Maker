@@ -21,10 +21,14 @@ def random_match_exercise(number=10, write_in_file=None):
     if write_in_file != None:
         with open(write_in_file, 'w', encoding='utf-8') as exercise_file:
             for key, value in elements:
-                exercise_file.write('{}, {}, {}\n'.format(key, random.choice(right_col), value))
+                random_element = random.choice(right_col)
+                exercise_file.write('{}, {}, {}\n'.format(key, random_element, value))
+                right_col.remove(random_element)
     else:
         for key, value in elements:
-                print(key, random.choice(right_col), value)
+            random_element = random.choice(right_col)
+            print(key, random_element, value)
+            right_col.remove(random_element)
 
 
 def open_collocation_file():
@@ -37,4 +41,4 @@ def open_collocation_file():
 
 if __name__ == '__main__':
     collocation_list = open_collocation_file()
-    random_match_exercise(write_in_file='match_exercise.txt')
+    random_match_exercise(number=4) #write_in_file='match_exercise.txt')
