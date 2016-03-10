@@ -2,9 +2,17 @@ __author__ = 'alenush'
 
 import pandas
 import random
+import nltk
+from nltk.util import ngrams
 import itertools
 from gensim.models import Word2Vec
 import difflib
+from find_difficult_words import Word_lists
+from nltk.collocations import *
+
+#from pattern.en import lexeme
+#http://www.clips.ua.ac.be/pages/pattern-en#conjugation
+#print lexeme('purr')
 
 RIGHT_DICTIONARY = {}
 
@@ -58,14 +66,7 @@ class Exercise:
         sent_context.append(corpus[my_sent_index+1])
         return sent_context
 
-
-class MultipleChoice(Exercise):
-
-    def __init__(self, whole_coll):
-        super().__init__(whole_coll)
-
-
-    def find_coll_in_text(self):
+    def find_coll_in_text(self, collocate_part):
         """
         Find the word from collocation and takes the context.
         :return: text
@@ -74,11 +75,18 @@ class MultipleChoice(Exercise):
             if self.collocation in sentence:
                 new_sentence = []
                 for word in sentence.split(' '):
-                    if word == self.second_col:
+                    if word == collocate_part:
                         new_sentence.append("#"+word+"#")
                     else:
                         new_sentence.append(word)
                 return ' '.join(new_sentence) #yield
+
+
+
+class MultipleChoice(Exercise):
+
+    def __init__(self, whole_coll):
+        super().__init__(whole_coll)
 
     def make_choices(self):
         """ Takes 3 candidates from word2vec"""
@@ -92,33 +100,91 @@ class MultipleChoice(Exercise):
         return choices[:3]
 
 
+class OpenCloze(Exercise):
+
+    def __init__(self, whole_coll):
+        super().__init__(whole_coll)
+
+    def find_collocation(self, number):
+        """
+        Find whol collocation. make gap from it and safe collocate as a write answer.
+        :return: sentence and tuple = (col1, col2)
+        """
+        for sentence in corpus:
+            if self.collocation in sentence:
+                bigrams = ngrams(sentence.split(' '), 2)
+                for big in bigrams:
+                    if big[0] in self.first_col and big[1] in self.second_col:
+                        sent_first = sentence.split(' ')[:sentence.split(' ').index(big[0])]
+                        sent_second = sentence.split(' ')[sentence.split(' ').index(big[1])+1:]
+                        sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
+                        print(sentence, big)
+                        return sentence, big
+
+def write_in_file(file_name, data):
+    with open(file_name, 'w', encoding='utf-8') as filewrite:
+        for row in data:
+            filewrite.write(row[0])
+            filewrite.write(row[1][0]+", "+row[1][1]+'\n\n')
+
+
 class WordFormExercise(Exercise):
 
     def __init__(self, whole_coll):
         super().__init__(whole_coll)
 
+    def word_form_variance(self, wf_dictionary):
+        """
+        :return:sentence with gap and two words: right form and headword
+        """
+        for key, value in wf_dictionary.items():
+            if self.first_col in value:
+                print("HEADWORD: ", key)
+            elif self.second_col in value:
+                print("HEADWORD: ", key)
+        #lmtzr = WordNetLemmatizer()
+        #lemma = lmtzr.lemmatize(self.first_col)
 
-def make_multiple_choice_ex():
+
+def make_multiple_choice_ex(number=5):
     with open('multiple_choice.txt', 'w', encoding='utf-8') as output:
-        elements = take(5, RIGHT_DICTIONARY.items())
+        elements = take(number, RIGHT_DICTIONARY.items())
         for key, value in elements:
             print(key, value)
             m_ch_exer = MultipleChoice((key, value))
-            sentence = m_ch_exer.find_coll_in_text()
+            sentence = m_ch_exer.find_coll_in_text(m_ch_exer.second_col)
             choices = m_ch_exer.make_choices()
-            if sentence!=None:
+            if sentence != None:
                 output.write(m_ch_exer.collocation+'\n')
                 context = m_ch_exer.take_context_of_sent(sentence)
                 output.write(''.join(context))
                 output.write("Choices: "+','.join(choices)+'\n\n')
 
 
-def wordform_exercise(number=5, write_in_file=None):
-    elements = take(5, RIGHT_DICTIONARY.items())
+def wordform_exercise(number=5):
+    elements = take(number, RIGHT_DICTIONARY.items())
+    wf = Word_lists()
+    wf.takes_wordforms()
+    wf_dictionary = wf.wordform_dictionary
     for key, value in elements:
         print(key, value)
         wf_ex = WordFormExercise((key, value))
+        wf_ex.find_coll_in_text(wf_ex.collocation)
+        wf_ex.word_form_variance(wf_dictionary)
 
+
+def open_cloze_exersize(number=5, file_name=None):
+    elements = take(number, RIGHT_DICTIONARY.items())
+    data = []
+    for n, paar in enumerate(elements):
+        print(n, paar[0], paar[1])
+        op_ex = OpenCloze((paar[0], paar[1]))
+        try:
+            sentence, collocate = op_ex.find_collocation(n)
+            data.append((sentence, collocate))
+        except:
+            print("No sentence with collocation")
+    write_in_file(file_name, data)
 
 
 def open_collocation_file():
@@ -133,4 +199,6 @@ def open_collocation_file():
 if __name__ == '__main__':
     open_collocation_file()
     #random_match_exercise(number=4) #write_in_file='match_exercise.txt')
-    make_multiple_choice_ex()
+    make_multiple_choice_ex(number=5)
+    #wordform_exercise(number=5)
+    #open_cloze_exersize(number=5, file_name='open_cloze.txt')
