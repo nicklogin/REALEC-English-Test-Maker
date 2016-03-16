@@ -2,7 +2,8 @@ __author__ = 'alenush'
 
 import pandas
 import random
-import nltk
+import json
+from nltk import WordNetLemmatizer
 from nltk.util import ngrams
 import itertools
 from gensim.models import Word2Vec
@@ -17,7 +18,7 @@ from nltk.collocations import *
 RIGHT_DICTIONARY = {}
 
 with open('corpus.txt', 'r', encoding='utf-8') as source_file:
-    corpus = [sentence.lower() for sentence in source_file.readlines()]
+    corpus = [sentence for sentence in source_file.readlines()]
 
 
 def take(n, iterable):
@@ -53,6 +54,9 @@ class Exercise:
         self.first_col = whole_coll[0]
         self.second_col = whole_coll[1]
 
+        with open('dictionary.json', 'r', encoding="utf-8") as dictionary:
+            self.lemma_dictionary = json.load(dictionary)
+
 
     def take_context_of_sent(self, sentence):
         """ Takes +-1 sentence from out sentence"""
@@ -66,22 +70,41 @@ class Exercise:
         sent_context.append(corpus[my_sent_index+1])
         return sent_context
 
-    def find_coll_in_text(self, collocate_part):
+    def find_coll_in_text(self, collocate_part=1):
         """
-        Find the word from collocation and takes the context.
+        Find the word from collocation
+        :collocate_part: 1 or 0, 0 -is first part, 1 is second
         :return: text
         """
         for sentence in corpus:
-            if self.collocation in sentence:
+            sent_coll = self.check_whole_collocation(sentence)
+            if sent_coll!= False:
                 new_sentence = []
                 for word in sentence.split(' '):
-                    if word == collocate_part:
+                    if word == sent_coll[collocate_part]:
                         new_sentence.append("#"+word+"#")
                     else:
                         new_sentence.append(word)
-                return ' '.join(new_sentence) #yield
+                return ' '.join(new_sentence)
 
 
+    def check_whole_collocation(self, sentence):
+        """
+        Generate part1 + part2 possible variants
+        :param col
+        """
+        collocate_set = set()
+        lmtzr = WordNetLemmatizer()
+        lemmas1 = lmtzr.lemmatize(self.first_col)
+        lemmas2 = lmtzr.lemmatize(self.second_col)
+        for lem1 in self.lemma_dictionary[lemmas1]:
+            for lem2 in self.lemma_dictionary[lemmas2]:
+                collocate_set.add((lem1, lem2))
+        for col in collocate_set:
+            my_col = col[0]+" "+col[1]
+            if my_col in sentence:
+                return col
+        return False
 
 class MultipleChoice(Exercise):
 
@@ -125,7 +148,7 @@ def write_in_file(file_name, data):
     with open(file_name, 'w', encoding='utf-8') as filewrite:
         for row in data:
             filewrite.write(row[0])
-            filewrite.write(row[1][0]+", "+row[1][1]+'\n\n')
+            filewrite.write(row[1][0]+" "+row[1][1]+'\n\n')
 
 
 class WordFormExercise(Exercise):
@@ -142,8 +165,7 @@ class WordFormExercise(Exercise):
                 print("HEADWORD: ", key)
             elif self.second_col in value:
                 print("HEADWORD: ", key)
-        #lmtzr = WordNetLemmatizer()
-        #lemma = lmtzr.lemmatize(self.first_col)
+
 
 
 def make_multiple_choice_ex(number=5):
@@ -152,7 +174,7 @@ def make_multiple_choice_ex(number=5):
         for key, value in elements:
             print(key, value)
             m_ch_exer = MultipleChoice((key, value))
-            sentence = m_ch_exer.find_coll_in_text(m_ch_exer.second_col)
+            sentence = m_ch_exer.find_coll_in_text(1)
             choices = m_ch_exer.make_choices()
             if sentence != None:
                 output.write(m_ch_exer.collocation+'\n')
@@ -169,7 +191,7 @@ def wordform_exercise(number=5):
     for key, value in elements:
         print(key, value)
         wf_ex = WordFormExercise((key, value))
-        wf_ex.find_coll_in_text(wf_ex.collocation)
+        wf_ex.find_coll_in_text(1)
         wf_ex.word_form_variance(wf_dictionary)
 
 
@@ -198,7 +220,10 @@ def open_collocation_file():
 
 if __name__ == '__main__':
     open_collocation_file()
-    #random_match_exercise(number=4) #write_in_file='match_exercise.txt')
-    make_multiple_choice_ex(number=5)
+    random_match_exercise(number=5, write_in_file='match_exercise.txt') #ok
+    make_multiple_choice_ex(number=5) #ok
+
     #wordform_exercise(number=5)
     #open_cloze_exersize(number=5, file_name='open_cloze.txt')
+    #word bank доделать норально. Или из опен-клоз создать
+    #todo: clелать проверку на случаи когда (an) в коллокации (или пока их убрать совсем)
