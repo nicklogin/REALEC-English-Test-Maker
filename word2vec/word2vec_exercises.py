@@ -5,15 +5,18 @@ from lxml import etree
 import os
 import pickle
 from gensim.models import Word2Vec
-from find_difficult_words import Word_lists
+#from find_difficult_words import Word_lists
+import json
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 
+LEMMAS_DIC = {}
+
 def make_word2vec_model(sentences):
         model = Word2Vec(sentences, size=100, window=5, min_count=5, workers=4)
-        model.save('./bnc_A.model')
+        model.save('./bnc_A_grammar.model')
 
 
 class Exercises:
@@ -69,9 +72,31 @@ class Exercises:
                 text.write('\n')
 
 
+def write_corpus_file(sentence):
+    with open('corpus_gr.txt', 'a', encoding='utf-8') as corpus_file:
+        #s_sentence = sentence.replace(" 's ", "'s ")
+        corpus_file.write(sentence+'.\n')
+
+
+def making_forms_dictionary(lemma, word):
+    """MAking  the dictionary of all word forms"""
+    if lemma not in LEMMAS_DIC.keys():
+        LEMMAS_DIC[lemma] = [word]
+    else:
+        if word not in LEMMAS_DIC[lemma]:
+            LEMMAS_DIC[lemma].append(word)
+
+def merge_gr_sent(grammar, sentence):
+    gr_sent = []
+    for gr, word in zip(grammar, sentence):
+        new_word = word + "_" + gr
+        gr_sent.append(new_word)
+    return gr_sent
+
+
 def parse_BNC(path):
     """
-    Go through the folderrs and collect sentences of
+    Go through the folders and collect sentences of
     pure corpus text for model.
     :param path: path to root folder
     :return: text_sentences - array of words
@@ -85,11 +110,34 @@ def parse_BNC(path):
                     sentences = file_tree.xpath('.//s')
                     for sent in sentences:
                         the_sentence = []
+                        sent_gramamr = []
                         for word in sent.xpath('.//w'):
                             if word.text != None:
-                                the_sentence.append(word.text.lower())
-                        text_sentences.append(the_sentence)
-    return text_sentences
+                                grammar = word.attrib["pos"]
+                                sent_gramamr.append(grammar)
+                                lemma = word.attrib['hw']
+                                making_forms_dictionary(lemma, word.text.lower().rstrip(' '))
+                                the_sentence.append(word.text.rstrip(' '))
+                        gr_sentences = merge_gr_sent(sent_gramamr, the_sentence)
+                        write_corpus_file(' '.join(gr_sentences))
+                        #text_sentences.append(zip(the_sentence, sent_gramamr)) #это для грамматика + слова
+    #return text_sentences# array of zip objects
+
+
+def save_forms_dictionary():
+    with open("dictionary_gr.json", 'w', encoding="utf-8") as out:
+        json.dump(LEMMAS_DIC, out)
+
+
+def convert_for_gr_model(corpus_of_sentences):
+    new_corpus = []
+    for sentence in corpus_of_sentences:
+        sent_zips = []
+        for z in sentence:
+            word = z[0]+"_"+z[1]
+            sent_zips.append(word)
+        new_corpus.append(sent_zips)
+    return new_corpus
 
 
 class MySentences():
@@ -99,9 +147,18 @@ class MySentences():
 
 
 if __name__ == '__main__':
-    #path = '../textA/'
-    #text_sentences = parse_BNC(path)
-    #make_word2vec_model(text_sentences)
+    path = '/home/alenush/Документы/НУГ/Texts/'
+    text_sentences = parse_BNC(path)
+    save_forms_dictionary()
+    #print("Collect and save dictionaries. Start to convert to w2vec")
+    #text_with_gr_model = convert_for_gr_model(text_sentences)
+    #print("New sentences are ready")
+    #make_word2vec_model(text_with_gr_model)
+
+    #model = Word2Vec.load('./bnc_A_grammar.model')
+    #variants = model.most_similar("make_VERB", topn=5)
+    #print(variants)
+
     #text_sentences = MySentences()
-    exercise = Exercises(10)
-    exercise.excess_word_exercise()
+    #exercise = Exercises(10)
+    #exercise.excess_word_exercise()
