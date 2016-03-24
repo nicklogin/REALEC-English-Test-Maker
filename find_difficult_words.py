@@ -3,6 +3,7 @@ __author__ = 'alenush'
 import urllib.request
 from lxml.html import parse
 from lxml import etree
+import json
 
 class Word_lists:
 
@@ -10,7 +11,8 @@ class Word_lists:
         self.oxford_words_list = set()
         self.oxford_li = './/ul[@class="result-list1 wordlist-oxford3000 list-plain"]//li//a'
         self.wikipedia_link = 'https://en.wikipedia.org/wiki/Wikipedia:List_of_commonly_misused_English_words'
-        self.wordform_link = 'https://simple.wiktionary.org/wiki/Wiktionary:BNC_spoken_freq_01'
+        self.wordform_link = 'https://simple.wiktionary.org/wiki/Wiktionary:BNC_spoken_freq_0{}'#01,02, 03,04
+        self.wordform_link2 = 'http://www.uefap.com/vocab/select/awl.htm'
         self.misspell_dictionary = {}
         self.misued_words_array = []
         self.wordform_dictionary = {}
@@ -69,15 +71,28 @@ class Word_lists:
         return self.misued_words_array
 
     def takes_wordforms(self):
+        """
+        Takes the link from wiipedia of wordfirmation.
+        Parse the html and save everyhing in the dictionary
+        """
         parser = etree.HTMLParser()
-        with urllib.request.urlopen(self.wordform_link) as f:
-            tree = etree.parse(f, parser)
-            for li in tree.findall('.//li'):
-                for a in li.findall('./a'):
-                    words = []
-                    for word in li.findall('.//dl//dd/a'):
-                        words.append(word.text)
-                    self.wordform_dictionary[a.text] = words
+        for i in range(1,5):
+            print(self.wordform_link.format(i))
+            with urllib.request.urlopen(self.wordform_link.format(i)) as f:
+                tree = etree.parse(f, parser)
+                for li in tree.findall('.//li'):
+                    for a in li.findall('./a'):
+                        words = []
+                        for word in li.findall('.//dl//dd/a'):
+                            words.append(word.text)
+                        self.wordform_dictionary[a.text] = words
+
+    def write_in_file(self):
+        """
+        Save the word_formation dictionary in json file.
+        """
+        with open('wordforms.json', 'w', encoding='utf-8') as my_file:
+            json.dump(self.wordform_dictionary, my_file)
 
 
 if __name__ == '__main__':
@@ -87,3 +102,4 @@ if __name__ == '__main__':
     #misused_words = w_list.takes_misued_words()
     w_list.takes_wordforms()
     print(w_list.wordform_dictionary)
+    w_list.write_in_file()
