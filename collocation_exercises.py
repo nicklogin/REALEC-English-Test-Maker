@@ -3,17 +3,14 @@ __author__ = 'alenush'
 import pandas
 import random
 import json
+import os
 from nltk import WordNetLemmatizer
 from nltk.util import ngrams
 import itertools
 from gensim.models import Word2Vec
 import difflib
 from find_difficult_words import Word_lists
-from nltk.collocations import *
 
-#from pattern.en import lexeme
-#http://www.clips.ua.ac.be/pages/pattern-en#conjugation
-#print lexeme('purr')
 
 RIGHT_DICTIONARY = {}
 
@@ -21,17 +18,13 @@ with open('corpus.txt', 'r', encoding='utf-8') as source_file:
     corpus = [sentence for sentence in source_file.readlines()]
 
 
-def take(n, iterable):
-    """Return first n items of the iterable as a list"""
-    return list(itertools.islice(iterable, n))
-
 def random_match_exercise(number=10, write_in_file=None):
     """
     Exercise of type Match the word from right with left column
     Function takes right collocations and randomize them
     :return: rows like: coll1, coll2_wrong, coll2_right
     """
-    elements = take(number, RIGHT_DICTIONARY.items())
+    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
     right_col = [paar[1] for paar in elements]
     if write_in_file != None:
         with open(write_in_file, 'w', encoding='utf-8') as exercise_file:
@@ -65,10 +58,11 @@ class Exercise:
             my_sent_index = corpus.index(sentence.replace('#', ''))
         except:
             my_sent_index = corpus.index(sentence)
-        sent_context.append(corpus[my_sent_index-1])
-        sent_context.append(sentence)
-        sent_context.append(corpus[my_sent_index+1])
-        return sent_context
+        if len(corpus[my_sent_index-1]) > 3 and len(corpus[my_sent_index+1]) > 3:
+            sent_context.append(corpus[my_sent_index-1])
+            sent_context.append(sentence)
+            sent_context.append(corpus[my_sent_index+1])
+            return sent_context
 
     def find_coll_in_text(self, collocate_part=1):
         """
@@ -114,12 +108,14 @@ class MultipleChoice(Exercise):
     def make_choices(self):
         """ Takes 3 candidates from word2vec"""
         model = Word2Vec.load('./word2vec/bnc.model')
-        variants = model.most_similar(self.second_col, topn=5)
+        variants = model.most_similar(self.second_col, topn=7)
         choices = []
         for var in variants:
             s = difflib.SequenceMatcher(None, self.second_col, var[0])
             if s.ratio() < 0.7:
                 choices.append(var[0])
+            else:
+                continue
         return choices[:3]
 
 
@@ -168,23 +164,30 @@ class WordFormExercise(Exercise):
 
 
 
-def make_multiple_choice_ex(number=5):
-    with open('multiple_choice.txt', 'w', encoding='utf-8') as output:
-        elements = take(number, RIGHT_DICTIONARY.items())
-        for key, value in elements:
-            print(key, value)
-            m_ch_exer = MultipleChoice((key, value))
-            sentence = m_ch_exer.find_coll_in_text(1)
-            choices = m_ch_exer.make_choices()
-            if sentence != None:
-                output.write(m_ch_exer.collocation+'\n')
-                context = m_ch_exer.take_context_of_sent(sentence)
-                output.write(''.join(context))
-                output.write("Choices: "+','.join(choices)+'\n\n')
+def make_multiple_choice_ex(number_inside=5, number_of_files=1):
+    """
+    Function for calling and writing multiple choice exercises
+    :param number_inside: number of exercises inside one document
+    :param number_of_files: number of documentts
+    """
+    os.makedirs('./multiple_choice_exercises', exist_ok=True)
+    for i in range(0,number_of_files):
+        with open('./multiple_choice_exercises/multiple_choice{}.txt'.format(i), 'w', encoding='utf-8') as output:
+            elements =  random.sample(RIGHT_DICTIONARY.items(), number_inside)
+            for key, value in elements:
+                print(key, value)
+                m_ch_exer = MultipleChoice((key, value))
+                sentence = m_ch_exer.find_coll_in_text(1)
+                choices = m_ch_exer.make_choices()
+                if sentence != None:
+                    output.write(m_ch_exer.collocation+'\n')
+                    context = m_ch_exer.take_context_of_sent(sentence)
+                    output.write(''.join(context))
+                    output.write("Choices: "+','.join(choices)+'\n\n')
 
 
 def wordform_exercise(number=5):
-    elements = take(number, RIGHT_DICTIONARY.items())
+    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
     wf = Word_lists()
     wf.takes_wordforms()
     wf_dictionary = wf.wordform_dictionary
@@ -196,7 +199,7 @@ def wordform_exercise(number=5):
 
 
 def open_cloze_exersize(number=5, file_name=None):
-    elements = take(number, RIGHT_DICTIONARY.items())
+    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
     data = []
     for n, paar in enumerate(elements):
         print(n, paar[0], paar[1])
@@ -215,15 +218,14 @@ def open_collocation_file():
     begin_col = df_collocations[['Component I']]
     end_col = df_collocations[['Component II']]
     for begin, end in zip(begin_col.values, end_col.values):
-        RIGHT_DICTIONARY[begin[0]] = end[0]
+        if '(' not in begin[0] and '(' not in end[0]:
+            RIGHT_DICTIONARY[begin[0]] = end[0]
 
 
 if __name__ == '__main__':
     open_collocation_file()
-    random_match_exercise(number=5, write_in_file='match_exercise.txt') #ok
-    make_multiple_choice_ex(number=5) #ok
-
+    #random_match_exercise(number=5, write_in_file='match_exercise.txt') #ok
+    make_multiple_choice_ex(number_inside=3, number_of_files=10)
     #wordform_exercise(number=5)
     #open_cloze_exersize(number=5, file_name='open_cloze.txt')
     #word bank доделать норально. Или из опен-клоз создать
-    #todo: clелать проверку на случаи когда (an) в коллокации (или пока их убрать совсем)
