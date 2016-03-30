@@ -6,10 +6,8 @@ import json
 import os
 from nltk import WordNetLemmatizer
 from nltk.util import ngrams
-import itertools
 from gensim.models import Word2Vec
 import difflib
-from find_difficult_words import Word_lists
 
 
 RIGHT_DICTIONARY = {}
@@ -18,25 +16,22 @@ with open('corpus.txt', 'r', encoding='utf-8') as source_file:
     corpus = [sentence for sentence in source_file.readlines()]
 
 
-def random_match_exercise(number=10, write_in_file=None):
+def random_match_exercise(number=5, number_of_files=5):
     """
     Exercise of type Match the word from right with left column
     Function takes right collocations and randomize them
     :return: rows like: coll1, coll2_wrong, coll2_right
     """
-    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
-    right_col = [paar[1] for paar in elements]
-    if write_in_file != None:
-        with open(write_in_file, 'w', encoding='utf-8') as exercise_file:
+    os.makedirs('./match_exercises', exist_ok=True)
+    for i in range(0, number_of_files):
+        with open('./match_exercises/match_exercises{}.txt'.format(i), 'w', encoding='utf-8') as output:
+            elements = random.sample(RIGHT_DICTIONARY.items(), number)
+            right_col = [paar[1] for paar in elements]
             for key, value in elements:
+                print(key,value)
                 random_element = random.choice(right_col)
-                exercise_file.write('{}, {}, {}\n'.format(key, random_element, value))
+                output.write('{}, {}, {}\n'.format(key, random_element, value))
                 right_col.remove(random_element)
-    else:
-        for key, value in elements:
-            random_element = random.choice(right_col)
-            print(key, random_element, value)
-            right_col.remove(random_element)
 
 
 class Exercise:
@@ -71,7 +66,7 @@ class Exercise:
         :return: text
         """
         for sentence in corpus:
-            sent_coll = self.check_whole_collocation(sentence)
+            sent_coll = self.check_whole_collocation(sentence) #check all possible variants
             if sent_coll!= False:
                 new_sentence = []
                 for word in sentence.split(' '):
@@ -91,14 +86,18 @@ class Exercise:
         lmtzr = WordNetLemmatizer()
         lemmas1 = lmtzr.lemmatize(self.first_col)
         lemmas2 = lmtzr.lemmatize(self.second_col)
-        for lem1 in self.lemma_dictionary[lemmas1]:
-            for lem2 in self.lemma_dictionary[lemmas2]:
-                collocate_set.add((lem1, lem2))
+        try:
+            for lem1 in self.lemma_dictionary[lemmas1]:
+                for lem2 in self.lemma_dictionary[lemmas2]:
+                    collocate_set.add((lem1, lem2))
+        except:
+            collocate_set.add((lemmas1,lemmas2))
         for col in collocate_set:
             my_col = col[0]+" "+col[1]
             if my_col in sentence:
                 return col
         return False
+
 
 class MultipleChoice(Exercise):
 
@@ -126,31 +125,39 @@ class OpenCloze(Exercise):
 
     def find_collocation(self, number):
         """
-        Find whol collocation. make gap from it and safe collocate as a write answer.
+        Find whole collocation. make gap from it and safe collocate as a write answer.
         :return: sentence and tuple = (col1, col2)
         """
+        # for sentence in corpus:
+        #     if self.collocation in sentence:
+        #         bigrams = ngrams(sentence.split(' '), 2)
+        #         for big in bigrams:
+        #             if big[0] in self.first_col and big[1] in self.second_col:#тут поменять условие!
+        #                 sent_first = sentence.split(' ')[:sentence.split(' ').index(big[0])]
+        #                 sent_second = sentence.split(' ')[sentence.split(' ').index(big[1])+1:]
+        #                 sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
+        #                 print(sentence, big)
+        #                 return sentence, big
         for sentence in corpus:
-            if self.collocation in sentence:
-                bigrams = ngrams(sentence.split(' '), 2)
-                for big in bigrams:
-                    if big[0] in self.first_col and big[1] in self.second_col:
-                        sent_first = sentence.split(' ')[:sentence.split(' ').index(big[0])]
-                        sent_second = sentence.split(' ')[sentence.split(' ').index(big[1])+1:]
-                        sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
-                        print(sentence, big)
-                        return sentence, big
-
-def write_in_file(file_name, data):
-    with open(file_name, 'w', encoding='utf-8') as filewrite:
-        for row in data:
-            filewrite.write(row[0])
-            filewrite.write(row[1][0]+" "+row[1][1]+'\n\n')
+            col = self.check_whole_collocation(sentence)
+            if col != False:
+                split_sent = sentence.split(' ')
+                print(split_sent)
+                print(col[0], col[1])
+                sent_first = split_sent[:split_sent.index(split_sent[0])]
+                sent_second = split_sent[split_sent.index(split_sent[1])+1:]
+                sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
+                print(sentence, col)
+                return sentence, col
 
 
 class WordFormExercise(Exercise):
 
     def __init__(self, whole_coll):
         super().__init__(whole_coll)
+
+        with open('wordforms.json', 'r', encoding="utf-8") as dictionary:
+            self.wf_dictionary = json.load(dictionary) #{'headword':[words,words,words]}
 
     def word_form_variance(self, wf_dictionary):
         """
@@ -162,6 +169,12 @@ class WordFormExercise(Exercise):
             elif self.second_col in value:
                 print("HEADWORD: ", key)
 
+    def check_headword(self, my_col):
+        """Return headword from the dictionary"""
+        for key, value in self.wf_dictionary.items():
+            headword = [val for val in value if val == my_col]
+            if len(headword)>0:
+                return key
 
 
 def make_multiple_choice_ex(number_inside=5, number_of_files=1):
@@ -182,34 +195,53 @@ def make_multiple_choice_ex(number_inside=5, number_of_files=1):
                 if sentence != None:
                     output.write(m_ch_exer.collocation+'\n')
                     context = m_ch_exer.take_context_of_sent(sentence)
-                    output.write(''.join(context))
+                    if context:
+                        output.write(''.join(context))
                     output.write("Choices: "+','.join(choices)+'\n\n')
 
 
-def wordform_exercise(number=5):
-    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
-    wf = Word_lists()
-    wf.takes_wordforms()
-    wf_dictionary = wf.wordform_dictionary
-    for key, value in elements:
-        print(key, value)
-        wf_ex = WordFormExercise((key, value))
-        wf_ex.find_coll_in_text(1)
-        wf_ex.word_form_variance(wf_dictionary)
+def wordform_exercise(number=5, number_of_files=5):
+    os.makedirs('./wordforms_exercises', exist_ok=True)
+    for i in range(0,number_of_files):
+        with open('./wordforms_exercises/wordform{}.txt'.format(i), 'w', encoding='utf-8') as output:
+            elements =  random.sample(RIGHT_DICTIONARY.items(), number)
+            for key, value in elements:
+                print(key, value)
+                wf_ex = WordFormExercise((key, value))
+                headword = wf_ex.check_headword(key)
+                if headword!=None:
+                    sentence = wf_ex.find_coll_in_text(0)
+                    if sentence != None:
+                        output.write(sentence+'\n')
+                        output.write(headword+'\n\n')
 
 
-def open_cloze_exersize(number=5, file_name=None):
-    elements =  random.sample(RIGHT_DICTIONARY.items(), number)
-    data = []
-    for n, paar in enumerate(elements):
-        print(n, paar[0], paar[1])
-        op_ex = OpenCloze((paar[0], paar[1]))
-        try:
-            sentence, collocate = op_ex.find_collocation(n)
-            data.append((sentence, collocate))
-        except:
-            print("No sentence with collocation")
-    write_in_file(file_name, data)
+def open_cloze_exercise(number=5, number_of_files=5):
+    """Make open cloze execises and write in files"""
+    os.makedirs('./open_cloze_exercises', exist_ok=True)
+    for i in range(0, number_of_files):
+        with open('./open_cloze_exercises/open_cloze{}.txt'.format(i), 'w', encoding='utf-8') as output:
+            elements = random.sample(RIGHT_DICTIONARY.items(), number)
+            data = []
+            for n, paar in enumerate(elements):
+                print(n, paar[0], paar[1])
+                op_ex = OpenCloze((paar[0], paar[1]))
+                try:
+                    sentence, collocate = op_ex.find_collocation(n) #TODO: not all forms are checked
+                    data.append((sentence, collocate))
+                except:
+                    print("No sentence with collocation")
+                    n += 1
+            for row in data:
+                output.write(row[0])
+                output.write(row[1][0]+" "+row[1][1]+'\n\n')
+
+def word_bank_exercise(number=5, number_of_files=5):
+    """Make word bank execises and write in files"""
+    os.makedirs('./word-bank_exercises', exist_ok=True)
+    for i in range(0, number_of_files):
+        with open('./word_bank_exercises/word_bank{}.txt'.format(i), 'w', encoding='utf-8') as output:
+            elements = random.sample(RIGHT_DICTIONARY.items(), number)
 
 
 def open_collocation_file():
@@ -224,8 +256,9 @@ def open_collocation_file():
 
 if __name__ == '__main__':
     open_collocation_file()
-    #random_match_exercise(number=5, write_in_file='match_exercise.txt') #ok
-    make_multiple_choice_ex(number_inside=3, number_of_files=10)
-    #wordform_exercise(number=5)
-    #open_cloze_exersize(number=5, file_name='open_cloze.txt')
-    #word bank доделать норально. Или из опен-клоз создать
+    #random_match_exercise(number=10, number_of_files=10) #ok
+    #make_multiple_choice_ex(number_inside=10, number_of_files=10) #ok
+    wordform_exercise(number=5)
+
+    #open_cloze_exercise(number=5, number_of_files = 5)
+    #word_bank_exercise(number=10, number_of_files=10) доделать норально. Или из опен-клоз создать
