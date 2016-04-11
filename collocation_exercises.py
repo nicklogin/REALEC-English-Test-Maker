@@ -5,14 +5,14 @@ import random
 import json
 import os
 from nltk import WordNetLemmatizer
-from nltk.util import ngrams
+from nltk import word_tokenize
 from gensim.models import Word2Vec
 import difflib
 
 
 RIGHT_DICTIONARY = {}
 
-with open('corpus.txt', 'r', encoding='utf-8') as source_file:
+with open('new_corpus.txt', 'r', encoding='utf-8') as source_file:
     corpus = [sentence for sentence in source_file.readlines()]
 
 
@@ -45,7 +45,6 @@ class Exercise:
         with open('dictionary.json', 'r', encoding="utf-8") as dictionary:
             self.lemma_dictionary = json.load(dictionary)
 
-
     def take_context_of_sent(self, sentence):
         """ Takes +-1 sentence from out sentence"""
         sent_context = []
@@ -69,13 +68,12 @@ class Exercise:
             sent_coll = self.check_whole_collocation(sentence) #check all possible variants
             if sent_coll!= False:
                 new_sentence = []
-                for word in sentence.split(' '):
+                for word in word_tokenize(sentence):
                     if word == sent_coll[collocate_part]:
-                        new_sentence.append("#"+word+"#")
+                        new_sentence.append("______")
                     else:
                         new_sentence.append(word)
                 return ' '.join(new_sentence)
-
 
     def check_whole_collocation(self, sentence):
         """
@@ -98,6 +96,34 @@ class Exercise:
                 return col
         return False
 
+    @staticmethod
+    def write_array(number, data_array, io_object, name="multichoice"):
+        """
+        :param data_array: array of one exercise
+        For M_ch: sentence, array of choices, answer
+        :param name: type of exercise; ex: multichoice
+        :param io_object: with open() as io_object
+        Writes one question in file in moodle format
+        """
+        io_object.write('<question type="{}">\n'.format(name))
+        io_object.write('<name><text>Question {}</text></name>\n'.format(number))
+        io_object.write('<questiontext format="html">\n<text><![CDATA[<p>'
+                        '{}<br></p>]]></text>\n</questiontext>\n'.format(data_array[0]))
+        io_object.write("<defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n"
+                        "<hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n"
+                        "<answernumbering>abc</answernumbering>\n<correctfeedback format='html'>\n"
+                        "<text>Your answer is correct.</text>\n</correctfeedback>\n"
+                        "<partiallycorrectfeedback format='html'>\n<text>Your answer is partially correct.</text>\n"
+                        "</partiallycorrectfeedback>\n<incorrectfeedback format='html'>\n"
+                        "<text>Your answer is incorrect.</text>\n</incorrectfeedback>\n")
+        for answer in data_array[1]:
+            correct = 0
+            if answer == data_array[2]:
+                correct = 100
+            io_object.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
+                            '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
+        io_object.write('</question>\n')
+
 
 class MultipleChoice(Exercise):
 
@@ -112,7 +138,7 @@ class MultipleChoice(Exercise):
         for var in variants:
             s = difflib.SequenceMatcher(None, self.second_col, var[0])
             if s.ratio() < 0.7:
-                choices.append(var[0])
+                choices.append(var[0].lower())
             else:
                 continue
         return choices[:3]
@@ -186,7 +212,7 @@ def make_multiple_choice_ex(number_inside=5, number_of_files=1):
     os.makedirs('./multiple_choice_exercises', exist_ok=True)
     for i in range(0,number_of_files):
         with open('./multiple_choice_exercises/multiple_choice{}.txt'.format(i), 'w', encoding='utf-8') as output:
-            elements =  random.sample(RIGHT_DICTIONARY.items(), number_inside)
+            elements = random.sample(RIGHT_DICTIONARY.items(), number_inside)
             for key, value in elements:
                 print(key, value)
                 m_ch_exer = MultipleChoice((key, value))
@@ -196,7 +222,7 @@ def make_multiple_choice_ex(number_inside=5, number_of_files=1):
                     output.write(m_ch_exer.collocation+'\n')
                     context = m_ch_exer.take_context_of_sent(sentence)
                     if context:
-                        output.write(''.join(context))
+                        output.write(''.join(context)+'.')
                     output.write("Choices: "+','.join(choices)+'\n\n')
 
 
@@ -253,12 +279,29 @@ def open_collocation_file():
         if '(' not in begin[0] and '(' not in end[0]:
             RIGHT_DICTIONARY[begin[0]] = end[0]
 
+def multiple_choice_moodle(number_inside=10, number_of_files=10):
+    os.makedirs('./multiple_choice_xml', exist_ok=True)
+    for i in range(0, number_of_files):
+        with open('./multiple_choice_xml/multiple_choice{}.xml'.format(i), 'w', encoding='utf-8') as output:
+            output.write("<quiz>")
+            elements = random.sample(RIGHT_DICTIONARY.items(), number_inside)
+            for number, (key, value) in enumerate(elements):
+                print(number, key, value)
+                m_ch_exer = MultipleChoice((key, value))
+                sentence = m_ch_exer.find_coll_in_text(1)
+                choices = m_ch_exer.make_choices()
+                print(sentence, choices, value)
+                choices.append(value)
+                MultipleChoice.write_array(number, [sentence, choices, value], output, 'multichoice')
+            output.write('</quiz>')
 
 if __name__ == '__main__':
     open_collocation_file()
     #random_match_exercise(number=10, number_of_files=10) #ok
     #make_multiple_choice_ex(number_inside=10, number_of_files=10) #ok
-    wordform_exercise(number=5)
+    #wordform_exercise(number=5)
 
-    #open_cloze_exercise(number=5, number_of_files = 5)
-    #word_bank_exercise(number=10, number_of_files=10) доделать норально. Или из опен-клоз создать
+    #open_cloze_exercise(number=5, number_of_files = 5) доделать!
+    #word_bank_exercise(number=10, number_of_files=10) доделать нормально. Или из опен-клоз создать
+
+    multiple_choice_moodle(number_inside=5, number_of_files=3)
