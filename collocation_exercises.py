@@ -77,6 +77,7 @@ class Exercise:
         self.collocation = whole_coll[0] + ' ' + whole_coll[1]
         self.first_col = whole_coll[0]
         self.second_col = whole_coll[1]
+        self.headword = ''
 
         with open('dictionary.json', 'r', encoding="utf-8") as dictionary:
             self.lemma_dictionary = json.load(dictionary)
@@ -108,6 +109,28 @@ class Exercise:
                 for word in word_tokenize(sentence):
                     if word == sent_coll[collocate_part]:
                         new_sentence.append("______")
+                    else:
+                        new_sentence.append(word)
+                return ' '.join(new_sentence)
+
+    def find_collocation_moodle_write(self, collocate_part=1, type='open_cloze'):
+        """
+            Find the word from collocation
+            :collocate_part: 1 or 0, 0 -is first part, 1 is second
+            Write in Moodle format like: {1:SHORTANSWER:=deeper}
+            :type: open_cloze or word_form
+        """
+        for sentence in corpus:
+            sent_coll = self.check_whole_collocation(sentence)  # check all possible variants
+            if sent_coll != False:
+                new_sentence = []
+                for word in word_tokenize(sentence):
+                    if word == sent_coll[collocate_part]:
+                        if type == 'open_cloze':
+                            new_sentence.append("{1:SHORTANSWER:=%s}"%word)
+                        else:
+                            new_sentence.append("{1:SHORTANSWER:=%s}" % word)
+                            new_sentence.append('(%s)'% self.headword)
                     else:
                         new_sentence.append(word)
                 return ' '.join(new_sentence)
@@ -225,24 +248,14 @@ class OpenCloze(Exercise):
                 print(sentence, col)
                 return sentence, col
 
-
 class WordFormExercise(Exercise):
 
     def __init__(self, whole_coll):
         super().__init__(whole_coll)
+        self.headword = ''
 
         with open('wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary) #{'headword':[words,words,words]}
-
-    def word_form_variance(self, wf_dictionary):
-        """
-        :return:sentence with gap and two words: right form and headword
-        """
-        for key, value in wf_dictionary.items():
-            if self.first_col in value:
-                print("HEADWORD: ", key)
-            elif self.second_col in value:
-                print("HEADWORD: ", key)
 
     def check_headword(self, my_col):
         """Return headword from the dictionary"""
@@ -251,22 +264,43 @@ class WordFormExercise(Exercise):
             if len(headword)>0:
                 return key
 
+    def make_sentence(self):
+        """
+        Find headword and write a sentence in moodle format. {1:SHORTANSWER:=deeper} (deep)
+        return: string - sentence
+        """
+        headword = self.check_headword(self.first_col)
+        self.headword = headword
+        if headword != None:
+            sentence = self.find_collocation_moodle_write(collocate_part=0, type='word_form')
+            return sentence
+
+    def write_in_moodle_format(self, output, sentence):
+        """Write in moodle format one word_form exercise"""
+        output.write('<quiz>\n'
+                     '<question type="cloze"> \n'
+                     '<name><text>Word formation exercise</text></name>\n')
+        output.write('<questiontext format="html"><text><p>{}</p></text></questiontext>\n'.format(sentence))
+        output.write('<generalfeedback format="html">\n'
+                     '<text/></generalfeedback><penalty>0.3333333</penalty>\n'
+                     '<hidden>0</hidden>\n</question>\n')
+        output.write('</quiz>')
 
 
-def wordform_exercise(number=5, number_of_files=5):
-    os.makedirs('./wordforms_exercises', exist_ok=True)
-    for i in range(0,number_of_files):
-        with open('./wordforms_exercises/wordform{}.txt'.format(i), 'w', encoding='utf-8') as output:
-            elements =  random.sample(RIGHT_DICTIONARY.items(), number)
+def wordform_exercise(number=5, ex_format='txt'):
+    os.makedirs('./wordforms_exercises_{}'.format(ex_format), exist_ok=True)
+    for i in range(0, number):
+        with open('./wordforms_exercises_{}/wordform{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
+            elements =  random.sample(RIGHT_DICTIONARY.items(), number) # actually it's strange. do not need number, but may be error
             for key, value in elements:
-                print(key, value)
                 wf_ex = WordFormExercise((key, value))
-                headword = wf_ex.check_headword(key)
-                if headword!=None:
-                    sentence = wf_ex.find_coll_in_text(0)
-                    if sentence != None:
-                        output.write(sentence+'\n')
-                        output.write(headword+'\n\n')
+                sentence = wf_ex.make_sentence()
+                if sentence != None:
+                    if ex_format == 'txt':
+                        output.write(sentence + '\n')
+                    else:
+                        wf_ex.write_in_moodle_format(output, sentence)
+                    break
 
 
 def open_cloze_exercise(number=5, number_of_files=5):
@@ -318,7 +352,7 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
     os.makedirs('./multiple_choice_{}'.format(ex_format), exist_ok=True)
     for i in range(0, number_of_files):
         with open('./multiple_choice_{}/multiple_choice{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
-            if ex_format == 'xml': output.write("<quiz>")
+            if ex_format == 'xml': output.write("<quiz>\n")
             elements = random.sample(RIGHT_DICTIONARY.items(), number_inside)
             for number, (key, value) in enumerate(elements):
                 print(number, key, value)
@@ -336,16 +370,15 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 
 if __name__ == '__main__':
     open_collocation_file()
-    #random_match_exercise(number=10, number_of_files=10) #ok
-    #wordform_exercise(number=5)
 
     #open_cloze_exercise(number=5, number_of_files = 5) доделать!
     #word_bank_exercise(number=10, number_of_files=10) доделать нормально. Или из опен-клоз создать
 
     # New version for moodle:
     #multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
-    random_match_exercise(number=7, number_of_files=2, ex_format='txt')
-
-
+    #random_match_exercise(number=7, number_of_files=2, ex_format='txt')
+    wordform_exercise(number=5, ex_format='txt')
+    #open_cloze_exercise(number=5, ex_format='xml')
 
 #:todo make a template of xml not to write in 100500 times!
+# ПАДАЕТ НА & ворд_форм xml О_О почему неясно
