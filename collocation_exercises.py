@@ -33,7 +33,6 @@ def random_match_exercise(number=5, number_of_files=5):
                 output.write('{}, {}, {}\n'.format(key, random_element, value))
                 right_col.remove(random_element)
 
-
 class Exercise:
 
     def __init__(self, whole_coll):
@@ -46,10 +45,11 @@ class Exercise:
             self.lemma_dictionary = json.load(dictionary)
 
     def take_context_of_sent(self, sentence):
+    #:todo make function that revert to punction standarts! # and add it before looking for context
         """ Takes +-1 sentence from out sentence"""
         sent_context = []
         try:
-            my_sent_index = corpus.index(sentence.replace('#', ''))
+            my_sent_index = corpus.index(sentence)
         except:
             my_sent_index = corpus.index(sentence)
         if len(corpus[my_sent_index-1]) > 3 and len(corpus[my_sent_index+1]) > 3:
@@ -89,41 +89,12 @@ class Exercise:
                 for lem2 in self.lemma_dictionary[lemmas2]:
                     collocate_set.add((lem1, lem2))
         except:
-            collocate_set.add((lemmas1,lemmas2))
+            collocate_set.add((lemmas1, lemmas2))
         for col in collocate_set:
             my_col = col[0]+" "+col[1]
             if my_col in sentence:
                 return col
         return False
-
-    @staticmethod
-    def write_array(number, data_array, io_object, name="multichoice"):
-        """
-        :param data_array: array of one exercise
-        For M_ch: sentence, array of choices, answer
-        :param name: type of exercise; ex: multichoice
-        :param io_object: with open() as io_object
-        Writes one question in file in moodle format
-        """
-        io_object.write('<question type="{}">\n'.format(name))
-        io_object.write('<name><text>Question {}</text></name>\n'.format(number))
-        io_object.write('<questiontext format="html">\n<text><![CDATA[<p>'
-                        '{}<br></p>]]></text>\n</questiontext>\n'.format(data_array[0]))
-        io_object.write("<defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n"
-                        "<hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n"
-                        "<answernumbering>abc</answernumbering>\n<correctfeedback format='html'>\n"
-                        "<text>Your answer is correct.</text>\n</correctfeedback>\n"
-                        "<partiallycorrectfeedback format='html'>\n<text>Your answer is partially correct.</text>\n"
-                        "</partiallycorrectfeedback>\n<incorrectfeedback format='html'>\n"
-                        "<text>Your answer is incorrect.</text>\n</incorrectfeedback>\n")
-        for answer in data_array[1]:
-            correct = 0
-            if answer == data_array[2]:
-                correct = 100
-            io_object.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
-                            '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
-        io_object.write('</question>\n')
-
 
 class MultipleChoice(Exercise):
 
@@ -142,6 +113,48 @@ class MultipleChoice(Exercise):
             else:
                 continue
         return choices[:3]
+
+    def write_in_normal_format(self, sentence, choices, output):
+        """
+        Write everything in txt file. Sentence with #answer# and Choices:...
+        :param sentence:
+        :param choices:
+        :param output: io object
+        """
+        output.write(self.collocation+'\n')
+        #context = self.take_context_of_sent(sentence)
+        #if context:
+        output.write(''.join(sentence)+'\n')
+        output.write("Choices: "+','.join(choices)+'\n\n')
+
+    @staticmethod
+    def write_in_moodle_xml(number, data_array, io_object, name="multichoice"):
+            """
+            :param data_array: array of one exercise
+            For M_ch: sentence, array of choices, answer
+            :param name: type of exercise; ex: multichoice
+            :param io_object: with open() as io_object
+            Writes one question in file in moodle format
+            """
+            io_object.write('<question type="{}">\n'.format(name))
+            io_object.write('<name><text>Question {}</text></name>\n'.format(number))
+            io_object.write('<questiontext format="html">\n<text><![CDATA[<p>'
+                            '{}<br></p>]]></text>\n</questiontext>\n'.format(data_array[0]))
+            io_object.write("<defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n"
+                            "<hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n"
+                            "<answernumbering>abc</answernumbering>\n<correctfeedback format='html'>\n"
+                            "<text>Your answer is correct.</text>\n</correctfeedback>\n"
+                            "<partiallycorrectfeedback format='html'>\n<text>Your answer is partially correct.</text>\n"
+                            "</partiallycorrectfeedback>\n<incorrectfeedback format='html'>\n"
+                            "<text>Your answer is incorrect.</text>\n</incorrectfeedback>\n")
+            for answer in data_array[1]:
+                correct = 0
+                if answer == data_array[2]:
+                    correct = 100
+                io_object.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
+                                '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
+            io_object.write('</question>\n')
+
 
 
 class OpenCloze(Exercise):
@@ -203,28 +216,6 @@ class WordFormExercise(Exercise):
                 return key
 
 
-def make_multiple_choice_ex(number_inside=5, number_of_files=1):
-    """
-    Function for calling and writing multiple choice exercises
-    :param number_inside: number of exercises inside one document
-    :param number_of_files: number of documentts
-    """
-    os.makedirs('./multiple_choice_exercises', exist_ok=True)
-    for i in range(0,number_of_files):
-        with open('./multiple_choice_exercises/multiple_choice{}.txt'.format(i), 'w', encoding='utf-8') as output:
-            elements = random.sample(RIGHT_DICTIONARY.items(), number_inside)
-            for key, value in elements:
-                print(key, value)
-                m_ch_exer = MultipleChoice((key, value))
-                sentence = m_ch_exer.find_coll_in_text(1)
-                choices = m_ch_exer.make_choices()
-                if sentence != None:
-                    output.write(m_ch_exer.collocation+'\n')
-                    context = m_ch_exer.take_context_of_sent(sentence)
-                    if context:
-                        output.write(''.join(context)+'.')
-                    output.write("Choices: "+','.join(choices)+'\n\n')
-
 
 def wordform_exercise(number=5, number_of_files=5):
     os.makedirs('./wordforms_exercises', exist_ok=True)
@@ -279,21 +270,33 @@ def open_collocation_file():
         if '(' not in begin[0] and '(' not in end[0]:
             RIGHT_DICTIONARY[begin[0]] = end[0]
 
-def multiple_choice_moodle(number_inside=10, number_of_files=10):
-    os.makedirs('./multiple_choice_xml', exist_ok=True)
+
+def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='txt'):
+    """
+    Function for calling and writing multiple choice exercises
+    :param number_inside: number of exercises inside one document
+    :param number_of_files: number of documentts
+    :param ex_format: can be txt or xml
+    :return:
+    """
+    os.makedirs('./multiple_choice_{}'.format(ex_format), exist_ok=True)
     for i in range(0, number_of_files):
-        with open('./multiple_choice_xml/multiple_choice{}.xml'.format(i), 'w', encoding='utf-8') as output:
-            output.write("<quiz>")
+        with open('./multiple_choice_{}/multiple_choice{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
+            if ex_format == 'xml': output.write("<quiz>")
             elements = random.sample(RIGHT_DICTIONARY.items(), number_inside)
             for number, (key, value) in enumerate(elements):
                 print(number, key, value)
                 m_ch_exer = MultipleChoice((key, value))
                 sentence = m_ch_exer.find_coll_in_text(1)
                 choices = m_ch_exer.make_choices()
-                print(sentence, choices, value)
-                choices.append(value)
-                MultipleChoice.write_array(number, [sentence, choices, value], output, 'multichoice')
-            output.write('</quiz>')
+                if sentence != None:
+                    choices.append(value)
+                    if ex_format == 'xml':
+                        MultipleChoice.write_in_moodle_xml(number, [sentence, choices, value], output, 'multichoice')
+                    else:
+                        m_ch_exer.write_in_normal_format(sentence, choices, output)
+            if ex_format == 'xml': output.write('</quiz>')
+
 
 if __name__ == '__main__':
     open_collocation_file()
@@ -304,4 +307,4 @@ if __name__ == '__main__':
     #open_cloze_exercise(number=5, number_of_files = 5) доделать!
     #word_bank_exercise(number=10, number_of_files=10) доделать нормально. Или из опен-клоз создать
 
-    multiple_choice_moodle(number_inside=5, number_of_files=3)
+    multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
