@@ -10,28 +10,65 @@ from gensim.models import Word2Vec
 import difflib
 
 
-RIGHT_DICTIONARY = {}
+RIGHT_DICTIONARY = {} # there are all my collocations here
 
-with open('new_corpus.txt', 'r', encoding='utf-8') as source_file:
+with open('new_corpus.txt', 'r', encoding='utf-8') as source_file: # This is my corpus (BAWE or BNC)
     corpus = [sentence for sentence in source_file.readlines()]
 
+#========= MATCH EXERCISE =======================
 
-def random_match_exercise(number=5, number_of_files=5):
+def write_match_exercise(right_col, output, elements):
+    """
+    Write in txt format one exercise
+    :param right_col: array of answers
+    :param output: io_object
+    :param elements: random dictionary
+    """
+    for key, value in elements:
+        print(key, value)
+        random_element = random.choice(right_col)
+        output.write('{}, {}, {}\n'.format(key, random_element, value))
+        right_col.remove(random_element)
+
+def write_match_ex_in_moodle(output, elements, right_col):
+    """Write in moodle xml format one doc"""
+    output.write("<quiz>")
+    output.write('<question type="matching">\n')
+    output.write('<name><text>Match collocation question</text></name>\n')
+    output.write('<questiontext format="html">\n<text><![CDATA[<p>'
+                    'Match the collocations below<br></p>]]></text>\n</questiontext>\n')
+    output.write("<defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n"
+                        "<hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n"
+                        "<correctfeedback format='html'>\n"
+                        "<text>Your answer is correct.</text>\n</correctfeedback>\n"
+                        "<partiallycorrectfeedback format='html'>\n<text>Your answer is partially correct.</text>\n"
+                        "</partiallycorrectfeedback>\n<incorrectfeedback format='html'>\n"
+                        "<text>Your answer is incorrect.</text>\n</incorrectfeedback>\n"
+                        "<shownumcorrect/>\n")
+    for key, value in elements:
+        output.write('<subquestion format="html">\n'
+                     '<text><![CDATA[<p>{}<br></p>]]></text>\n'
+                     '<answer><text><![CDATA[<p>{}<br></p>]]></text></answer>\n</subquestion>\n'.format(key, value))
+    output.write('</question>\n')
+    output.write("</quiz>")
+
+def random_match_exercise(number=5, number_of_files=5, ex_format='txt'):
     """
     Exercise of type Match the word from right with left column
     Function takes right collocations and randomize them
     :return: rows like: coll1, coll2_wrong, coll2_right
     """
-    os.makedirs('./match_exercises', exist_ok=True)
+    os.makedirs('./match_exercises_{}'.format(ex_format), exist_ok=True)
     for i in range(0, number_of_files):
-        with open('./match_exercises/match_exercises{}.txt'.format(i), 'w', encoding='utf-8') as output:
+        with open('./match_exercises_{}/match_exercises{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
             elements = random.sample(RIGHT_DICTIONARY.items(), number)
             right_col = [paar[1] for paar in elements]
-            for key, value in elements:
-                print(key,value)
-                random_element = random.choice(right_col)
-                output.write('{}, {}, {}\n'.format(key, random_element, value))
-                right_col.remove(random_element)
+            if ex_format == 'txt':
+                write_match_exercise(right_col, output, elements)
+            else:
+                write_match_ex_in_moodle(output, elements, right_col)
+
+#=========== NORMAL EXERCISES ==========
 
 class Exercise:
 
@@ -154,7 +191,6 @@ class MultipleChoice(Exercise):
                 io_object.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
                                 '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
             io_object.write('</question>\n')
-
 
 
 class OpenCloze(Exercise):
@@ -301,10 +337,15 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 if __name__ == '__main__':
     open_collocation_file()
     #random_match_exercise(number=10, number_of_files=10) #ok
-    #make_multiple_choice_ex(number_inside=10, number_of_files=10) #ok
     #wordform_exercise(number=5)
 
     #open_cloze_exercise(number=5, number_of_files = 5) доделать!
     #word_bank_exercise(number=10, number_of_files=10) доделать нормально. Или из опен-клоз создать
 
-    multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
+    # New version for moodle:
+    #multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
+    random_match_exercise(number=7, number_of_files=2, ex_format='txt')
+
+
+
+#:todo make a template of xml not to write in 100500 times!
