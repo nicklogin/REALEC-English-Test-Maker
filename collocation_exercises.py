@@ -124,21 +124,23 @@ class Exercise:
             sent_coll = self.check_whole_collocation(sentence)  # check all possible variants
             if sent_coll != False:
                 new_sentence = []
-                for word in word_tokenize(sentence):
-                    if word == sent_coll[collocate_part]:
-                        if type == 'open_cloze':
-                            new_sentence.append("{1:SHORTANSWER:=%s}"%word)
+                if type == 'word_form':
+                    for word in word_tokenize(sentence):
+                        if word == sent_coll[collocate_part]:
+                                new_sentence.append("{1:SHORTANSWER:=%s}" % word)
+                                new_sentence.append('(%s)'% self.headword)
                         else:
-                            new_sentence.append("{1:SHORTANSWER:=%s}" % word)
-                            new_sentence.append('(%s)'% self.headword)
-                    else:
-                        new_sentence.append(word)
+                            new_sentence.append(word)
+                else:
+                    print("Here will be open_cloze")
+                    print(sentence)
                 return ' '.join(new_sentence)
 
     def check_whole_collocation(self, sentence):
         """
         Generate part1 + part2 possible variants
         :param col
+        :return: return collocation -- (col1, col2) or False
         """
         collocate_set = set()
         lmtzr = WordNetLemmatizer()
@@ -155,6 +157,19 @@ class Exercise:
             if my_col in sentence:
                 return col
         return False
+
+    def write_in_moodle_format(self, output, sentence, type):
+        """Write in moodle format one word_form exercise"""
+        output.write('<quiz>\n'
+                         '<question type="cloze"> \n'
+                         '<name><text>{}</text></name>\n'.format(type))
+        output.write(
+                '<questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n'.format(sentence))
+        output.write('<generalfeedback format="html">\n'
+                         '<text/></generalfeedback><penalty>0.3333333</penalty>\n'
+                         '<hidden>0</hidden>\n</question>\n')
+        output.write('</quiz>')
+
 
 class MultipleChoice(Exercise):
 
@@ -221,32 +236,23 @@ class OpenCloze(Exercise):
     def __init__(self, whole_coll):
         super().__init__(whole_coll)
 
-    def find_collocation(self, number):
+    def find_collocation(self):
         """
         Find whole collocation. make gap from it and safe collocate as a write answer.
         :return: sentence and tuple = (col1, col2)
         """
-        # for sentence in corpus:
-        #     if self.collocation in sentence:
-        #         bigrams = ngrams(sentence.split(' '), 2)
-        #         for big in bigrams:
-        #             if big[0] in self.first_col and big[1] in self.second_col:#тут поменять условие!
-        #                 sent_first = sentence.split(' ')[:sentence.split(' ').index(big[0])]
-        #                 sent_second = sentence.split(' ')[sentence.split(' ').index(big[1])+1:]
-        #                 sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
-        #                 print(sentence, big)
-        #                 return sentence, big
         for sentence in corpus:
             col = self.check_whole_collocation(sentence)
             if col != False:
                 split_sent = sentence.split(' ')
-                print(split_sent)
-                print(col[0], col[1])
-                sent_first = split_sent[:split_sent.index(split_sent[0])]
-                sent_second = split_sent[split_sent.index(split_sent[1])+1:]
-                sentence = "{} #{}# {}".format(' '.join(sent_first), number, ' '.join(sent_second))
-                print(sentence, col)
-                return sentence, col
+                index = [ num for num, part in enumerate(split_sent) if part == col[0]]
+                sent_first = split_sent[1:index[0]]
+                sent_second = split_sent[index[0]+2:]
+                sentence = "{} ".format(' '.join(sent_first))+\
+                           "{1:SHORTANSWER:=%s %s}"%(split_sent[index[0]],split_sent[index[0]+1])+\
+                           " {}".format(' '.join(sent_second))
+                return sentence
+
 
 class WordFormExercise(Exercise):
 
@@ -275,19 +281,8 @@ class WordFormExercise(Exercise):
             sentence = self.find_collocation_moodle_write(collocate_part=0, type='word_form')
             return sentence
 
-    def write_in_moodle_format(self, output, sentence):
-        """Write in moodle format one word_form exercise"""
-        output.write('<quiz>\n'
-                     '<question type="cloze"> \n'
-                     '<name><text>Word formation exercise</text></name>\n')
-        output.write('<questiontext format="html"><text><p>{}</p></text></questiontext>\n'.format(sentence))
-        output.write('<generalfeedback format="html">\n'
-                     '<text/></generalfeedback><penalty>0.3333333</penalty>\n'
-                     '<hidden>0</hidden>\n</question>\n')
-        output.write('</quiz>')
-
-
 def wordform_exercise(number=5, ex_format='txt'):
+    """Make word formation exercise in moodle format and just text"""
     os.makedirs('./wordforms_exercises_{}'.format(ex_format), exist_ok=True)
     for i in range(0, number):
         with open('./wordforms_exercises_{}/wordform{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
@@ -299,29 +294,27 @@ def wordform_exercise(number=5, ex_format='txt'):
                     if ex_format == 'txt':
                         output.write(sentence + '\n')
                     else:
-                        wf_ex.write_in_moodle_format(output, sentence)
+                        wf_ex.write_in_moodle_format(output, sentence, type="Word formation")
                     break
 
-
-def open_cloze_exercise(number=5, number_of_files=5):
+def open_cloze_exercise(number=5, ex_format='txt'):
     """Make open cloze execises and write in files"""
-    os.makedirs('./open_cloze_exercises', exist_ok=True)
-    for i in range(0, number_of_files):
-        with open('./open_cloze_exercises/open_cloze{}.txt'.format(i), 'w', encoding='utf-8') as output:
+    os.makedirs('./open_cloze_exercises_{}'.format(ex_format), exist_ok=True)
+    for i in range(0, number):
+        with open('./open_cloze_exercises_{}/open_cloze{}.{}'.format(ex_format,i,ex_format), 'w', encoding='utf-8') as output:
             elements = random.sample(RIGHT_DICTIONARY.items(), number)
-            data = []
-            for n, paar in enumerate(elements):
-                print(n, paar[0], paar[1])
+            for paar in elements:
                 op_ex = OpenCloze((paar[0], paar[1]))
                 try:
-                    sentence, collocate = op_ex.find_collocation(n) #TODO: not all forms are checked
-                    data.append((sentence, collocate))
+                    sentence = op_ex.find_collocation() #TODO: not all forms are checked
+                    if ex_format == 'xml':
+                        op_ex.write_in_moodle_format(output, sentence, type="Open Cloze")
+                    else:
+                        output.write(sentence+'\n')
+                    break
                 except:
                     print("No sentence with collocation")
-                    n += 1
-            for row in data:
-                output.write(row[0])
-                output.write(row[1][0]+" "+row[1][1]+'\n\n')
+
 
 def word_bank_exercise(number=5, number_of_files=5):
     """Make word bank execises and write in files"""
@@ -371,14 +364,12 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 if __name__ == '__main__':
     open_collocation_file()
 
-    #open_cloze_exercise(number=5, number_of_files = 5) доделать!
-    #word_bank_exercise(number=10, number_of_files=10) доделать нормально. Или из опен-клоз создать
-
     # New version for moodle:
     #multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
     #random_match_exercise(number=7, number_of_files=2, ex_format='txt')
-    wordform_exercise(number=5, ex_format='txt')
+    #wordform_exercise(number=5, ex_format='xml')
     #open_cloze_exercise(number=5, ex_format='xml')
+    word_bank_exercise(number=10, number_of_files=10)
 
 #:todo make a template of xml not to write in 100500 times!
 # ПАДАЕТ НА & ворд_форм xml О_О почему неясно
