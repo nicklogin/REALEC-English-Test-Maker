@@ -254,6 +254,48 @@ class OpenCloze(Exercise):
                 return sentence
 
 
+class Word_Bank_Cloze(Exercise):
+
+    def __init__(self, whole_coll):
+        super().__init__(whole_coll)
+
+    def find_collocation(self, n):
+        """
+        Find whole collocation. make gap from it and safe collocate as a write answer.
+        :return: sentence and tuple = (col1, col2)
+        """
+        for sentence in corpus:
+            col = self.check_whole_collocation(sentence)
+            if col != False:
+                split_sent = sentence.split(' ')
+                index = [num for num, part in enumerate(split_sent) if part == col[0]]
+                sent_first = split_sent[1:index[0]]
+                sent_second = split_sent[index[0]+2:]
+                sentence = "{} ".format(' '.join(sent_first))+\
+                           "[[%s]]"%(n+1)+\
+                           " {}".format(' '.join(sent_second))
+                return sentence, (split_sent[index[0]], split_sent[index[0]+1])
+
+    @staticmethod
+    def write_in_moodle_xml(output, sentence, answers):
+        output.write('<quiz>\n')
+        output.write('<question type="ddwtos">\n')
+        output.write('<name><text>Word bank</text></name>\n'
+                     '<questiontext format="html">\n<text><![CDATA[<p>'
+                     '{}<br></p>]]></text>\n</questiontext>\n'.format(sentence))
+        output.write('<generalfeedback format="html">\n<text/></generalfeedback>\n'
+                     '<defaultgrade>1.0000000</defaultgrade>\n'
+                     '<penalty>0.3333333</penalty>\n'
+                     '<hidden>0</hidden>\n'
+                     '<shuffleanswers>0</shuffleanswers>\n'
+                     '<correctfeedback format="html"><text>Your answer is correct.</text></correctfeedback>\n'
+                     '<partiallycorrectfeedback format="html"><text>Your answer is partially correct.</text></partiallycorrectfeedback>\n'
+                     '<incorrectfeedback format="html"><text>Your answer is incorrect.</text></incorrectfeedback>\n<shownumcorrect/>\n')
+        for answer in answers:
+            output.write('<dragbox>\n<text>{}</text>\n<group>1</group>\n</dragbox>\n'.format(answer))
+        output.write('</question>\n</quiz>')
+
+
 class WordFormExercise(Exercise):
 
     def __init__(self, whole_coll):
@@ -316,12 +358,24 @@ def open_cloze_exercise(number=5, ex_format='txt'):
                     print("No sentence with collocation")
 
 
-def word_bank_exercise(number=5, number_of_files=5):
+def word_bank_exercise(number=5, number_of_files=2, ex_format="txt"):
     """Make word bank execises and write in files"""
-    os.makedirs('./word-bank_exercises', exist_ok=True)
+    os.makedirs('./word_bank_exercises_{}'.format(ex_format), exist_ok=True)
     for i in range(0, number_of_files):
-        with open('./word_bank_exercises/word_bank{}.txt'.format(i), 'w', encoding='utf-8') as output:
+        with open('./word_bank_exercises_{}/word_bank{}.{}'.format(ex_format, i, ex_format), 'w', encoding='utf-8') as output:
             elements = random.sample(RIGHT_DICTIONARY.items(), number)
+            answers, ex_text = [], ''
+            for n, paar in enumerate(elements):
+                print(paar)
+                op_ex = Word_Bank_Cloze((paar[0], paar[1]))
+                sentence, answer = op_ex.find_collocation(n)
+                answers.append(answer[0]+" "+answer[1])
+                ex_text += sentence + '\n'
+            if ex_format == 'xml':
+                Word_Bank_Cloze.write_in_moodle_xml(output, ex_text, answers)
+            else:
+                output.write(ex_text + '\n')
+                output.write("Possible answers: "+', '.join(answers)+'\n')
 
 
 def open_collocation_file():
@@ -363,13 +417,12 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 
 if __name__ == '__main__':
     open_collocation_file()
-
-    # New version for moodle:
-    #multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
-    #random_match_exercise(number=7, number_of_files=2, ex_format='txt')
-    #wordform_exercise(number=5, ex_format='xml')
-    #open_cloze_exercise(number=5, ex_format='xml')
-    word_bank_exercise(number=10, number_of_files=10)
+    #Exercises:
+    multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
+    random_match_exercise(number=7, number_of_files=2, ex_format='txt')
+    wordform_exercise(number=5, ex_format='xml')
+    open_cloze_exercise(number=5, ex_format='xml')
+    word_bank_exercise(number=5, number_of_files = 3, ex_format='xml')
 
 #:todo make a template of xml not to write in 100500 times!
-# ПАДАЕТ НА & ворд_форм xml О_О почему неясно
+#word bank and open cloze -- test! find little bugs!
