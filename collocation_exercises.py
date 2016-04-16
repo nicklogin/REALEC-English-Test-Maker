@@ -12,8 +12,15 @@ import difflib
 
 RIGHT_DICTIONARY = {} # there are all my collocations here
 
-with open('new_corpus.txt', 'r', encoding='utf-8') as source_file: # This is my corpus (BAWE or BNC)
-    corpus = [sentence for sentence in source_file.readlines()]
+
+def choose_corpora(corpus_name):
+    if corpus_name == 'bawe' or corpus_name == 'bnc':
+        path = '.'
+    else:
+        path = './Categories_new'
+    with open('{}/{}.txt'.format(path,corpus_name), 'r', encoding='utf-8') as source_file:  # This is my corpus (BAWE or BNC)
+        global corpus
+        corpus = [sentence for sentence in source_file.readlines()]
 
 #========= MATCH EXERCISE =======================
 
@@ -392,7 +399,7 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
     """
     Function for calling and writing multiple choice exercises
     :param number_inside: number of exercises inside one document
-    :param number_of_files: number of documentts
+    :param number_of_files: number of documents
     :param ex_format: can be txt or xml
     :return:
     """
@@ -416,13 +423,14 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 
 
 if __name__ == '__main__':
+    choose_corpora('Linguistics')
     open_collocation_file()
     #Exercises:
-    multiple_choice_exercise(number_inside=5, number_of_files=3, ex_format='txt')
-    random_match_exercise(number=7, number_of_files=2, ex_format='txt')
-    wordform_exercise(number=5, ex_format='xml')
-    open_cloze_exercise(number=5, ex_format='xml')
-    word_bank_exercise(number=5, number_of_files = 3, ex_format='xml')
+    #multiple_choice_exercise(number_inside=1, number_of_files=3, ex_format='txt')
+    #random_match_exercise(number=7, number_of_files=2, ex_format='txt')
+    #wordform_exercise(number=5, ex_format='xml')
+    open_cloze_exercise(number=5, ex_format='txt')
+    #word_bank_exercise(number=5, number_of_files = 3, ex_format='xml')
 
 #:todo make a template of xml not to write in 100500 times!
 #word bank and open cloze -- test! find little bugs!
