@@ -186,9 +186,9 @@ class MultipleChoice(Exercise):
     def make_choices(self):
         """ Takes 3 candidates from word2vec"""
         model = Word2Vec.load('./word2vec/bnc.model')
-        variants = model.most_similar(self.second_col, topn=7)
+        variants = model.most_similar(self.second_col, topn=200)
         choices = []
-        for var in variants:
+        for var in variants[170:]:
             s = difflib.SequenceMatcher(None, self.second_col, var[0])
             if s.ratio() < 0.7:
                 choices.append(var[0].lower())
@@ -423,13 +423,13 @@ def multiple_choice_exercise(number_inside=10, number_of_files=10, ex_format='tx
 
 
 if __name__ == '__main__':
-    choose_corpora('Linguistics')
+    choose_corpora('bawe')
     open_collocation_file()
     #Exercises:
-    #multiple_choice_exercise(number_inside=1, number_of_files=3, ex_format='txt')
+    multiple_choice_exercise(number_inside=1, number_of_files=3, ex_format='xml')
     #random_match_exercise(number=7, number_of_files=2, ex_format='txt')
     #wordform_exercise(number=5, ex_format='xml')
-    open_cloze_exercise(number=5, ex_format='txt')
+    #open_cloze_exercise(number=5, ex_format='txt')
     #word_bank_exercise(number=5, number_of_files = 3, ex_format='xml')
 
 #:todo make a template of xml not to write in 100500 times!

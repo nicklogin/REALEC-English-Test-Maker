@@ -26,6 +26,15 @@ def categories_files():
                 for sent in sentences:
                     new.write(sent+'.\n')
 
+def l1_l2_categories_files():
+    os.makedirs('./L1_new/', exist_ok=True)
+    for filename in os.listdir('./L1_L2_categories/L1'):
+        with open('./L1_L2_categories/L1/' + filename) as text:
+            ok_text = BeautifulSoup(text.read(), "lxml").get_text()
+            sentences = ok_text.split('.')
+            with open('./L1_new/{}'.format(filename), 'w', encoding='utf-8') as new:
+                for sent in sentences:
+                    new.write(sent+'.\n')
 
 if __name__ == '__main__':
-    categories_files()
+    l1_l2_categories_files()
