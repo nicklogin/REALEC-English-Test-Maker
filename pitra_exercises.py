@@ -5,6 +5,8 @@ import random
 import json
 import os
 
+""" This is a script for exercises on words mostly confused. 
+Based on BAWE corpus. XML moodle format as output. """
 
 def choose_corpora(corpus_name):
     if corpus_name == 'bawe' or corpus_name == 'bnc':

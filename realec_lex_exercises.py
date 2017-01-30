@@ -6,9 +6,11 @@ class Exercise:
         self.path_new = path_new
         self.path_old = path_old
         self.exercises_out = os.makedirs('moodle_exercises', exist_ok = True)
-        self.error_type = ['Word_choice', 'lex_item_choice', 'Often_confused', 'Choice_synonyms',
-                        'lex_part_choice', 'Absence_comp_colloc', 'Redundant', 'Derivation',
-                        'Conversion', 'Formational_affixes', 'Suffix', 'Prefix', 'Category_confusion']
+        #self.error_type = ['Word_choice', 'lex_item_choice', 'Often_confused', 'Choice_synonyms',
+        #                'lex_part_choice', 'Absence_comp_colloc', 'Redundant', 'Derivation',
+        #                'Conversion', 'Formational_affixes', 'Suffix', 'Prefix', 'Category_confusion']
+        self.error_type = ['Word_choice']
+	#['Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number']
         self.current_doc_errors = defaultdict()
 
     def find_errors_indoc(self, line):
@@ -78,23 +80,22 @@ class Exercise:
                                     new_file.write("#DELETE#"+str(indexes_comp)+"#")
                     new_file.write(sym)
 
-
     def short_answer(self, new_text):
         good_sentences = []
-        for sentence in new_text.split('.'):
-            if '*' in sentence:
+        sentences = [''] + new_text.split('. ')
+        for sent1, sent2, sent3 in zip(sentences,sentences[1:], sentences[2:]):
+            if '*' in sent2:
                 try:
-                    sent, right_answer, index, other = sentence.split('*')
+                    sent, right_answer, index, other = sent2.split('*')
                     wrong = other[:int(index)]
                     new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] + '.'
-                    good_sentences.append((new_sent, right_answer))
+                    text = sent1+'. '+new_sent+' '+sent3
+                    if '*' not in text:
+                         good_sentences.append((text, right_answer))
                 except:
-                    print("Bad: ", sentence)
-        return good_sentences
+                    print("Bad: ", sent2)
 
-    def word_bank(self, new_text):
-        """ more than 3"""
-        pass
+        return good_sentences
 
 
     def write_sh_answ_exercise(self, sentences):
@@ -110,11 +111,14 @@ class Exercise:
         <feedback><text>Correct!</text></feedback>\n\
         </answer>\n\
         </question>\n'
-        with open('short_answer_exercises.xml', 'a', encoding='utf-8') as moodle_ex:
+        with open('ielts_Word_choice_new.xml', 'a', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for ex in sentences:
                 moodle_ex.write((pattern.format(ex[0], ex[1])).replace('&','and'))
             moodle_ex.write('</quiz>')
+        with open('ielts_Word_choice_new.txt', 'a', encoding='utf-8') as plait_text:
+            for ex in sentences:
+                plait_text.write(ex[1]+'\t'+ex[0]+'\n\n')
 
 
     def make_moodle_format(self, type='find_error'):
@@ -140,16 +144,15 @@ class Exercise:
                         new_text += words[current_number:]
                         current_number = 0
             if '*' in new_text:
-                # all_sents += self.short_answer(new_text)
-                sentences = self.word_bank(new_text)
-        # self.write_sh_answ_exercise(all_sents)
+                all_sents += self.short_answer(new_text)
+        self.write_sh_answ_exercise(all_sents)
 
 
 
 if __name__ == "__main__":
 
-    path_new, path_old = './new_texts/', './realec/'
+    path_new, path_old = './new_texts/', './IELTS2015/'
     e = Exercise(path_new, path_old)
-    # e.find_sentences()
+    e.find_sentences()
 
     e.make_moodle_format()

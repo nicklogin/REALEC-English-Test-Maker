@@ -14,6 +14,7 @@ class Frequencies:
     def __init__(self, path, discipline):
         self.path = path
         self.discipline = discipline
+        self.discipline_name = discipline.split('.')[0]
         self.simple_freq = {}
         self.tf_idf_dict = {}
         self.token_dict = {} # 'Economics': 'text'
@@ -67,7 +68,7 @@ class Frequencies:
                             if word not in self.stop and self.numbers.match(word) == None]
         self.simple_freq = FreqDist(clean_text_array)
         text_size = len(self.discipline_text)
-        with open('freq_list_1000.csv', 'w', encoding='utf-8') as freq_file:
+        with open('freq_list_1000_{}.csv'.format(self.discipline_name), 'w', encoding='utf-8') as freq_file:
             freq_file.write("word,absolute frequency,relative frequency,tf-idf score\n")
             for word, freq in self.simple_freq.most_common(1000):
                 try:
@@ -88,14 +89,14 @@ class Frequencies:
         #score_raw = finder.score_ngrams(bigram_measures.raw_freq)
         return scored_pmi, scored_llog
 
-    def write_in_file_collocations(self, pmi, llog):
+    def write_in_file_collocations(self, pmi, llog, discipline):
         """
         Write: col1, col2, freq1, fre2, relative freq_collocation, absolute freq,
         pmi_score, llog_score.
         :return:
         """
-        with open("collocation_freq.csv", 'w', encoding='utf-8') as output_file:
-            output_file.write('collocate1,collocate2,freq_col1,freq_col2,relative_col_freq,absolute_col_freq,pmi_score,llog_score,t-score\n')
+        with open("collocation_freq_{}.csv".format(discipline), 'w', encoding='utf-8') as output_file:
+            output_file.write('collocate1,collocate2,freq_col1,freq_col2,absolute_col_freq,relative_col_freq,pmi_score,llog_score,t-score\n')
             llog_score = 0
             bigram_freq = 0
             for ((col1, col2), pmi_score) in pmi:
@@ -121,17 +122,19 @@ class Frequencies:
             self.discipline_text = tokenizer.tokenize(text)
             return self.discipline_text
 
+def check_all_files(path):
+    for discipline in os.listdir(path):
+        freq_object = Frequencies(path, discipline)
+        token_dictionary = freq_object.make_dictionary()
+        my_dictionary = freq_object.tf_idf_function()
+
+        freq_object.open_file()
+        freq_object.find_most_freq_words()
+        freq_object.make_bigrams_dictionary()
+        pmi,llog = freq_object.find_most_freq_collocations()
+        freq_object.write_in_file_collocations(pmi, llog, discipline.split('.')[0])
+
+
 if __name__ == '__main__':
-    path = '../Categories_new/'
-    discipline = 'Economics.txt'
-
-    freq_object = Frequencies(path, discipline)
-    token_dictionary = freq_object.make_dictionary()
-    my_dictionary = freq_object.tf_idf_function()
-
-    freq_object.open_file()
-    freq_object.find_most_freq_words()
-    freq_object.make_bigrams_dictionary()
-    pmi, llog = freq_object.find_most_freq_collocations()
-    freq_object.write_in_file_collocations(pmi, llog)
-
+    path = '../L2_new/'
+    check_all_files(path)

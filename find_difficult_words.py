@@ -1,5 +1,8 @@
 __author__ = 'alenush'
 
+""" This script goes through links and takes all lists of academic 
+phrases, difficult words and so on. Makes academic lists and dictionaries."""
+
 import urllib.request
 from lxml.html import parse
 from lxml import etree

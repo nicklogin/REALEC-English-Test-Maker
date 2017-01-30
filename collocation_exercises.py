@@ -9,6 +9,9 @@ from nltk import word_tokenize
 from gensim.models import Word2Vec
 import difflib
 
+""" Script for all types of exercises on collocations.
+Need Academic collocation list. Corpus Bawe and BNC were used.
+Output format -> Moodle xml """
 
 RIGHT_DICTIONARY = {} # there are all my collocations here
 
