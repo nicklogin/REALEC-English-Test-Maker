@@ -18,12 +18,6 @@ class Exercise:
         self.exercise_type = exercise_type
         self.current_doc_errors = defaultdict()
         self.headword = ''
-        self.error_func = {
-            "short_answer": self.short_answer,
-            "multiple_choice": self.multiple_choice,
-            "word_form":self.word_form,
-            "open_cloze":  self.open_cloze
-        }
         self.write_func = {
             "short_answer": self.write_sh_answ_exercise,
             "multiple_choice": self.write_multiple_ch,
@@ -102,24 +96,62 @@ class Exercise:
                                     new_file.write("#DELETE#"+str(indexes_comp)+"#")
                     new_file.write(sym)
 
-    # ============Short answer exercise=======================
+    # ================Write Exercises to the files=================
 
-    def short_answer(self, new_text):
+    def find_choices(self, right, wrong): #TODO @Kate, rewrite this function
+        """
+        Finds two more choices for Multiple Choice exercise.
+        :param right:
+        :param wrong:
+        :return: array of four choices (first is always right)
+        """
+        choices = [right, wrong]
+        for key, value in self.wf_dictionary.items():
+            if right == key:
+                [choices.append(v) for v in value if v != wrong]
+            elif right in value:
+                [choices.append(v) for v in value if v != wrong and v != right]
+        return choices[:4]
+
+    def check_headform(self, word):
+        """Take initial fowm - headform of the word"""
+        for key, value in self.wf_dictionary.items():
+            headword = [val for val in value if val == word]
+            if len(headword)>0:
+                return key
+
+    def create_sentence_function(self, new_text):
+        """
+        Makes sentences and write answers for all exercise types
+        :return: array of good sentences. [ (sentences, [right_answer, ... ]), (...)]
+        """
         good_sentences = []
         sentences = [''] + new_text.split('. ')
-        for sent1, sent2, sent3 in zip(sentences,sentences[1:], sentences[2:]):
+        for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
             if '*' in sent2:
                 try:
                     sent, right_answer, index, other = sent2.split('*')
                     wrong = other[:int(index)]
-                    new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] + '.'
-                    text = sent1+'. '+new_sent+' '+sent3
+                    new_sent, answers = '', []
+                    if self.exercise_type == 'short_answer':
+                        new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] + '.'
+                        answers = [right_answer]
+                    elif self.exercise_type == 'open_cloze':
+                        new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):] + '.'
+                        answers = [right_answer]
+                    elif self.exercise_type == 'word_form':
+                        new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + '(' +\
+                               self.check_headform(right_answer) + ')' + other[int(index):] + '.'
+                        answers = [right_answer]
+                    elif self.exercise_type == 'multiple_choice':
+                        new_sent = sent + "_______ " + other[int(index):] + '.'
+                        answers = self.find_choices(right_answer, wrong)
+                    text = sent1 + '. ' + new_sent + ' ' + sent3
                     if '*' not in text:
-                         good_sentences.append((text, right_answer))
+                        good_sentences.append((text, answers))
                 except:
                     print("Bad: ", sent2)
         return good_sentences
-
 
     def write_sh_answ_exercise(self, sentences):
         pattern = '<question type="shortanswer">\n\
@@ -137,83 +169,57 @@ class Exercise:
         with open('./moodle_exercises/{}_{}.xml'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
-                moodle_ex.write((pattern.format(n, ex[0], ex[1])).replace('&','and'))
+                moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and'))
             moodle_ex.write('</quiz>')
         with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
-                plait_text.write(ex[1]+'\t'+ex[0]+'\n\n')
+                plait_text.write(ex[1][0]+'\t'+ex[0]+'\n\n')
 
-    def multiple_choice(self):
-        pass
+    def write_multiple_ch(self, sentences):
+        pattern = '<question type="multichoice">\n \
+        <name><text>Grammar realec. Multiple Choice question {} </text></name>\n \
+        <questiontext format = "html" >\n <text> <![CDATA[ <p> {}<br></p>]]></text>\n</questiontext>\n\
+        <defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n\
+        <hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n\
+        <answernumbering>abc</answernumbering>\n<correctfeedback format="html">\n\
+        <text>Your answer is correct.</text>\n</correctfeedback>\n\
+        <partiallycorrectfeedback format="html">\n<text>Your answer is partially correct.</text>\n\
+        </partiallycorrectfeedback>\n<incorrectfeedback format="html">\n\
+        <text>Your answer is incorrect.</text>\n</incorrectfeedback>\n'
 
-    def check_headform(self, word):
-        """Take initial fowm - headform of the word"""
-        for key, value in self.wf_dictionary.items():
-            headword = [val for val in value if val == word]
-            if len(headword)>0:
-                return key
-
-    def word_form(self, new_text):
-        good_sentences = []
-        sentences = [''] + new_text.split('. ')
-        for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
-            if '*' in sent2:
-                try:
-                    sent, right_answer, index, other = sent2.split('*')
-                    new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + '(' +\
-                               self.check_headform(right_answer) + ')' + other[int(index):] + '.'
-                    text = sent1 + '. ' + new_sent + ' ' + sent3
-                    if '*' not in text:
-                        good_sentences.append((text, right_answer))
-                except:
-                    print("Bad: ", sent2)
-        return good_sentences
-
-    def open_cloze(self, new_text):
-        good_sentences = []
-        sentences = [''] + new_text.split('. ')
-        for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
-            if '*' in sent2:
-                try:
-                    sent, right_answer, index, other = sent2.split('*')
-                    new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):] + '.'
-                    text = sent1 + '. ' + new_sent + ' ' + sent3
-                    if '*' not in text:
-                        good_sentences.append((text, right_answer))
-                except:
-                    print("Bad: ", sent2)
-        return good_sentences
-
-    def write_multiple_ch(self, data_array):
-        with open('./moodle_exercises/{}_{}.xml'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
-            moodle_ex.write('<question type="multichoice">\n')
-            moodle_ex.write('<name><text>Grammar realec. Multiple Choice</text></name>\n')
-            moodle_ex.write('<questiontext format="html">\n<text><![CDATA[<p>'
-                            '{}<br></p>]]></text>\n</questiontext>\n'.format(data_array[0]))
-            moodle_ex.write("<defaultgrade>1.0000000</defaultgrade>\n<penalty>0.3333333</penalty>\n"
-                            "<hidden>0</hidden>\n<single>true</single>\n<shuffleanswers>true</shuffleanswers>\n"
-                            "<answernumbering>abc</answernumbering>\n<correctfeedback format='html'>\n"
-                            "<text>Your answer is correct.</text>\n</correctfeedback>\n"
-                            "<partiallycorrectfeedback format='html'>\n<text>Your answer is partially correct.</text>\n"
-                            "</partiallycorrectfeedback>\n<incorrectfeedback format='html'>\n"
-                            "<text>Your answer is incorrect.</text>\n</incorrectfeedback>\n")
-            for answer in data_array[1]:
-                correct = 0
-                if answer == data_array[2]:
-                    correct = 100
-                moodle_ex.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
-                                '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
-                moodle_ex.write('</question>\n')
-
-    def write_open_cloze(self, sentences):
-        pattern = '<question type="cloze"><name><text>Grammar realec. Open cloze {}</text></name>\n\
-                     <questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n''<generalfeedback format="html">\n\
-                     <text/></generalfeedback><penalty>0.3333333</penalty>\n\
-                     <hidden>0</hidden>\n</question>\n'
         with open('./moodle_exercises/{}_{}.xml'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
-                moodle_ex.write((pattern.format(n, ex[0], ex[1])).replace('&','and'))
+                moodle_ex.write((pattern.format(n, ex[0])).replace('&','and'))
+                for n, answer in enumerate(ex[1]):
+                    correct = 0
+                    if n == 0:
+                        correct = 100
+                    moodle_ex.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
+                                    '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
+                moodle_ex.write('</question>\n')
+            moodle_ex.write('</quiz>')
+        with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w',
+                  encoding='utf-8') as plait_text:
+            for ex in sentences:
+                plait_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n')
+
+
+    def write_open_cloze(self, sentences):
+        """:param type: Word form or Open cloze"""
+        type = ''
+        if self.exercise_type == 'word_form':
+            type = "Word form"
+        elif self.exercise_type == 'open_cloze':
+            type = "Open Cloze"
+        pattern = '<question type="cloze"><name><text>Grammar realec. {} {}</text></name>\n\
+                     <questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n''<generalfeedback format="html">\n\
+                     <text/></generalfeedback><penalty>0.3333333</penalty>\n\
+                     <hidden>0</hidden>\n</question>\n'
+        with open('./moodle_exercises/{}_{}.xml'.format(self.exercise_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
+            moodle_ex.write('<quiz>\n')
+            for n, ex in enumerate(sentences):
+                moodle_ex.write((pattern.format(type, n, ex[0], ex[1][0])).replace('&','and'))
             moodle_ex.write('</quiz>')
         with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
@@ -238,7 +244,7 @@ class Exercise:
                         new_text += words[current_number:]
                         current_number = 0
             if '*' in new_text:
-                all_sents += self.error_func[self.exercise_type](new_text)
+                all_sents += self.create_sentence_function(new_text)
         self.write_func[self.exercise_type](all_sents)
 
         shutil.rmtree('./processed_texts/')
@@ -246,7 +252,7 @@ class Exercise:
 if __name__ == "__main__":
 
     path_to_data = './IELTS2015/'
-    e = Exercise(path_to_data, 'Tense_choice', 'short_answer')
+    e = Exercise(path_to_data, 'Tense_choice', 'open_cloze')
     e.make_data_ready_4exercise()
 
     e.make_exercise()

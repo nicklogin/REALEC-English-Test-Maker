@@ -6,11 +6,10 @@ class Exercise:
         self.path_new = path_new
         self.path_old = path_old
         self.exercises_out = os.makedirs('moodle_exercises', exist_ok = True)
-        #self.error_type = ['Word_choice', 'lex_item_choice', 'Often_confused', 'Choice_synonyms',
+        # Possible variants of lex errors: ['Word_choice', 'lex_item_choice', 'Often_confused', 'Choice_synonyms',
         #                'lex_part_choice', 'Absence_comp_colloc', 'Redundant', 'Derivation',
         #                'Conversion', 'Formational_affixes', 'Suffix', 'Prefix', 'Category_confusion']
         self.error_type = ['Word_choice']
-	#['Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number']
         self.current_doc_errors = defaultdict()
 
     def find_errors_indoc(self, line):
