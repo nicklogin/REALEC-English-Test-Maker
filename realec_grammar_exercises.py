@@ -1,23 +1,25 @@
 import sys, codecs, re, os, traceback
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import shutil
 import random
 import json
+import pprint
+import difflib
 
 """Script that generates grammar exercises from REAELEC data """
 
 class Exercise:
-    def __init__(self, path_to_realecdata, error_type, exercise_type, bold, context):
+    def __init__(self, path_to_realecdata, error_type, exercise_types, bold, context):
 
         """"
         :param error_type: 'Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number
-        :param exercise_type: multiple_choice, word_formation, short_answer, open_cloze
+        :param exercise_types: list, any from: multiple_choice, word_form, short_answer, open_cloze
         """
         self.path_new = './processed_texts/'
         self.path_old = path_to_realecdata
         self.error_type = error_type
-        self.exercise_type = exercise_type
-        self.current_doc_errors = defaultdict()
+        self.exercise_types = exercise_types
+        self.current_doc_errors = OrderedDict()
         self.bold = bold
         self.context = context
         self.headword = ''
@@ -32,7 +34,7 @@ class Exercise:
         with open('./nug_needs/wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
 
-    def find_errors_indoc(self, line, error_ind):
+    def find_errors_indoc(self, line):
         """
         Find all T... marks and save in dictionary.
         Format: {"T1":{'Error':err, 'Index':(index1, index2), "Wrong":text_mistake}}
@@ -45,7 +47,7 @@ class Exercise:
                 return (int(index1), int(index2))
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
-                print("Something wrong! No Notes probably", line)
+                print("Errors: Something wrong! No notes or a double span", line)
 
     def validate_answers(self, answer):
         # TO DO: multiple variants?
@@ -55,11 +57,13 @@ class Exercise:
         answer = re.sub(' ?\(.*?\) ?','',answer)
         if '/' in answer:
             answer = answer.split('/')[0]
+        if '\\' in answer:
+            answer = answer.split('\\')[0]
         if ' OR ' in answer:
             answer = answer.split(' OR ')[0]
-        if ' or ' in answer:
-            answer = answer.split(' or ')[0]
-        if answer.strip('? ') == '':
+        if ' или ' in answer:
+            answer = answer.split(' или ')[0]
+        if answer.strip('? ') == '' or '???' in answer:
             return None
         return answer
 
@@ -74,7 +78,7 @@ class Exercise:
                         self.current_doc_errors[annotation.split()[1]]['Right'] = validated
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
-                print("Something wrong! No Notes probably", line)
+                print("Answers: Something wrong! No Notes probably", line)
 
     def find_delete_seqs(self, line):
         if re.search('^A', line) is not None and 'Delete' in line:
@@ -88,35 +92,95 @@ class Exercise:
         for ann in anns:
             print(ann)
             self.error_intersects = set()
-            error_ind = []
             with open(self.path_old + ann, 'r', encoding='utf-8') as ann_file:
                 for line in ann_file.readlines():
-                    ind = self.find_errors_indoc(line,error_ind)
-                    if ind is not None:
-                        if ind in error_ind:
-                            self.error_intersects.add(ind)
-                        else:
-                            error_ind.append(ind)
+                    ind = self.find_errors_indoc(line)
                     self.find_answers_indoc(line)
                     self.find_delete_seqs(line)
-            self.embedded,self.overlap = self.find_embeddings(error_ind)
+                    
+            new_errors = OrderedDict()
+            for x in sorted(self.current_doc_errors.items(),key=lambda x: (x[1]['Index'][0],x[1]['Index'][1],int(x[0][1:]))):
+                if 'Right' in x[1] or 'Delete' in x[1]:
+                    new_errors[x[0]] = x[1]
+            self.current_doc_errors = new_errors
+            
+            unique_error_ind = []
+            error_ind = [self.current_doc_errors[x]['Index'] for x in self.current_doc_errors]
+            for ind in error_ind:
+                if ind in unique_error_ind:
+                    self.error_intersects.add(ind)
+                else:
+                    unique_error_ind.append(ind)                
+            self.embedded,self.overlap1,self.overlap2 = self.find_embeddings(unique_error_ind)
             self.make_one_file(ann.split('.')[0])
             self.current_doc_errors.clear()
 
     def find_embeddings(self,indices):
         indices.sort(key=lambda x: (x[0],-x[1]))
         embedded = []
-        overlap = []
+        overlap1, overlap2 = [],[]
+        self.embedding = defaultdict(list)
         for i in range(1,len(indices)):
             find_emb = [x for x in indices if (x[0] <= indices[i][0] and x[1] > indices[i][1]) or \
                                               (x[0] < indices[i][0] and x[1] >= indices[i][1])]
             if find_emb:
+                for j in find_emb:
+                    self.embedding[str(j)].append(indices[i])
                 embedded.append(indices[i])
-            elif indices[i][0] < indices[i-1][1]:
-                overlap.append(indices[i])
-        return embedded, overlap
+            else:
+                overlaps = [x for x in indices if x[0] < indices[i][0] and (x[1] > indices[i][0] and
+                                                                            x[1] < indices[i][1])]
+                if overlaps:
+                    overlap1.append(overlaps[0])
+                    overlap2.append(indices[i])
+        return embedded, overlap1, overlap2
         
-                
+    def tackle_embeddings(self,dic):
+        b = dic.get('Index')[0]
+        emb_errors = [x for x in self.current_doc_errors.items() if x[1]['Index'] in self.embedding[str(dic.get('Index'))]]
+        new_wrong = ''
+        nw = 0
+        ignore = []
+        for j,ws in enumerate(dic['Wrong']):
+            emb_intersects = []
+            for t,e in emb_errors:
+                if e['Index'][0]-b == j:
+                    if 'Right' in e and 'Right' in dic and e['Right'] == dic['Right']:
+                        break
+                    if str(e['Index']) in self.embedding:
+                        ignore += self.embedding[str(e['Index'])]
+                    if e['Index'] in self.error_intersects:
+                        emb_intersects.append((int(t[1:]),e))
+                        continue
+                    if e['Index'] not in ignore:
+                        if 'Right' in e:
+                            new_wrong += e['Right']
+                            nw = len(e['Wrong'])
+                        elif 'Delete' in e:
+                            nw = len(e['Wrong'])
+            if emb_intersects:
+                emb_intersects = sorted(emb_intersects,key=lambda x: x[0])
+                last = emb_intersects[-1][1]
+                L = -1
+                while 'Right' not in last:
+                    L -= 1
+                    last = emb_intersects[L][1]
+                new_wrong += last['Right']
+                nw = len(last['Wrong'])
+            if not nw:
+                new_wrong += ws
+            else:
+                nw -= 1
+        return new_wrong
+
+    def find_overlap(self,s1,s2):
+        m = difflib.SequenceMatcher(None, s1, s2).get_matching_blocks()
+        if len(m) > 1:
+            for x in m[:-1]:
+                if x.b == 0:
+                    return x.size
+        return 0
+            
 
     def make_one_file(self, filename):
         """
@@ -132,11 +196,51 @@ class Exercise:
                     intersects = []
                     for t_key, dic in self.current_doc_errors.items():
                         if dic.get('Index')[0] == i:
+                            if dic.get('Error') == 'Punctuation' and 'Right' in dic and \
+                               not dic.get('Right').startswith(','):
+                                dic['Right'] = ' '+dic['Right']
+                            if dic.get('Index') in self.embedded:
+                                continue
+                            if str(dic.get('Index')) in self.embedding:
+                                if dic.get('Error') in self.error_type:
+                                    new_wrong = self.tackle_embeddings(dic)
+                                    new_file.write("*"+str(dic.get('Right'))+'*'+str(len(new_wrong))+'*'+new_wrong)
+                                    not_to_write_sym = len(dic['Wrong'])
+                                    break
+
+                            if dic.get('Index') in self.overlap1:
+                                if dic.get('Error') not in self.error_type:
+                                    overlap2_ind = self.overlap2[self.overlap1.index(dic.get('Index'))]
+                                    overlap2_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap2_ind][-1]
+                                    if 'Right' in dic and 'Right' in overlap2_err:
+                                        rn = self.find_overlap(dic['Right'],overlap2_err['Right'])
+                                        wn = dic['Index'][1] - overlap2_err['Index'][0]
+                                        indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
+                                        if rn == 0:
+                                            new_file.write(str(dic.get('Right'))+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn])
+                                        else:
+                                            new_file.write(str(dic.get('Right')[:-rn])+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn])
+                                        not_to_write_sym = len(str(dic.get('Wrong'))) - wn
+                                        break
+
+                            if dic.get('Index') in self.overlap2:
+                                overlap1_ind = self.overlap1[self.overlap2.index(dic.get('Index'))]
+                                overlap1_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap1_ind][-1]
+                                if overlap1_err['Error'] in self.error_type:
+                                    if dic.get('Error') not in self.error_type:
+                                        if 'Right' in dic and 'Right' in overlap1_err:
+                                            rn = self.find_overlap(overlap1_err['Right'],dic['Right'])
+                                            wn = overlap1_err['Index'][1] - dic['Index'][0]
+                                            indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
+                                            new_file.write(dic.get('Wrong')[:wn] + dic.get('Right')[rn:] +'#'+str(indexes_comp)+ '#'+dic.get('Wrong')[wn:])
+                                            not_to_write_sym = len(str(dic.get('Wrong')))
+                                    break
+                                    
+                                    
                             if dic.get('Index') in self.error_intersects:
-                                intersects.append(dic)
+                                intersects.append((int(t_key[1:]),dic))
                                 continue
-                            if dic.get('Index') in self.embedded or dic.get('Index') in self.overlap:
-                                continue
+    
                             if dic.get('Right'):
                                 indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
                                 if dic.get('Error') in self.error_type:
@@ -148,7 +252,10 @@ class Exercise:
                                 if dic.get('Delete'):
                                     indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
                                     new_file.write("#DELETE#"+str(indexes_comp)+"#")
+                                    
                     if intersects:
+                        intersects = sorted(intersects,key=lambda x: x[0])
+                        intersects = [x[1] for x in intersects]
                         needed_error_types = [x for x in intersects if x['Error'] in self.error_type]
                         if needed_error_types and 'Right' in needed_error_types[-1]:
                             saving = needed_error_types[-1]
@@ -163,14 +270,14 @@ class Exercise:
                                 new_file.write("*"+str(saving['Right'])+'*'+str(indexes_comp)+'*'+to_change['Right'])
                         else:
                             if 'Right' in intersects[-1]:
-                                if 'Right' in intersects[-2]:
+                                if len(intersects) > 1 and 'Right' in intersects[-2]:
                                     indexes_comp = len(intersects[-2]['Right'])
                                     not_to_write_sym = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
                                     new_file.write(intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#' + intersects[-2]['Right'])
                                 else:
                                     indexes_comp = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
                                     new_file.write(intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#')
-                    if not not_to_write_sym:            
+                    if not not_to_write_sym:
                         new_file.write(sym)
                     else:
                         not_to_write_sym -= 1
@@ -204,28 +311,36 @@ class Exercise:
         Makes sentences and write answers for all exercise types
         :return: array of good sentences. [ (sentences, [right_answer, ... ]), (...)]
         """
-        good_sentences = []
+        good_sentences = {x:list() for x in self.exercise_types}
         sentences = [''] + new_text.split('. ')
         for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
             if '*' in sent2:
+                ex_type = random.choice(self.exercise_types)
                 try:
                     sent, right_answer, index, other = sent2.split('*')
                     wrong = other[:int(index)]
                     new_sent, answers = '', []
-                    if self.exercise_type == 'short_answer':
+                    if ex_type == 'word_form':
+                        try:
+                            new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + ' (' +\
+                                   self.check_headform(right_answer) + ')' + other[int(index):] + '.'
+                            answers = [right_answer]
+                        except:
+                            if len(self.exercise_types) > 1:
+                                while ex_type == 'word_form':
+                                    ex_type = random.choice(self.exercise_types)
+                            else:
+                                continue
+                    if ex_type == 'short_answer':
                         if self.bold:
                             new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] + '.'
                         else:
                             new_sent = sent + wrong + other[int(index):] + '.'
                         answers = [right_answer]
-                    elif self.exercise_type == 'open_cloze':
+                    if ex_type == 'open_cloze':
                         new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):] + '.'
                         answers = [right_answer]
-                    elif self.exercise_type == 'word_form':
-                        new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + ' (' +\
-                               self.check_headform(right_answer) + ')' + other[int(index):] + '.'
-                        answers = [right_answer]
-                    elif self.exercise_type == 'multiple_choice':
+                    if ex_type == 'multiple_choice':
                         new_sent = sent + "_______ " + other[int(index):] + '.'
                         answers = self.find_choices(right_answer, wrong)
                 except:
@@ -240,22 +355,25 @@ class Exercise:
                     for i in range(0,len(split_sent),3):
                         if len(split_sent[i:i+4]) > 1:
                             sent, right_answer, index, other = split_sent[i],split_sent[i+1],split_sent[i+2],split_sent[i+3]
-                            if self.exercise_type == 'open_cloze' or self.exercise_type == 'word_form':
-                                if self.exercise_type == 'open_cloze':
+                            if ex_type == 'open_cloze' or ex_type == 'word_form':
+                                if ex_type == 'open_cloze':
                                     new_sent += "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):]
-                                elif self.exercise_type == 'word_form':
-                                    new_sent += "{1:SHORTANSWER:=%s}" % right_answer + ' (' +\
-                                        self.check_headform(right_answer) + ')' + other[int(index):]                               
+                                elif ex_type == 'word_form':
+                                    try:
+                                        new_sent += "{1:SHORTANSWER:=%s}" % right_answer + ' (' +\
+                                            self.check_headform(right_answer) + ')' + other[int(index):]
+                                    except:
+                                        new_sent += right_answer + other[int(index):]
                             else:
                                 if i == chosen*3:
                                     wrong = other[:int(index)]
-                                    if self.exercise_type == 'short_answer':
+                                    if ex_type == 'short_answer':
                                         if self.bold:
                                             new_sent += '<b>' + wrong + '</b>' + other[int(index):]
                                         else:
                                             new_sent += wrong + other[int(index):]
                                         answers = [right_answer]
-                                    elif self.exercise_type == 'multiple_choice':
+                                    elif ex_type == 'multiple_choice':
                                         new_sent += "_______ " + other[int(index):]
                                         answers = self.find_choices(right_answer, wrong)
                                 else:
@@ -272,10 +390,10 @@ class Exercise:
                     text = new_sent
                 text = re.sub(' +',' ',text)
                 if '*' not in text:
-                    good_sentences.append((text, answers))
+                    good_sentences[ex_type].append((text, answers))
         return good_sentences
 
-    def write_sh_answ_exercise(self, sentences):
+    def write_sh_answ_exercise(self, sentences, ex_type):
         pattern = '<question type="shortanswer">\n\
                     <name>\n\
                     <text>Grammar realec. Short answer {}</text>\n\
@@ -288,16 +406,16 @@ class Exercise:
         <feedback><text>Correct!</text></feedback>\n\
         </answer>\n\
         </question>\n'
-        with open('./moodle_exercises/{}_{}.xml'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
+        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and'))
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as plait_text:
+        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[1][0]+'\t'+ex[0]+'\n\n')
 
-    def write_multiple_ch(self, sentences):
+    def write_multiple_ch(self, sentences, ex_type):
         pattern = '<question type="multichoice">\n \
         <name><text>Grammar realec. Multiple Choice question {} </text></name>\n \
         <questiontext format = "html" >\n <text> <![CDATA[ <p> {}<br></p>]]></text>\n</questiontext>\n\
@@ -309,7 +427,7 @@ class Exercise:
         </partiallycorrectfeedback>\n<incorrectfeedback format="html">\n\
         <text>Your answer is incorrect.</text>\n</incorrectfeedback>\n'
 
-        with open('./moodle_exercises/{}_{}.xml'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
+        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(n, ex[0])).replace('&','and'))
@@ -321,35 +439,34 @@ class Exercise:
                                     '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
                 moodle_ex.write('</question>\n')
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w',
-                  encoding='utf-8') as plait_text:
+        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w',encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n')
 
 
-    def write_open_cloze(self, sentences):
+    def write_open_cloze(self, sentences, ex_type):
         """:param type: Word form or Open cloze"""
         type = ''
-        if self.exercise_type == 'word_form':
+        if ex_type == 'word_form':
             type = "Word form"
-        elif self.exercise_type == 'open_cloze':
+        elif ex_type == 'open_cloze':
             type = "Open Cloze"
         pattern = '<question type="cloze"><name><text>Grammar realec. {} {}</text></name>\n\
                      <questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n''<generalfeedback format="html">\n\
                      <text/></generalfeedback><penalty>0.3333333</penalty>\n\
                      <hidden>0</hidden>\n</question>\n'
-        with open('./moodle_exercises/{}_{}.xml'.format(self.exercise_type, self.exercise_type), 'w', encoding='utf-8') as moodle_ex:
+        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(type, n, ex[0])).replace('&','and'))
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}_{}.txt'.format(self.error_type, self.exercise_type), 'w', encoding='utf-8') as plait_text:
+        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[0]+'\n\n')
 
     def make_exercise(self):
         """Write it all in moodle format and txt format"""
-        all_sents = []
+        all_sents = {x:list() for x in self.exercise_types}
         for f in os.listdir(self.path_new):
             new_text = ''
             with open(self.path_new + f,'r', encoding='utf-8') as one_doc:
@@ -366,15 +483,24 @@ class Exercise:
                         new_text += words[current_number:]
                         current_number = 0
             if '*' in new_text:
-                all_sents += self.create_sentence_function(new_text)
-        self.write_func[self.exercise_type](all_sents)
+                new_sents = self.create_sentence_function(new_text)
+                for key in all_sents:
+                    all_sents[key] += new_sents[key]
+        for key in all_sents:
+            self.write_func[key](all_sents[key],key)
 
-        shutil.rmtree('./processed_texts/')
+        #shutil.rmtree('./processed_texts/')
 
 if __name__ == "__main__":
 
     path_to_data = './IELTS2015/'
-    e = Exercise(path_to_data, 'Tense_choice', 'open_cloze', bold=True, context=False)
+    e = Exercise(path_to_data, ['Tense_choice','Tense_form','Voice_choice','Voice_form',
+                                'Infinitive_constr','Gerund_phrase','Infinitive_with_to',
+                                'Infinitive_without_to_vs_participle','Verb_Inf_Gerund',
+                                'Verb_part','Verb_Inf','Verb_Bare_Inf','Participial_constr',
+                                'Number','Standard','Num_form','Incoherent_tenses','Incoherent_in_cond',
+                                'Tautology','lex_part_choice','Prepositional_adjective','Prepositional_noun'],
+                                ['word_form', 'short_answer', 'open_cloze'], bold=False, context=False)
     e.make_data_ready_4exercise()
 
     e.make_exercise()
