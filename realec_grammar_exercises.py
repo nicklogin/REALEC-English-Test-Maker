@@ -6,6 +6,7 @@ import json
 import pprint
 import difflib
 
+
 """Script that generates grammar exercises from REALEC data 
 grammar tags:
 	Punctuation
@@ -253,7 +254,7 @@ class Exercise:
         """ Collect errors info """
         anns = [f for f in os.listdir(self.path_old) if f.endswith('.ann')]
         for ann in anns:
-            print(ann)
+            #print(ann)
             self.error_intersects = set()
             with open(self.path_old + ann, 'r', encoding='utf-8') as ann_file:
                 for line in ann_file.readlines():
@@ -367,7 +368,7 @@ class Exercise:
                             if str(dic.get('Index')) in self.embedding:
                                 if dic.get('Error') in self.error_type:
                                     new_wrong = self.tackle_embeddings(dic)
-                                    new_file.write("*"+str(dic.get('Right'))+'*'+str(len(new_wrong))+'*'+new_wrong)
+                                    new_file.write('**'+str(dic.get('Right'))+'**'+str(len(new_wrong))+'**'+new_wrong)
                                     not_to_write_sym = len(dic['Wrong'])
                                     break
 
@@ -407,7 +408,7 @@ class Exercise:
                             if dic.get('Right'):
                                 indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
                                 if dic.get('Error') in self.error_type:
-                                    new_file.write("*"+str(dic.get('Right'))+'*'+str(indexes_comp)+'*')
+                                    new_file.write('**'+str(dic.get('Right'))+'**'+str(indexes_comp)+'**')
                                 else:
                                     new_file.write(dic.get('Right') +
                                                    '#'+str(indexes_comp)+ '#')
@@ -426,11 +427,11 @@ class Exercise:
                             to_change = intersects[-1]
                             if 'Right' not in to_change or to_change['Right'] == saving['Right']:
                                 indexes_comp = saving['Index'][1] - saving['Index'][0]
-                                new_file.write("*"+str(saving['Right'])+'*'+str(indexes_comp)+'*')
+                                new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**')
                             else: 
                                 indexes_comp = len(to_change['Right'])
                                 not_to_write_sym = saving['Index'][1] - saving['Index'][0]
-                                new_file.write("*"+str(saving['Right'])+'*'+str(indexes_comp)+'*'+to_change['Right'])
+                                new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right'])
                         else:
                             if 'Right' in intersects[-1]:
                                 if len(intersects) > 1 and 'Right' in intersects[-2]:
@@ -477,10 +478,11 @@ class Exercise:
         good_sentences = {x:list() for x in self.exercise_types}
         sentences = [''] + new_text.split('. ')
         for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
-            if '*' in sent2:
+            to_skip = False
+            if '**' in sent2:
                 ex_type = random.choice(self.exercise_types)
                 try:
-                    sent, right_answer, index, other = sent2.split('*')
+                    sent, right_answer, index, other = sent2.split('**')
                     wrong = other[:int(index)]
                     new_sent, answers = '', []
                     if ex_type == 'word_form':
@@ -507,7 +509,7 @@ class Exercise:
                         new_sent = sent + "_______ " + other[int(index):] + '.'
                         answers = self.find_choices(right_answer, wrong)
                 except:
-                    split_sent = sent2.split('*')
+                    split_sent = sent2.split('**')
                     n = (len(split_sent) - 1) / 3
                     try:
                         chosen = random.randint(0,n-1)
@@ -516,8 +518,13 @@ class Exercise:
                         continue
                     new_sent,answers = '',[]
                     for i in range(0,len(split_sent),3):
-                        if len(split_sent[i:i+4]) > 1:
+                        if len(split_sent[i:i+4]) > 1 and not to_skip:
                             sent, right_answer, index, other = split_sent[i],split_sent[i+1],split_sent[i+2],split_sent[i+3]
+                            try:
+                                index = int(index)
+                            except:
+                                to_skip = True
+                                continue
                             if ex_type == 'open_cloze' or ex_type == 'word_form':
                                 if ex_type == 'open_cloze':
                                     new_sent += "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):]
@@ -552,7 +559,7 @@ class Exercise:
                 else:
                     text = new_sent
                 text = re.sub(' +',' ',text)
-                if '*' not in text:
+                if '**' not in text and not to_skip:
                     good_sentences[ex_type].append((text, answers))
         return good_sentences
 
@@ -645,14 +652,14 @@ class Exercise:
                     else:
                         new_text += words[current_number:]
                         current_number = 0
-            if '*' in new_text:
+            if '**' in new_text:
                 new_sents = self.create_sentence_function(new_text)
                 for key in all_sents:
                     all_sents[key] += new_sents[key]
         for key in all_sents:
             self.write_func[key](all_sents[key],key)
 
-        #shutil.rmtree('./processed_texts/')
+        shutil.rmtree('./processed_texts/')
 
 if __name__ == "__main__":
 
