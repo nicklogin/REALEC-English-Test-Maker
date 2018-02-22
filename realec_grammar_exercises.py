@@ -479,10 +479,12 @@ class Exercise:
         choices = [right, wrong]
         if self.error_type == ['Number']:
             if not self.tagger:
-                print('Cannot proceed - Stanford POS Tagger needs to be installed')
-                raise Error
+                print('''Cannot proceed - NLTK package with Stanford POS Tagger needed to create Multiple choice questions on
+Number''')
+                raise Exception
             quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone', 'no-one', 'nobody', 'something', 'everything', 'nothing')
-            if nltk.tag.staford(right.split()[0])[1].startswith('V') and nltk.tag.stanford([wrong.split()[0]])[1].startswith('V'):
+            if self.tagger.tag(right.split())[0][1].startswith('V') and self.tagger.tag(wrong.split())[0][1].startswith('V'):
+##                print('Stanford POS Tagger OK')
                 quant_presence = False
                 tagged_sent = self.tagger.tag(new_sent.replace('_______',right).split())
                 for i in range(len(tagged_sent)):
@@ -775,8 +777,19 @@ def main(path_to_data,exercise_types,output_path,error_types):
     e.make_exercise()
 
 def console_user_interface():
+    print('Welcome to REALEC English Test Maker!')
+    print('''2016-2018, Russian Error-Annotated Learners' of English Corpus research group,
+HSE University,
+Moscow.
+''')
     path_to_data = input('Enter path to corpus data:    ')
-    exercise_types = input('Enter exercise types separated by gap:    ').split()
+    exercise_types = input('Enter exercise types separated by gap:    ').lower().split()
+    if 'multiple_choice' in exercise_types:
+        print('''
+Warning! Multiple choice feature is experimental and not available for all type of erros.
+To proceed, enter either 'Number','Preposotional_noun Prepositional_adjective Prepositional_adv Prepositional_verb',
+'Choice_in_cond Form_in_cond Incoherent_in_cond' in the next field.
+''')
     error_types = input('Enter error types separated by gap:    ').split()
     output_path = input('Enter path to output files:     ')
     main(path_to_data, exercise_types, output_path, error_types)
