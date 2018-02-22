@@ -5,7 +5,13 @@ import random
 import json
 import pprint
 import difflib
-
+import verb_forms_finder as vff
+import simple_phrase_parser as spp
+try:
+    import nltk.tag.stanford as stag
+except:
+    pass
+    
 
 """Script that generates grammar exercises from REALEC data 
 grammar tags:
@@ -173,7 +179,7 @@ grammar tags:
 """
 
 class Exercise:
-    def __init__(self, path_to_realecdata, error_type, exercise_types, bold, context):
+    def __init__(self, path_to_realecdata, exercise_types, output_path, error_types = [], bold = False, context = False):
 
         """"
         :param error_type: 'Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number
@@ -181,8 +187,12 @@ class Exercise:
         """
         self.path_new = './processed_texts/'
         self.path_old = path_to_realecdata
-        self.error_type = error_type
+        if not output_path:
+            output_path = './moodle_exercises'
+        self.output_path = output_path
+        os.makedirs(output_path, exist_ok = True)
         self.exercise_types = exercise_types
+        self.error_type = error_types
         self.current_doc_errors = OrderedDict()
         self.bold = bold
         self.context = context
@@ -193,9 +203,12 @@ class Exercise:
             "word_form": self.write_open_cloze,
             "open_cloze": self.write_open_cloze
         }
-        os.makedirs('moodle_exercises', exist_ok=True)
+        try:
+            self.tagger = stag.StanfordPOSTagger('english-caseless-left3words-distsim.tagger')
+        except:
+            self.tagger = False
         os.makedirs('processed_texts', exist_ok=True)
-        with open('./nug_needs/wordforms.json', 'r', encoding="utf-8") as dictionary:
+        with open('wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
 
     def find_errors_indoc(self, line):
@@ -252,11 +265,15 @@ class Exercise:
 
     def make_data_ready_4exercise(self):
         """ Collect errors info """
-        anns = [f for f in os.listdir(self.path_old) if f.endswith('.ann')]
+        print('collecting errors info...')
+        anns = []
+        for root, dire, files in os.walk(self.path_old):
+            anns += [root+'/'+f for f in files if f.endswith('.ann')]
+        i = 0
         for ann in anns:
-            #print(ann)
+##            print(ann)
             self.error_intersects = set()
-            with open(self.path_old + ann, 'r', encoding='utf-8') as ann_file:
+            with open(ann, 'r', encoding='utf-8') as ann_file:
                 for line in ann_file.readlines():
                     ind = self.find_errors_indoc(line)
                     self.find_answers_indoc(line)
@@ -276,7 +293,8 @@ class Exercise:
                 else:
                     unique_error_ind.append(ind)                
             self.embedded,self.overlap1,self.overlap2 = self.find_embeddings(unique_error_ind)
-            self.make_one_file(ann.split('.')[0])
+            self.make_one_file(ann[:ann.find('.ann')],str(i))
+            i += 1
             self.current_doc_errors.clear()
 
     def find_embeddings(self,indices):
@@ -346,14 +364,14 @@ class Exercise:
         return 0
             
 
-    def make_one_file(self, filename):
+    def make_one_file(self, filename, new_filename):
         """
         Makes file with current types of errors. all other errors checked.
         :param filename: name of the textfile
         return: nothing. just write files in dir <<processed_texts>>
         """
-        with open(self.path_new+filename+'.txt', 'w', encoding='utf-8') as new_file:
-            with open(self.path_old+filename+'.txt', 'r', encoding='utf-8') as text_file:
+        with open(self.path_new+new_filename+'.txt', 'w', encoding='utf-8') as new_file:
+            with open(filename+'.txt', 'r', encoding='utf-8') as text_file:
                 one_text = text_file.read()
                 not_to_write_sym = 0
                 for i, sym in enumerate(one_text):
@@ -424,14 +442,15 @@ class Exercise:
                         if needed_error_types and 'Right' in needed_error_types[-1]:
                             saving = needed_error_types[-1]
                             intersects.remove(saving)
-                            to_change = intersects[-1]
-                            if 'Right' not in to_change or to_change['Right'] == saving['Right']:
-                                indexes_comp = saving['Index'][1] - saving['Index'][0]
-                                new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**')
-                            else: 
-                                indexes_comp = len(to_change['Right'])
-                                not_to_write_sym = saving['Index'][1] - saving['Index'][0]
-                                new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right'])
+                            if intersects:
+                                to_change = intersects[-1]
+                                if 'Right' not in to_change or to_change['Right'] == saving['Right']:
+                                    indexes_comp = saving['Index'][1] - saving['Index'][0]
+                                    new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**')
+                                else: 
+                                    indexes_comp = len(to_change['Right'])
+                                    not_to_write_sym = saving['Index'][1] - saving['Index'][0]
+                                    new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right'])
                         else:
                             if 'Right' in intersects[-1]:
                                 if len(intersects) > 1 and 'Right' in intersects[-2]:
@@ -448,20 +467,89 @@ class Exercise:
 
     # ================Write Exercises to the files=================
 
-    def find_choices(self, right, wrong): #TODO @Kate, rewrite this function
+    def find_choices(self, right, wrong, new_sent): #TODO @Kate, rewrite this function
         """
         Finds two more choices for Multiple Choice exercise.
         :param right:
         :param wrong:
         :return: array of four choices (first is always right)
         """
+        right = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',right)
+        wrong = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',wrong)
         choices = [right, wrong]
-        for key, value in self.wf_dictionary.items():
-            if right == key:
-                [choices.append(v) for v in value if v != wrong]
-            elif right in value:
-                [choices.append(v) for v in value if v != wrong and v != right]
+        if self.error_type == ['Number']:
+            if not self.tagger:
+                print('Cannot proceed - Stanford POS Tagger needs to be installed')
+                raise Error
+            quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone', 'no-one', 'nobody', 'something', 'everything', 'nothing')
+            if nltk.tag.staford(right.split()[0])[1].startswith('V') and nltk.tag.stanford([wrong.split()[0]])[1].startswith('V'):
+                quant_presence = False
+                tagged_sent = self.tagger.tag(new_sent.replace('_______',right).split())
+                for i in range(len(tagged_sent)):
+                    if tagged_sent[i][0] in quantifiers:
+                        quant_presence = True
+                    if tagged_sent[i][0] == right.split()[0] and tagged_sent[i][1].startswith('V') and quant_presence:
+                        [choices.append(i) for i in (vff.neg(right), vff.neg(wrong))\
+                         if (i!=right) and (i!=wrong) and (i!='') and (i!=None)]
+                        break
+        elif self.error_type == ['Preposotional_noun','Prepositional_adjective','Prepositional_adv', 'Prepositional_verb']:
+            pr1 = spp.find_prep(right)
+            pr2 = spp.find_prep(wrong)
+            if pr1['prep']:
+                prep, left, rite = pr1['prep'], pr1['left'], pr1['right']
+                preps = 'at', 'for', 'on'
+                variants = set(left + i + rite for i in preps)
+                if ((left + rite).strip(' ') == (pr2['left']+pr2['right']).strip(' ')):
+                    [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
+            elif pr2['prep']:
+                prep, left, rite = pr2['prep'], pr2['left'], pr2['right']
+                preps = 'at', 'for', 'on'
+                variants = set(left + i + rite for i in preps)
+                if left+rite.strip(' ') == pr1['left'].strip(' '):
+                    [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
+        elif self.error_type == ['Conjunctions','Absence_comp_sent','Lex_item_choice','Word_choice','Conjunctions','Lex_part_choice','Often_confused','Absence_comp_colloc','Redundant','Redundant_comp']:
+            conjunctions1 = ['except', 'besides','but for']
+            conjunctions2 = ['even if', 'even though', 'even']
+            if right in conjunctions1:
+                [choices.append(i) for i in conjunctions1 if (i != right) and (i != wrong)]
+            elif right in conjunctions2:
+                [choices.append(i) for i in conjunctions2 if (i != right) and (i != wrong)]
+        elif self.error_type == ['Defining']:
+            gerund_form = spp.find_verb_form(right,'gerund')
+            add_forms = vff.find_verb_forms(gerund_form)
+            new_choices = []
+            if gerund_form:
+                continuous_form = spp.find_anal_form(right,gerund_form)
+                new_choices.append(right.replace(gerund_form, 'being ' + add_forms['3rd'], 1))
+                new_choices.append(right.replace(continuous_form, add_forms['2nd'], 1))
+                if ("n't" in continuous_form) or ('not' in continuous_form):
+                    new_choices = [vff.neg(i) for i in new_choices]
+                [choices.append(i) for i in new_choices if i != right and i != wrong]
+        elif self.error_type == ['Choice_in_cond','Form_in_cond','Incoherent_in_cond'] and ('would' in right):
+            neg = False
+            if "wouldn't" in right:
+                neg = True
+            lex_verb = spp.find_verb_form(right[right.find('would'):],'any')
+            if lex_verb.count(' ') == 0:
+                lex_verb_forms = vff.find_verb_forms(lex_verb)
+                if lex_verb_forms:
+                    new_choices = set([lex_verb_forms['2nd'], 'would have '+lex_verb_forms['3rd'],'would '+lex_verb_forms['bare_inf']])
+            else:
+                be_form, verb_form = lex_verb.split(' ')
+                new_choices = set()
+                if (be_form == 'are') or (be_form == 'were'):
+                    new_choices.add('were '+verb_form)
+                else:
+                    new_choices.add('was '+verb_form)
+                new_choices.add('would have been '+verb_form)
+                new_choices.add('would be '+verb_form)
+            if neg:
+                new_choices = [vff.neg(i) for i in new_choices]
+            new_choices = [right[:right.find('would')]+i+right[right.find(lex_verb)+len(lex_verb):] for i in new_choices]
+            [choices.append(i) for i in new_choices if i!=right and i != wrong]
         return choices[:4]
+
+    
 
     def check_headform(self, word):
         """Take initial fowm - headform of the word"""
@@ -476,8 +564,11 @@ class Exercise:
         :return: array of good sentences. [ (sentences, [right_answer, ... ]), (...)]
         """
         good_sentences = {x:list() for x in self.exercise_types}
+        types1 = [i for i in self.exercise_types if i!='word_form']
         sentences = [''] + new_text.split('. ')
+        i = 0
         for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
+            i += 1
             to_skip = False
             if '**' in sent2:
                 ex_type = random.choice(self.exercise_types)
@@ -492,8 +583,7 @@ class Exercise:
                             answers = [right_answer]
                         except:
                             if len(self.exercise_types) > 1:
-                                while ex_type == 'word_form':
-                                    ex_type = random.choice(self.exercise_types)
+                                ex_type = random.choice(types1) 
                             else:
                                 continue
                     if ex_type == 'short_answer':
@@ -507,7 +597,13 @@ class Exercise:
                         answers = [right_answer]
                     if ex_type == 'multiple_choice':
                         new_sent = sent + "_______ " + other[int(index):] + '.'
-                        answers = self.find_choices(right_answer, wrong)
+                        answers = self.find_choices(right_answer, wrong, new_sent)
+                        if len(answers)<3:
+                            sentences[i] = sent + ' ' + right_answer + ' ' + other[int(index):] + '.'
+                            answers = []
+                        else:
+                            print('choices: ',answers)
+                        
                 except:
                     split_sent = sent2.split('**')
                     n = (len(split_sent) - 1) / 3
@@ -545,7 +641,10 @@ class Exercise:
                                         answers = [right_answer]
                                     elif ex_type == 'multiple_choice':
                                         new_sent += "_______ " + other[int(index):]
-                                        answers = self.find_choices(right_answer, wrong)
+                                        answers = self.find_choices(right_answer, wrong, sent)
+                                        if len(answers)<3:
+                                            new_sent += right_answer + other[int(index):]
+                                            answers = []
                                 else:
                                     new_sent += right_answer + other[int(index):]
                             if i == 0:
@@ -559,8 +658,14 @@ class Exercise:
                 else:
                     text = new_sent
                 text = re.sub(' +',' ',text)
-                if '**' not in text and not to_skip:
+                text = re.sub('[а-яА-ЯЁё]+','',text)
+                if ('**' not in text) and (not to_skip) and (answers != []):
+##                    print('answers: ', answers)
                     good_sentences[ex_type].append((text, answers))
+##                elif '**' in text:
+##                    print('answers arent added cause ** in text: ', answers)
+##                elif to_skip:
+##                    print('answers arent added cause to_skip = True: ', answers)         
         return good_sentences
 
     def write_sh_answ_exercise(self, sentences, ex_type):
@@ -576,12 +681,12 @@ class Exercise:
         <feedback><text>Correct!</text></feedback>\n\
         </answer>\n\
         </question>\n'
-        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
+        with open(self.output_path+'/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and'))
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
+        with open(self.output_path+'/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[1][0]+'\t'+ex[0]+'\n\n')
 
@@ -597,7 +702,7 @@ class Exercise:
         </partiallycorrectfeedback>\n<incorrectfeedback format="html">\n\
         <text>Your answer is incorrect.</text>\n</incorrectfeedback>\n'
 
-        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
+        with open(self.output_path+'/{}.xml'.format(ex_type+'_'+' '.join(self.error_type)), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(n, ex[0])).replace('&','and'))
@@ -609,7 +714,7 @@ class Exercise:
                                     '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
                 moodle_ex.write('</question>\n')
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w',encoding='utf-8') as plait_text:
+        with open(self.output_path+'/{}.txt'.format(ex_type+'_'+' '.join(self.error_type)), 'w',encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n')
 
@@ -625,17 +730,18 @@ class Exercise:
                      <questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n''<generalfeedback format="html">\n\
                      <text/></generalfeedback><penalty>0.3333333</penalty>\n\
                      <hidden>0</hidden>\n</question>\n'
-        with open('./moodle_exercises/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
+        with open(self.output_path+'/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
             moodle_ex.write('<quiz>\n')
             for n, ex in enumerate(sentences):
                 moodle_ex.write((pattern.format(type, n, ex[0])).replace('&','and'))
             moodle_ex.write('</quiz>')
-        with open('./moodle_exercises/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
+        with open(self.output_path+'/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
             for ex in sentences:
                 plait_text.write(ex[0]+'\n\n')
 
     def make_exercise(self):
         """Write it all in moodle format and txt format"""
+        print('Making exercises...')
         all_sents = {x:list() for x in self.exercise_types}
         for f in os.listdir(self.path_new):
             new_text = ''
@@ -657,20 +763,34 @@ class Exercise:
                 for key in all_sents:
                     all_sents[key] += new_sents[key]
         for key in all_sents:
+            print('Writing '+key+' questions, '+str(len(all_sents[key]))+' total ...')
             self.write_func[key](all_sents[key],key)
+        print('done, saved to' + self.output_path)
 
-        shutil.rmtree('./processed_texts/')
+        #shutil.rmtree('./processed_texts/')
 
-if __name__ == "__main__":
-
-    path_to_data = './IELTS2015/'
-    e = Exercise(path_to_data, ['Tense_choice','Tense_form','Voice_choice','Voice_form',
-                                'Infinitive_constr','Gerund_phrase','Infinitive_with_to',
-                                'Infinitive_without_to_vs_participle','Verb_Inf_Gerund',
-                                'Verb_part','Verb_Inf','Verb_Bare_Inf','Participial_constr',
-                                'Number','Standard','Num_form','Incoherent_tenses','Incoherent_in_cond',
-                                'Tautology','lex_part_choice','Prepositional_adjective','Prepositional_noun'],
-                                ['word_form', 'short_answer', 'open_cloze'], bold=False, context=False)
+def main(path_to_data,exercise_types,output_path,error_types):
+    e = Exercise(path_to_data, exercise_types, output_path, error_types = error_types, bold=False, context=True)
     e.make_data_ready_4exercise()
-
     e.make_exercise()
+
+def console_user_interface():
+    path_to_data = input('Enter path to corpus data:    ')
+    exercise_types = input('Enter exercise types separated by gap:    ').split()
+    error_types = input('Enter error types separated by gap:    ').split()
+    output_path = input('Enter path to output files:     ')
+    main(path_to_data, exercise_types, output_path, error_types)
+
+def test_launch():
+    error_types = ['Tense_choice','Tense_form','Voice_choice','Voice_form',
+                    'Infinitive_constr','Gerund_phrase','Infinitive_with_to',
+                    'Infinitive_without_to_vs_participle','Verb_Inf_Gerund',
+                    'Verb_part','Verb_Inf','Verb_Bare_Inf','Participial_constr',
+                    'Number','Standard','Num_form','Incoherent_tenses','Incoherent_in_cond',
+                    'Tautology','lex_part_choice','Prepositional_adjective','Prepositional_noun']
+    
+    main('./IELTS' ,['open_cloze','short_answer','word_form'], './moodle_exercises/', error_types = error_types)
+
+if __name__ == '__main__':
+    console_user_interface()
+##    test_launch()
