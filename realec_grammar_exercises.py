@@ -207,8 +207,8 @@ class Exercise:
             self.tagger = stag.StanfordPOSTagger('english-caseless-left3words-distsim.tagger')
         except:
             self.tagger = False
-        os.makedirs('processed_texts', exist_ok=True)
-        with open('wordforms.json', 'r', encoding="utf-8") as dictionary:
+        os.makedirs('./processed_texts', exist_ok=True)
+        with open('./nug_needs/wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
 
     def find_errors_indoc(self, line):
