@@ -2,16 +2,19 @@ import sys, codecs, re, os, traceback
 from collections import defaultdict, OrderedDict
 import shutil
 import random
-import json
+import json, csv
 import pprint
 import difflib
 import verb_forms_finder as vff
 import simple_phrase_parser as spp
+import time
+import realec_helper
+import io
 try:
-    import nltk.tag.stanford as stag
+   import nltk.tag.stanford as stag
 except:
-    pass
-    
+   pass
+   
 
 """Script that generates grammar exercises from REALEC data 
 grammar tags:
@@ -179,36 +182,85 @@ grammar tags:
 """
 
 class Exercise:
-    def __init__(self, path_to_realecdata, exercise_types, output_path, error_types = [], bold = False, context = False):
+    def __init__(self, path_to_realecdata = None, exercise_types = None, output_path = None,
+     ann = None, text = None, error_types = [], bold = False, context = False, mode = 'folder',
+      maintain_log = True, show_messages = True, use_ram=False,output_file_names = None,
+      file_output = True, write_txt = False):
 
         """"
-        :param error_type: 'Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number
-        :param exercise_types: list, any from: multiple_choice, word_form, short_answer, open_cloze
+        :param error_types: list of str, can include values from
+        'Tense_choice', 'Tense_form', 'Voice_choice', 'Voice_form', 'Number', e.g.
+        :param exercise_types: list of str, any from: 'multiple_choice', 'word_form', 'short_answer', 'open_cloze'
+        :param bold: bool, whether to write error region in bold text
+        :param context: bool, whether to include contexts (one sentence before and
+        one sentence after) for sentences in exercises
+        :param show_messages: bool, whether to display messages in console while generating exercises
+        :param write_txt: whether to include plain text representation of exercises in the output along
+        with Moodle XML files or ByteIO objects
+        :param use_ram: bool
+        :param mode: str
+        :param path_to_realecdata: str, path to directory with .txt and .ann files if mode == 'folder'
+        alternatively path to an .ann file if mode == 'file'
+        :param file_output: bool
+        :param output_file_names: list of str
         """
-        self.path_new = './processed_texts/'
-        self.path_old = path_to_realecdata
-        if not output_path:
-            output_path = './moodle_exercises'
-        self.output_path = output_path
-        os.makedirs(output_path, exist_ok = True)
+
         self.exercise_types = exercise_types
         self.error_type = error_types
+        print(self.error_type)
+        self.to_include = lambda x: True if (x["Error"] in self.error_type or self.error_type==[''] or not self.error_type) and (x["Relation"]!="Dependant_change") else False
         self.current_doc_errors = OrderedDict()
         self.bold = bold
         self.context = context
+        self.write_txt = write_txt
+        self.use_ram = use_ram
+        self.mode = mode
+        self.file_output = file_output
+        ##Note: maintain_log is forcibly set to False if file_output is False
+        self.maintain_log = maintain_log
+        self.show_messages = show_messages
+        if self.use_ram:
+            self.processed_texts = []
+        else:
+            self.path_new = './processed_texts/'
+        if self.mode == 'direct_input':
+            self.ann = ann
+            self.text = text
+        else:
+            self.path_old = path_to_realecdata
+        if self.file_output:
+            if not output_path:
+                output_path = './moodle_exercises'
+            os.makedirs(output_path, exist_ok = True)
+            self.output_path = output_path
+            if output_file_names:
+                self.output_file_names = output_file_names
+            else:
+                self.output_file_names = dict()
+                for ex_type in self.exercise_types:
+                    self.output_file_names[ex_type] = self.output_path+'/{}_{}'.format(''.join([str(i) for i in time.localtime()]),
+                                                                                            ex_type+'_context_'+str(self.context))
+        else:
+            self.maintain_log = False
+            self.output_objects = dict()
+        if self.maintain_log:
+            self.log = []
+            self.fieldnames = ["ex_type","text","answers","to_skip","result"]
+            self.log_name = '_'.join(self.exercise_types)+'_context='+str(self.context)+'_'+''.join([str(i) for i in time.localtime()])
         self.headword = ''
         self.write_func = {
-            "short_answer": self.write_sh_answ_exercise,
-            "multiple_choice": self.write_multiple_ch,
-            "word_form": self.write_open_cloze,
-            "open_cloze": self.write_open_cloze
+            "short_answer": self.write_sh_answ_exercise, ##exerciese with selected error region
+            "multiple_choice": self.write_multiple_ch, ##exercises with multiple answer selection
+            "word_form": self.write_open_cloze, ##exercises where word is to be assigned the appropriate grammar
+            "open_cloze": self.write_open_cloze ##exercises where you need to insert something in gap
         }
         try:
             self.tagger = stag.StanfordPOSTagger('english-caseless-left3words-distsim.tagger')
         except:
             self.tagger = False
-        os.makedirs('./processed_texts', exist_ok=True)
-        with open('./nug_needs/wordforms.json', 'r', encoding="utf-8") as dictionary:
+        if not self.use_ram:
+            os.makedirs('./processed_texts', exist_ok=True)
+        with open('./wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
 
     def find_errors_indoc(self, line):
@@ -220,8 +272,8 @@ class Exercise:
             try:
                 t, span, text_mistake = line.strip().split('\t')
                 err, index1, index2 = span.split()
-                self.current_doc_errors[t] = {'Error':err, 'Index':(int(index1), int(index2)), "Wrong":text_mistake}
-                return (int(index1), int(index2))
+                if err!='note':
+                    self.current_doc_errors[t] = {'Error':err, 'Index':(int(index1), int(index2)), "Wrong":text_mistake, "Relation":None}
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
                 print("Errors: Something wrong! No notes or a double span", line)
@@ -230,8 +282,8 @@ class Exercise:
         # TO DO: multiple variants?
         if answer.upper() == answer:
             answer = answer.lower()
-        answer = answer.strip('\'"')
-        answer = re.sub(' ?\(.*?\) ?','',answer)
+        answer = answer.strip(r'\'"')
+        answer = re.sub(r' ?\(.*?\) ?','',answer)
         if '/' in answer:
             answer = answer.split('/')[0]
         if '\\' in answer:
@@ -257,6 +309,17 @@ class Exercise:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
                 print("Answers: Something wrong! No Notes probably", line)
 
+    def find_relations_indoc(self, line):
+        if re.search('^R', line) is not None:
+            # try:
+            number, relation = line.strip().split('\t')
+            relation_type, *relation_args = relation.split()
+            relation_args = list(map(lambda x: x.split(':')[1], relation_args))
+            for arg in relation_args:
+                self.current_doc_errors[arg]["Relation"] = relation_type
+            # except:
+            #     print("Relations: Something wrong! No Notes probably", line)
+    
     def find_delete_seqs(self, line):
         if re.search('^A', line) is not None and 'Delete' in line:
             t = line.strip().split('\t')[1].split()[1]
@@ -266,38 +329,62 @@ class Exercise:
     def make_data_ready_4exercise(self):
         """ Collect errors info """
         print('collecting errors info...')
-        anns = []
-        for root, dire, files in os.walk(self.path_old):
-            anns += [root+'/'+f for f in files if f.endswith('.ann')]
-        i = 0
-        for ann in anns:
-##            print(ann)
-            self.error_intersects = set()
-            with open(ann, 'r', encoding='utf-8') as ann_file:
-                for line in ann_file.readlines():
-                    ind = self.find_errors_indoc(line)
-                    self.find_answers_indoc(line)
-                    self.find_delete_seqs(line)
+        if self.mode == 'folder':
+            i = 0
+            for root, dire, files in os.walk(self.path_old):
+                for f in files:
+                    i += 1
+                    if f.endswith('.ann'):
+                        annpath = root+'/'+f
+                        self.parse_ann_and_process_text(ann = annpath, processed_text_filename = str(i))
                     
-            new_errors = OrderedDict()
-            for x in sorted(self.current_doc_errors.items(),key=lambda x: (x[1]['Index'][0],x[1]['Index'][1],int(x[0][1:]))):
-                if 'Right' in x[1] or 'Delete' in x[1]:
-                    new_errors[x[0]] = x[1]
-            self.current_doc_errors = new_errors
+        elif self.mode == 'file':
+            self.parse_ann_and_process_text(ann = self.path_old)
+        elif self.mode == 'direct_input':
+            self.parse_ann_and_process_text()
+
+    def parse_ann_and_process_text(self, ann=None, processed_text_filename = None):
+        self.error_intersects = set()
+        if self.mode!='direct_input':
+            with open(ann, 'r', encoding='utf-8') as ann_file:
+                annlines = ann_file.readlines()
+        else:
+            annlines = self.ann.splitlines()
+        for method in (self.find_errors_indoc, self.find_answers_indoc, self.find_relations_indoc, self.find_delete_seqs):
+            for line in annlines:
+                method(line)
             
-            unique_error_ind = []
-            error_ind = [self.current_doc_errors[x]['Index'] for x in self.current_doc_errors]
-            for ind in error_ind:
-                if ind in unique_error_ind:
-                    self.error_intersects.add(ind)
-                else:
-                    unique_error_ind.append(ind)                
-            self.embedded,self.overlap1,self.overlap2 = self.find_embeddings(unique_error_ind)
-            self.make_one_file(ann[:ann.find('.ann')],str(i))
-            i += 1
-            self.current_doc_errors.clear()
+        new_errors = OrderedDict()
+        for x in sorted(self.current_doc_errors.items(),key=lambda x: (x[1]['Index'][0],x[1]['Index'][1],int(x[0][1:]))):
+            if 'Right' in x[1] or 'Delete' in x[1]:
+                new_errors[x[0]] = x[1]
+        self.current_doc_errors = new_errors
+        
+        unique_error_ind = []
+        error_ind = [self.current_doc_errors[x]['Index'] for x in self.current_doc_errors]
+        ##если области ошибки совпадают оставляем те,
+        ##которые записаны первыми
+        for ind in error_ind:
+            if ind in unique_error_ind:
+                self.error_intersects.add(ind)
+            else:
+                unique_error_ind.append(ind)                
+        self.embedded,self.overlap1,self.overlap2 = self.find_embeddings(unique_error_ind)
+        if self.use_ram:
+            if self.mode == 'file':
+                self.add_to_processed_list(filename = ann[:ann.find('.ann')])
+            elif self.mode == 'direct_input':
+                self.add_to_processed_list()
+        else:
+            if self.mode == 'folder':
+                self.make_one_file(ann[:ann.find('.ann')],processed_text_filename)
+            elif self.mode == 'direct_input':
+                self.save_processed(self.text, output_filename='processed')
+        self.current_doc_errors.clear()
 
     def find_embeddings(self,indices):
+        ##сортируем исправления - сначала сортируем по возрастанию первого индекса,
+        ##потом по убыванию второго индекса:
         indices.sort(key=lambda x: (x[0],-x[1]))
         embedded = []
         overlap1, overlap2 = [],[]
@@ -315,11 +402,14 @@ class Exercise:
                 if overlaps:
                     overlap1.append(overlaps[0])
                     overlap2.append(indices[i])
+        ## на выход:
+        ## наложения - словарь - индекс начала: индексы концов
+        ## пересечения1 и пересечения 2 - аннотации, которые пересекаются, идут отдельно
         return embedded, overlap1, overlap2
         
     def tackle_embeddings(self,dic):
         b = dic.get('Index')[0]
-        emb_errors = [x for x in self.current_doc_errors.items() if x[1]['Index'] in self.embedding[str(dic.get('Index'))]]
+        emb_errors = [x for x in self.current_doc_errors.items() if (x[1]['Index'] in self.embedding[str(dic.get('Index'))]) and ('Right' in x[1])]
         new_wrong = ''
         nw = 0
         ignore = []
@@ -344,7 +434,7 @@ class Exercise:
                 emb_intersects = sorted(emb_intersects,key=lambda x: x[0])
                 last = emb_intersects[-1][1]
                 L = -1
-                while 'Right' not in last:
+                while 'Right' not in last and abs(L)<len(emb_intersects):
                     L -= 1
                     last = emb_intersects[L][1]
                 new_wrong += last['Right']
@@ -370,102 +460,128 @@ class Exercise:
         :param filename: name of the textfile
         return: nothing. just write files in dir <<processed_texts>>
         """
-        with open(self.path_new+new_filename+'.txt', 'w', encoding='utf-8') as new_file:
+        with open(filename+'.txt', 'r', encoding='utf-8') as text_file:
+            self.save_processed(text_file.read(), output_filename = self.path_new+new_filename+'.txt')
+                
+    def add_to_processed_list(self, filename = None):
+        if self.mode != 'direct_input':
             with open(filename+'.txt', 'r', encoding='utf-8') as text_file:
-                one_text = text_file.read()
-                not_to_write_sym = 0
-                for i, sym in enumerate(one_text):
-                    intersects = []
-                    for t_key, dic in self.current_doc_errors.items():
-                        if dic.get('Index')[0] == i:
-                            if dic.get('Error') == 'Punctuation' and 'Right' in dic and \
-                               not dic.get('Right').startswith(','):
-                                dic['Right'] = ' '+dic['Right']
-                            if dic.get('Index') in self.embedded:
-                                continue
-                            if str(dic.get('Index')) in self.embedding:
-                                if dic.get('Error') in self.error_type:
-                                    new_wrong = self.tackle_embeddings(dic)
-                                    new_file.write('**'+str(dic.get('Right'))+'**'+str(len(new_wrong))+'**'+new_wrong)
-                                    not_to_write_sym = len(dic['Wrong'])
-                                    break
+                self.processed_texts.append(self.save_processed(text_file.read(), output_filename=filename))
+        else:
+            self.processed_texts.append(self.save_processed(self.text))
 
-                            if dic.get('Index') in self.overlap1:
-                                if dic.get('Error') not in self.error_type:
-                                    overlap2_ind = self.overlap2[self.overlap1.index(dic.get('Index'))]
-                                    overlap2_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap2_ind][-1]
-                                    if 'Right' in dic and 'Right' in overlap2_err:
-                                        rn = self.find_overlap(dic['Right'],overlap2_err['Right'])
-                                        wn = dic['Index'][1] - overlap2_err['Index'][0]
-                                        indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
-                                        if rn == 0:
-                                            new_file.write(str(dic.get('Right'))+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn])
-                                        else:
-                                            new_file.write(str(dic.get('Right')[:-rn])+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn])
-                                        not_to_write_sym = len(str(dic.get('Wrong'))) - wn
-                                        break
+    def save_processed(self, one_text, output_filename = None):
+        processed = ''
+        not_to_write_sym = 0
+        for i, sym in enumerate(one_text):
+            ##идём по каждому символу оригинального текста эссе:
+            intersects = []
+            ##перебираем все ошибки в этом эссе
+            for t_key, dic in self.current_doc_errors.items():
+                ##если начало какой-либо ошибки приходится на текущий символ:
+                if dic.get('Index')[0] == i:
+                    if dic.get('Error') == 'Punctuation' and 'Right' in dic and \
+                       not dic.get('Right').startswith(','):
+                        dic['Right'] = ' '+dic['Right']
+                    ##если исправление попало в меньшую область ошибки - не берём его:
+                    if dic.get('Index') in self.embedded:
+                        continue
+                    ##если исправление попало в большую (закрывающую) область ошибки - берём:
+                    if str(dic.get('Index')) in self.embedding:
+                        if self.to_include(dic):
+                            new_wrong = self.tackle_embeddings(dic)
+                            processed += '**'+str(dic.get('Right'))+'**'+str(len(new_wrong))+'**'+new_wrong
+                            ##устанавливаем, сколько итераций мы не будем дописывать символы:
+                            not_to_write_sym = len(dic['Wrong'])
+                            break
 
-                            if dic.get('Index') in self.overlap2:
-                                overlap1_ind = self.overlap1[self.overlap2.index(dic.get('Index'))]
-                                overlap1_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap1_ind][-1]
-                                if overlap1_err['Error'] in self.error_type:
-                                    if dic.get('Error') not in self.error_type:
-                                        if 'Right' in dic and 'Right' in overlap1_err:
-                                            rn = self.find_overlap(overlap1_err['Right'],dic['Right'])
-                                            wn = overlap1_err['Index'][1] - dic['Index'][0]
-                                            indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
-                                            new_file.write(dic.get('Wrong')[:wn] + dic.get('Right')[rn:] +'#'+str(indexes_comp)+ '#'+dic.get('Wrong')[wn:])
-                                            not_to_write_sym = len(str(dic.get('Wrong')))
-                                    break
-                                    
-                                    
-                            if dic.get('Index') in self.error_intersects:
-                                intersects.append((int(t_key[1:]),dic))
-                                continue
-    
-                            if dic.get('Right'):
-                                indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
-                                if dic.get('Error') in self.error_type:
-                                    new_file.write('**'+str(dic.get('Right'))+'**'+str(indexes_comp)+'**')
+                    ##если среди пересечений, которые идут раньше
+                    if dic.get('Index') in self.overlap1:
+                        if not self.to_include(dic):
+                            overlap2_ind = self.overlap2[self.overlap1.index(dic.get('Index'))]
+                            overlap2_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap2_ind][-1]
+                            if 'Right' in dic and 'Right' in overlap2_err:
+                                rn = self.find_overlap(dic['Right'],overlap2_err['Right'])
+                                ##разница правой границы первого и левой границы второго
+                                wn = dic['Index'][1] - overlap2_err['Index'][0]
+                                indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
+                                if rn == 0:
+                                    processed += str(dic.get('Right'))+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn]
                                 else:
-                                    new_file.write(dic.get('Right') +
-                                                   '#'+str(indexes_comp)+ '#')
-                            else:
-                                if dic.get('Delete'):
-                                    indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
-                                    new_file.write("#DELETE#"+str(indexes_comp)+"#")
-                                    
-                    if intersects:
-                        intersects = sorted(intersects,key=lambda x: x[0])
-                        intersects = [x[1] for x in intersects]
-                        needed_error_types = [x for x in intersects if x['Error'] in self.error_type]
-                        if needed_error_types and 'Right' in needed_error_types[-1]:
-                            saving = needed_error_types[-1]
-                            intersects.remove(saving)
-                            if intersects:
-                                to_change = intersects[-1]
-                                if 'Right' not in to_change or to_change['Right'] == saving['Right']:
-                                    indexes_comp = saving['Index'][1] - saving['Index'][0]
-                                    new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**')
-                                else: 
-                                    indexes_comp = len(to_change['Right'])
-                                    not_to_write_sym = saving['Index'][1] - saving['Index'][0]
-                                    new_file.write('**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right'])
+                                    processed += str(dic.get('Right')[:-rn])+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn]
+                                not_to_write_sym = len(str(dic.get('Wrong'))) - wn
+                                break
+
+                    ##если среди пересечений, которые идут позже:
+                    if dic.get('Index') in self.overlap2:
+                        overlap1_ind = self.overlap1[self.overlap2.index(dic.get('Index'))]
+                        overlap1_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap1_ind][-1]
+                        if self.to_include(overlap1_err):
+                            if not self.to_include(dic):
+                                if 'Right' in dic and 'Right' in overlap1_err:
+                                    rn = self.find_overlap(overlap1_err['Right'],dic['Right'])
+                                    ##разница правой границы первого и левой границы второго
+                                    wn = overlap1_err['Index'][1] - dic['Index'][0]
+                                    indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
+                                    processed += dic.get('Wrong')[:wn] + dic.get('Right')[rn:] +'#'+str(indexes_comp)+ '#'+dic.get('Wrong')[wn:]
+                                    not_to_write_sym = len(str(dic.get('Wrong')))
+                            break
+                            
+                            
+                    if dic.get('Index') in self.error_intersects:
+                        intersects.append((int(t_key[1:]),dic))
+                        continue
+
+                    if dic.get('Right'):
+                        indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
+                        if self.to_include(dic):
+                            processed += '**'+str(dic.get('Right'))+'**'+str(indexes_comp)+'**'
                         else:
-                            if 'Right' in intersects[-1]:
-                                if len(intersects) > 1 and 'Right' in intersects[-2]:
-                                    indexes_comp = len(intersects[-2]['Right'])
-                                    not_to_write_sym = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
-                                    new_file.write(intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#' + intersects[-2]['Right'])
-                                else:
-                                    indexes_comp = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
-                                    new_file.write(intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#')
-                    if not not_to_write_sym:
-                        new_file.write(sym)
+                            processed += dic.get('Right') +'#'+str(indexes_comp)+ '#'
                     else:
-                        not_to_write_sym -= 1
-
-    # ================Write Exercises to the files=================
+                        if dic.get('Delete'):
+                            indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
+                            processed += "#DELETE#"+str(indexes_comp)+"#"
+                            
+            if intersects:
+                intersects = sorted(intersects,key=lambda x: x[0])
+                intersects = [x[1] for x in intersects]
+                needed_error_types = [x for x in intersects if self.to_include(x)]
+                if needed_error_types and 'Right' in needed_error_types[-1]:
+                    ## из входящих друг в друга тегов берётся самый верхний:
+                    saving = needed_error_types[-1]
+                    intersects.remove(saving)
+                    if intersects:
+                        to_change = intersects[-1]
+                        if 'Right' not in to_change or to_change['Right'] == saving['Right']:
+                            indexes_comp = saving['Index'][1] - saving['Index'][0]
+                            processed += '**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'
+                        else: 
+                            indexes_comp = len(to_change['Right'])
+                            not_to_write_sym = saving['Index'][1] - saving['Index'][0]
+                            processed += '**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right']
+                else:
+                    if 'Right' in intersects[-1]:
+                        if len(intersects) > 1 and 'Right' in intersects[-2]:
+                            indexes_comp = len(intersects[-2]['Right'])
+                            not_to_write_sym = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
+                            processed += intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#' + intersects[-2]['Right']
+                        else:
+                            indexes_comp = intersects[-1]['Index'][1] - intersects[-1]['Index'][0]
+                            processed += intersects[-1]['Right'] + '#'+str(indexes_comp)+ '#'
+            if not not_to_write_sym:
+                processed += sym
+            else:
+                not_to_write_sym -= 1
+        if not self.use_ram:
+            # print('Saving processed text to ', output_filename)
+            with open(output_filename+'.txt', 'w', encoding='utf-8') as new_file:
+                new_file.write(processed)
+        else:
+            return processed
+        
+        
+    '''================Write Exercises to the files================='''
 
     def find_choices(self, right, wrong, new_sent): #TODO @Kate, rewrite this function
         """
@@ -482,9 +598,10 @@ class Exercise:
                 print('''Cannot proceed - NLTK package with Stanford POS Tagger needed to create Multiple choice questions on
 Number''')
                 raise Exception
-            quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone', 'no-one', 'nobody', 'something', 'everything', 'nothing')
+            quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone',
+             'no-one', 'nobody', 'something', 'everything', 'nothing')
             if self.tagger.tag(right.split())[0][1].startswith('V') and self.tagger.tag(wrong.split())[0][1].startswith('V'):
-##                print('Stanford POS Tagger OK')
+                print('Stanford POS Tagger OK')
                 quant_presence = False
                 tagged_sent = self.tagger.tag(new_sent.replace('_______',right).split())
                 for i in range(len(tagged_sent)):
@@ -509,7 +626,8 @@ Number''')
                 variants = set(left + i + rite for i in preps)
                 if left+rite.strip(' ') == pr1['left'].strip(' '):
                     [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
-        elif self.error_type == ['Conjunctions','Absence_comp_sent','Lex_item_choice','Word_choice','Conjunctions','Lex_part_choice','Often_confused','Absence_comp_colloc','Redundant','Redundant_comp']:
+        elif self.error_type == ['Conjunctions','Absence_comp_sent','Lex_item_choice','Word_choice',
+        'Conjunctions','Lex_part_choice','Often_confused','Absence_comp_colloc','Redundant','Redundant_comp']:
             conjunctions1 = ['except', 'besides','but for']
             conjunctions2 = ['even if', 'even though', 'even']
             if right in conjunctions1:
@@ -567,7 +685,9 @@ Number''')
         """
         good_sentences = {x:list() for x in self.exercise_types}
         types1 = [i for i in self.exercise_types if i!='word_form']
-        sentences = [''] + new_text.split('. ')
+        ##Пока что так, потом сделаю, чтобы сплиттил по точке и любому пробельному символу
+        sentences = [''] + new_text.split('.')
+        ##кко
         i = 0
         for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
             i += 1
@@ -604,9 +724,12 @@ Number''')
                             sentences[i] = sent + ' ' + right_answer + ' ' + other[int(index):] + '.'
                             answers = []
                         else:
-                            print('choices: ',answers)
+                            if self.show_messages:
+                                print('choices: ',answers)
                         
                 except:
+                    ## вот здесь работаем с предложениями, где больше одной ошибки
+                    ## сюда имплементируй иерархию тегов:
                     split_sent = sent2.split('**')
                     n = (len(split_sent) - 1) / 3
                     try:
@@ -633,6 +756,9 @@ Number''')
                                     except:
                                         new_sent += right_answer + other[int(index):]
                             else:
+                                ## всё-таки берём случайную ощибку, т.к. пременная chosen - выход ГСЧ
+                                ## вместо этого нужно имплементировать иерархию
+                                ## кмк лучше переписать функцию с нуля
                                 if i == chosen*3:
                                     wrong = other[:int(index)]
                                     if ex_type == 'short_answer':
@@ -661,13 +787,23 @@ Number''')
                     text = new_sent
                 text = re.sub(' +',' ',text)
                 text = re.sub('[а-яА-ЯЁё]+','',text)
+                if self.maintain_log:
+                    question_log = {"ex_type":ex_type,"text":text,"answers":answers,"to_skip":to_skip,"result":"not included"}
                 if ('**' not in text) and (not to_skip) and (answers != []):
-##                    print('answers: ', answers)
+                    ##закомменть:
+                    if self.show_messages:
+                        print('text, answers: ', text, answers)
+                    if self.maintain_log:
+                        question_log["result"] = "ok"
                     good_sentences[ex_type].append((text, answers))
-##                elif '**' in text:
-##                    print('answers arent added cause ** in text: ', answers)
-##                elif to_skip:
-##                    print('answers arent added cause to_skip = True: ', answers)         
+                elif '**' in text:
+                    if self.show_messages:
+                        print('text and answers arent added cause ** in text: ', text, answers)
+                elif to_skip:
+                    if self.show_messages:
+                        print('text and answers arent added cause to_skip = True: ', text, answers)
+                if self.maintain_log:
+                    self.log.append(question_log)
         return good_sentences
 
     def write_sh_answ_exercise(self, sentences, ex_type):
@@ -683,14 +819,28 @@ Number''')
         <feedback><text>Correct!</text></feedback>\n\
         </answer>\n\
         </question>\n'
-        with open(self.output_path+'/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
-            moodle_ex.write('<quiz>\n')
+        if self.file_output:
+            with open(self.output_file_names[ex_type]+'.xml', 'w', encoding='utf-8') as moodle_ex:
+                moodle_ex.write('<quiz>\n')
+                for n, ex in enumerate(sentences):
+                    moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and'))
+                moodle_ex.write('</quiz>')
+            if self.write_txt:
+                with open(self.output_file_names[ex_type]+'.txt', 'w', encoding='utf-8') as plain_text:
+                    for ex in sentences:
+                        plain_text.write(ex[1][0]+'\t'+ex[0]+'\n\n')
+        else:
+            moodle_ex = io.BytesIO()
+            moodle_ex.write('<quiz>\n'.encode('utf-8'))
             for n, ex in enumerate(sentences):
-                moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and'))
-            moodle_ex.write('</quiz>')
-        with open(self.output_path+'/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
-            for ex in sentences:
-                plait_text.write(ex[1][0]+'\t'+ex[0]+'\n\n')
+                moodle_ex.write((pattern.format(n, ex[0], ex[1][0])).replace('&','and').encode('utf-8'))
+            moodle_ex.write('</quiz>'.encode('utf-8'))
+            self.output_objects[ex_type+'_xml'] = moodle_ex
+            if self.write_txt:
+                plain_text = io.BytesIO()
+                for ex in sentences:
+                    plain_text.write(ex[1][0]+'\t'+ex[0]+'\n\n'.encode('utf-8'))
+                self.output_objects[ex_type+'_txt'] = plain_text
 
     def write_multiple_ch(self, sentences, ex_type):
         pattern = '<question type="multichoice">\n \
@@ -703,23 +853,43 @@ Number''')
         <partiallycorrectfeedback format="html">\n<text>Your answer is partially correct.</text>\n\
         </partiallycorrectfeedback>\n<incorrectfeedback format="html">\n\
         <text>Your answer is incorrect.</text>\n</incorrectfeedback>\n'
-
-        with open(self.output_path+'/{}.xml'.format(ex_type+'_'+' '.join(self.error_type)), 'w', encoding='utf-8') as moodle_ex:
-            moodle_ex.write('<quiz>\n')
+        if self.file_output:
+            with open(self.output_file_names[ex_type]+'.xml', 'w', encoding='utf-8') as moodle_ex:
+                moodle_ex.write('<quiz>\n')
+                for n, ex in enumerate(sentences):
+                    moodle_ex.write((pattern.format(n, ex[0])).replace('&','and'))
+                    for n, answer in enumerate(ex[1]):
+                        correct = 0
+                        if n == 0:
+                            correct = 100
+                        moodle_ex.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
+                                        '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
+                    moodle_ex.write('</question>\n')
+                moodle_ex.write('</quiz>')
+            if self.write_txt:
+                with open(self.output_file_names[ex_type]+'.txt', 'w',encoding='utf-8') as plain_text:
+                    for ex in sentences:
+                        plain_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n')
+        else:
+            moodle_ex = io.BytesIO()
+            moodle_ex.write('<quiz>\n'.encode('utf-8'))
             for n, ex in enumerate(sentences):
-                moodle_ex.write((pattern.format(n, ex[0])).replace('&','and'))
+                moodle_ex.write((pattern.format(n, ex[0])).replace('&','and').encode('utf-8'))
                 for n, answer in enumerate(ex[1]):
                     correct = 0
                     if n == 0:
                         correct = 100
                     moodle_ex.write('<answer fraction="{}" format="html">\n<text><![CDATA[<p>{}<br></p>]]>'
-                                    '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct, answer))
-                moodle_ex.write('</question>\n')
-            moodle_ex.write('</quiz>')
-        with open(self.output_path+'/{}.txt'.format(ex_type+'_'+' '.join(self.error_type)), 'w',encoding='utf-8') as plait_text:
-            for ex in sentences:
-                plait_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n')
-
+                                    '</text>\n<feedback format="html">\n</feedback>\n</answer>\n'.format(correct,
+                                     answer).encode('utf-8'))
+                moodle_ex.write('</question>\n'.encode('utf-8'))
+            moodle_ex.write('</quiz>'.encode('utf-8'))
+            self.output_objects[ex_type+'_xml'] = moodle_ex
+            if self.write_txt:
+                plain_text = io.BytesIO()
+                for ex in sentences:
+                    plain_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n'.encode('utf-8'))
+                self.output_objects[ex_type+'_txt'] = plain_text
 
     def write_open_cloze(self, sentences, ex_type):
         """:param type: Word form or Open cloze"""
@@ -732,34 +902,55 @@ Number''')
                      <questiontext format="html"><text><![CDATA[<p>{}</p>]]></text></questiontext>\n''<generalfeedback format="html">\n\
                      <text/></generalfeedback><penalty>0.3333333</penalty>\n\
                      <hidden>0</hidden>\n</question>\n'
-        with open(self.output_path+'/{}.xml'.format(ex_type), 'w', encoding='utf-8') as moodle_ex:
-            moodle_ex.write('<quiz>\n')
+        if self.file_output:
+            with open(self.output_file_names[ex_type]+'.xml','w', encoding='utf-8') as moodle_ex:
+                moodle_ex.write('<quiz>\n')
+                for n, ex in enumerate(sentences):
+                    moodle_ex.write((pattern.format(type, n, ex[0])).replace('&','and'))
+                moodle_ex.write('</quiz>')
+            if self.write_txt:
+                with open(self.output_file_names[ex_type]+'.txt','w', encoding='utf-8') as plain_text:
+                    for ex in sentences:
+                        plain_text.write(ex[0]+'\n\n')
+        else:
+            moodle_ex = io.BytesIO()
+            moodle_ex.write('<quiz>\n'.encode('utf-8'))
             for n, ex in enumerate(sentences):
-                moodle_ex.write((pattern.format(type, n, ex[0])).replace('&','and'))
-            moodle_ex.write('</quiz>')
-        with open(self.output_path+'/{}.txt'.format(ex_type), 'w', encoding='utf-8') as plait_text:
-            for ex in sentences:
-                plait_text.write(ex[0]+'\n\n')
+                moodle_ex.write((pattern.format(type, n, ex[0])).replace('&','and').encode('utf-8'))
+            moodle_ex.write('</quiz>'.encode('utf-8'))
+            self.output_objects[ex_type+'_xml'] = moodle_ex
+            if self.write_txt:
+                plain_text = io.BytesIO()
+                for ex in sentences:
+                    plain_text.write(ex[0] + '\n' + '\t'.join(ex[1]) + '\n\n'.encode('utf-8'))
+                self.output_objects[ex_type+'_txt'] = plain_text
 
     def make_exercise(self):
         """Write it all in moodle format and txt format"""
         print('Making exercises...')
         all_sents = {x:list() for x in self.exercise_types}
-        for f in os.listdir(self.path_new):
+        if self.use_ram:
+            list_to_iter = self.processed_texts
+        else:
+            list_to_iter = os.listdir(self.path_new)
+        for f in list_to_iter:
             new_text = ''
-            with open(self.path_new + f,'r', encoding='utf-8') as one_doc:
-                text_array = one_doc.read().split('#')
-                current_number = 0
-                for words in text_array:
-                    words = words.replace('\n', ' ').replace('\ufeff', '')
-                    if re.match('^[0-9]+$', words):
-                        if words != '':
-                            current_number = int(words)
-                    elif words == 'DELETE':
-                        current_number = 0
-                    else:
-                        new_text += words[current_number:]
-                        current_number = 0
+            if self.use_ram:
+                text_array = f.split('#')
+            else:
+                with open(self.path_new + f,'r', encoding='utf-8') as one_doc:
+                    text_array = one_doc.read().split('#')
+            current_number = 0
+            for words in text_array:
+                words = words.replace('\n', ' ').replace('\ufeff', '')
+                if re.match('^[0-9]+$', words):
+                    if words != '':
+                        current_number = int(words)
+                elif words == 'DELETE':
+                    current_number = 0
+                else:
+                    new_text += words[current_number:]
+                    current_number = 0
             if '**' in new_text:
                 new_sents = self.create_sentence_function(new_text)
                 for key in all_sents:
@@ -767,12 +958,29 @@ Number''')
         for key in all_sents:
             print('Writing '+key+' questions, '+str(len(all_sents[key]))+' total ...')
             self.write_func[key](all_sents[key],key)
-        print('done, saved to' + self.output_path)
 
-        #shutil.rmtree('./processed_texts/')
+        shutil.rmtree('./processed_texts/')
 
-def main(path_to_data,exercise_types,output_path,error_types):
-    e = Exercise(path_to_data, exercise_types, output_path, error_types = error_types, bold=False, context=True)
+        if self.maintain_log:
+            self.write_log()
+        if self.file_output:
+            print('done, saved to' + self.output_path)
+        else:
+            print('done, saved in RAM as BytesIO object')
+
+    def write_log(self):
+        path_to_save = self.output_path+'/{}log.csv'.format(self.log_name)
+        with open(path_to_save,'w',encoding='utf-8') as l:
+            writer = csv.DictWriter(l,self.fieldnames)
+            writer.writeheader()
+            writer.writerows(self.log)
+            print ('log saved to: ', path_to_save)
+
+def main(path_to_data = None,exercise_types = None,output_path = None,error_types = None,mode = 'direct_input',
+context = True, maintain_log = True, show_messages = False, bold = True, use_ram = False, ann = None, text =None):
+    e = Exercise(path_to_realecdata = path_to_data, exercise_types = exercise_types, output_path = output_path,
+     ann = ann, text = text, error_types = error_types, bold=bold, context=context,mode=mode, maintain_log=maintain_log,
+     show_messages=show_messages,use_ram = use_ram)
     e.make_data_ready_4exercise()
     e.make_exercise()
 
@@ -792,7 +1000,12 @@ To proceed, enter either 'Number','Preposotional_noun Prepositional_adjective Pr
 ''')
     error_types = input('Enter error types separated by gap:    ').split()
     output_path = input('Enter path to output files:     ')
-    main(path_to_data, exercise_types, output_path, error_types)
+    context = input('Do you want to include contexts?     ').strip().lower()
+    if context == 'yes':
+        context = True
+    else:
+        context = False
+    main(path_to_data, exercise_types, output_path, error_types,mode='folder',context=context,bold = True)
 
 def test_launch():
     error_types = ['Tense_choice','Tense_form','Voice_choice','Voice_form',
@@ -802,8 +1015,67 @@ def test_launch():
                     'Number','Standard','Num_form','Incoherent_tenses','Incoherent_in_cond',
                     'Tautology','lex_part_choice','Prepositional_adjective','Prepositional_noun']
     
-    main('./IELTS' ,['open_cloze','short_answer','word_form'], './moodle_exercises/', error_types = error_types)
+    main('./IELTS' ,['open_cloze','short_answer','word_form'], './moodle_exercises/', error_types = error_types, mode='folder')
+
+def test_ideally_annotated():
+    for ex_type in ('open_cloze', 'short_answer', 'word_form'):
+        for context in (True, False):
+            print(ex_type, context)
+            main(path_to_data = './ideally_annotated', exercise_types = [ex_type], output_path = './ideally_annoted_output',
+             error_types = [], mode='folder', context=context, maintain_log = True, show_messages = False, bold = True)
+
+def test_with_ram():
+    for ex_type in ('open_cloze', 'short_answer', 'word_form'):
+        for context in (True, False):
+            print(ex_type, context)
+            main(path_to_data = './test_with_ram_input/AAl_12_2.ann', exercise_types = [ex_type], use_ram = True,
+             output_path = './test_with_ram_output_file_input', error_types = [], mode='file', context=context,
+              maintain_log = True, show_messages = True, bold = True)
+
+def test_direct_input():
+    with open (r'./2nd-year-thesis/realec_dump_31_03_2018/exam/exam2014/DZu_23_2.txt','r',encoding='utf-8') as inp:
+        text = inp.read()
+    with open (r'./2nd-year-thesis/realec_dump_31_03_2018/exam\exam2014\DZu_23_2.ann','r',encoding='utf-8') as inp:
+        ann = inp.read()
+    #for ex_type in ('open_cloze', 'short_answer', 'word_form'):
+    main(ann=ann, text=text, exercise_types = ['open_cloze', 'short_answer', 'word_form'], use_ram = True,
+     output_path = './test_with_direct_input_output_file_input', error_types = [], mode='direct_input', context=False,
+      maintain_log = True, show_messages = True, bold = True)
+
+def generate_exercises_from_essay(essay_name, context=False, exercise_types = ['short_answer'],file_output = True,
+ write_txt = False, use_ram = True):
+    helper = realec_helper.realecHelper()
+    helper.download_essay(essay_name, include_json = False, save = False)
+    e = Exercise(ann=helper.current_ann, text=helper.current_text,
+     exercise_types = exercise_types, use_ram = use_ram,
+     output_path = './test_with_direct_input_output_file_input', error_types = [], mode='direct_input', context=context,
+     maintain_log = False, show_messages = False, bold = True, file_output = file_output, write_txt = write_txt)
+    e.make_data_ready_4exercise()
+    e.make_exercise()
+    if file_output:
+        return e.output_file_names
+    else:
+        return e.output_objects
+
+def test_with_realec_helper():
+    # essay_name = '/exam/exam2014/DZu_23_2'
+    essay_name = 'http://www.realec.org/index.xhtml#/exam/exam2017/EGe_105_2'
+    essay_paths = generate_exercises_from_essay(essay_name)
+    print(essay_paths)
+
+def test_with_relations():
+    # essay_name = "http://realec.org/index.xhtml#/exam/exam2017/EGe_101_1"
+    essay_name = "http://realec.org/index.xhtml#/exam/exam2017/EGe_105_2"
+    essay_paths = generate_exercises_from_essay(essay_name, use_ram=False)
+    print(essay_paths)
 
 if __name__ == '__main__':
+#    console_user_interface()
+#    test_launch()
+#    test_ideally_annotated()
+#    test_direct_input()
+    # test_with_realec_helper()
+    # file_objects = generate_exercises_from_essay('/exam/exam2014/DZu_23_2', file_output = False, write_txt = False)
+    # for i in file_objects:
+    #     print(i, file_objects[i].getvalue())
     console_user_interface()
-##    test_launch()
