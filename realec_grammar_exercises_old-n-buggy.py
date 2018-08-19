@@ -5,17 +5,19 @@ import random
 import json, csv
 import pprint
 import difflib
-#import verb_forms_finder as vff
-#import simple_phrase_parser as spp
+import verb_forms_finder as vff
+import simple_phrase_parser as spp
 import time
-import realec_helper
+try:
+    import realec_helper
+except:
+    pass
 import io
-import html
-##try:
-##    import nltk.tag.stanford as stag
-##except:
-##    pass
-##    
+try:
+   import nltk.tag.stanford as stag
+except:
+   pass
+   
 
 """Script that generates grammar exercises from REALEC data 
 grammar tags:
@@ -186,8 +188,7 @@ class Exercise:
     def __init__(self, path_to_realecdata = None, exercise_types = None, output_path = None,
      ann = None, text = None, error_types = [], bold = False, context = False, mode = 'folder',
       maintain_log = True, show_messages = True, use_ram=False,output_file_names = None,
-      file_output = True, write_txt = False, keep_processed = True, hier_choice = False,
-      make_two_variants = False, exclude_repeated = False, include_smaller_mistakes = False, file_prefix = os.getcwd()+os.sep):
+      file_output = True, write_txt = False):
 
         """"
         :param error_types: list of str, can include values from
@@ -206,24 +207,10 @@ class Exercise:
         :param file_output: bool
         :param output_file_names: list of str
         """
-        self.file_prefix = file_prefix
+
         self.exercise_types = exercise_types
         self.error_type = error_types
-        self.keep_processed = keep_processed
-        # print(self.error_type)
-        self.hier_choice = hier_choice
-        if self.hier_choice:
-            with open (self.file_prefix + 'hierarchy.json','r',encoding='utf-8') as inp:
-                self.hierarchy = json.load(inp)
-            self.get_hierarchy = lambda x: self.hierarchy[x] if x in self.hierarchy else 0
-            self.hier_sort = lambda x: sorted(x,key = self.get_hierarchy, reverse = True)
-        self.make_two_variants = make_two_variants
-        self.exclude_repeated = exclude_repeated
-        # self.sent_tokenize_processed = lambda x: re.findall(r".*?\*\*[0-9]+\*\*.*?[\.?!]",x)
-        self.sent_tokenize_processed = lambda x: [i[0] for i in re.findall(r"(([A-Z].*?)?(\*\*.*?){6}[\.\?!])",x)]
-        # (([A-Z].*?)?(<.*?>.*?)*[\.\?!]) - регулярное выражение, которое лучше соответствует предложению, но тогда область ошибки
-        # должна полностью обрамляться символами <> (знак > должен стоять после неправильного варианта, закрывая область ошибки) - 
-        # добавить на будущее
+        print(self.error_type)
         self.to_include = lambda x: True if (x["Error"] in self.error_type or self.error_type==[''] or not self.error_type) and (x["Relation"]!="Dependant_change") else False
         self.current_doc_errors = OrderedDict()
         self.bold = bold
@@ -231,12 +218,6 @@ class Exercise:
         self.write_txt = write_txt
         self.use_ram = use_ram
         self.mode = mode
-        if self.mode in ('file','direct_input') and self.make_two_variants:
-            ##пока делаем возможность использовать во втором варианте ошибки
-            ##с меньшей областью, только если на вход поступает одно эссе:
-            self.include_smaller_mistakes = include_smaller_mistakes
-        else:
-            self.include_smaller_mistakes = False
         self.file_output = file_output
         ##Note: maintain_log is forcibly set to False if file_output is False
         self.maintain_log = maintain_log
@@ -244,31 +225,23 @@ class Exercise:
         if self.use_ram:
             self.processed_texts = []
         else:
-            self.path_new = self.file_prefix + 'processed_texts/'
+            self.path_new = './processed_texts/'
         if self.mode == 'direct_input':
             self.ann = ann
             self.text = text
         else:
             self.path_old = path_to_realecdata
         if self.file_output:
-            self.output_path = self.file_prefix + output_path
             if not output_path:
-                output_path = 'moodle_exercises'
-            os.makedirs(self.output_path, exist_ok = True)
+                output_path = './moodle_exercises'
+            os.makedirs(output_path, exist_ok = True)
+            self.output_path = output_path
             if output_file_names:
                 self.output_file_names = output_file_names
             else:
                 self.output_file_names = dict()
                 for ex_type in self.exercise_types:
-                    if self.make_two_variants and (ex_type=='short_answer' or ex_type=='multiple_choice'):
-                        ex_type1 = ex_type+'_variant1'
-                        ex_type2 = ex_type+'_variant2'
-                        self.output_file_names[ex_type1] = self.output_path+'/{}_{}'.format(''.join([str(i) for i in time.localtime()]),
-                                                                                            ex_type1+'_context_'+str(self.context))
-                        self.output_file_names[ex_type2] = self.output_path+'/{}_{}'.format(''.join([str(i) for i in time.localtime()]),
-                                                                                            ex_type2+'_context_'+str(self.context))
-                    else:
-                        self.output_file_names[ex_type] = self.output_path+'/{}_{}'.format(''.join([str(i) for i in time.localtime()]),
+                    self.output_file_names[ex_type] = self.output_path+'/{}_{}'.format(''.join([str(i) for i in time.localtime()]),
                                                                                             ex_type+'_context_'+str(self.context))
         else:
             self.maintain_log = False
@@ -284,13 +257,13 @@ class Exercise:
             "word_form": self.write_open_cloze, ##exercises where word is to be assigned the appropriate grammar
             "open_cloze": self.write_open_cloze ##exercises where you need to insert something in gap
         }
-        # try:
-        #     self.tagger = stag.StanfordPOSTagger('english-caseless-left3words-distsim.tagger')
-        # except:
-        #     self.tagger = False
+        try:
+            self.tagger = stag.StanfordPOSTagger('english-caseless-left3words-distsim.tagger')
+        except:
+            self.tagger = False
         if not self.use_ram:
-            os.makedirs(self.file_prefix+'processed_texts', exist_ok=True)
-        with open(self.file_prefix + 'wordforms.json', 'r', encoding="utf-8") as dictionary:
+            os.makedirs('./processed_texts', exist_ok=True)
+        with open('./wordforms.json', 'r', encoding="utf-8") as dictionary:
             self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
 
     def find_errors_indoc(self, line):
@@ -331,15 +304,9 @@ class Exercise:
             try:
                 number, annotation, correction = line.strip().split('\t')
                 t_error = annotation.split()[1]
-                err = self.current_doc_errors.get(t_error)
-                if err:
+                if self.current_doc_errors.get(t_error):
                     validated = self.validate_answers(correction)
                     if validated is not None:
-                        ##если убирается запятая, следим, чтобы исправление начиналось с пробела,
-                        ##иначе дописываем его к исправлению:
-                        if ((err.get('Error') == 'Punctuation' or err.get('Error') == 'Defining') and 
-                        not validated.startswith(',') and not validated.startswith(' ') and err.get('Wrong').startswith(',')):
-                            validated = ' '+validated
                         self.current_doc_errors[annotation.split()[1]]['Right'] = validated
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
@@ -354,7 +321,8 @@ class Exercise:
                 for arg in relation_args:
                     self.current_doc_errors[arg]["Relation"] = relation_type
             except:
-                print("Relations: Something wrong! No Notes or relation between non-error tags", line)
+                print("Relations: Something wrong! No Notes probably", line)
+                raise Exception
     
     def find_delete_seqs(self, line):
         if re.search('^A', line) is not None and 'Delete' in line:
@@ -366,14 +334,11 @@ class Exercise:
         """ Collect errors info """
         print('collecting errors info...')
         if self.mode == 'folder':
-            # print(self.path_new)
             i = 0
             for root, dire, files in os.walk(self.path_old):
                 for f in files:
+                    i += 1
                     if f.endswith('.ann'):
-                        i += 1
-                        if self.show_messages:
-                            print(f)
                         annpath = root+'/'+f
                         self.parse_ann_and_process_text(ann = annpath, processed_text_filename = str(i))
                     
@@ -385,6 +350,7 @@ class Exercise:
     def parse_ann_and_process_text(self, ann=None, processed_text_filename = None):
         self.error_intersects = set()
         if self.mode!='direct_input':
+            print(ann)
             with open(ann, 'r', encoding='utf-8') as ann_file:
                 annlines = ann_file.readlines()
         else:
@@ -418,9 +384,8 @@ class Exercise:
             if self.mode == 'folder':
                 self.make_one_file(ann[:ann.find('.ann')],processed_text_filename)
             elif self.mode == 'direct_input':
-                self.save_processed(self.text, output_filename=self.path_new+'processed')
-        if not self.include_smaller_mistakes:
-            self.current_doc_errors.clear()
+                self.save_processed(self.text, output_filename='processed')
+        self.current_doc_errors.clear()
 
     def find_embeddings(self,indices):
         ##сортируем исправления - сначала сортируем по возрастанию первого индекса,
@@ -433,18 +398,14 @@ class Exercise:
             find_emb = [x for x in indices if (x[0] <= indices[i][0] and x[1] > indices[i][1]) or \
                                               (x[0] < indices[i][0] and x[1] >= indices[i][1])]
             if find_emb:
-                ##в self.embedding для каждой ошибки с большей областью записываем текущую ошибку:
                 for j in find_emb:
                     self.embedding[str(j)].append(indices[i])
-                ##в self.embedded записываем те ошибки, для которых есть ошибки с большей областью:
                 embedded.append(indices[i])
             else:
                 overlaps = [x for x in indices if x[0] < indices[i][0] and (x[1] > indices[i][0] and
                                                                             x[1] < indices[i][1])]
                 if overlaps:
-                    ##самое левое наслаивание по отношению к ошибке уходит в overlap1:
                     overlap1.append(overlaps[0])
-                    ##сама ошибка уходит в overlap2:
                     overlap2.append(indices[i])
         ## на выход:
         ## наложения - словарь - индекс начала: индексы концов
@@ -453,7 +414,6 @@ class Exercise:
         
     def tackle_embeddings(self,dic):
         b = dic.get('Index')[0]
-        ##записываем в emb_errors ошибки, область которых меньше данной:
         emb_errors = [x for x in self.current_doc_errors.items() if (x[1]['Index'] in self.embedding[str(dic.get('Index'))]) and ('Right' in x[1])]
         new_wrong = ''
         nw = 0
@@ -464,12 +424,8 @@ class Exercise:
                 if e['Index'][0]-b == j:
                     if 'Right' in e and 'Right' in dic and e['Right'] == dic['Right']:
                         break
-                    for t1, e1 in emb_errors:
-                        if str(e['Index']) in self.embedding[str(e1['Index'])]:
-                            ignore += self.embedding[str(e['Index'])]
-                            break
-                    # if str(e['Index']) in self.embedding:
-                    #     ignore += self.embedding[str(e['Index'])]
+                    if str(e['Index']) in self.embedding:
+                        ignore += self.embedding[str(e['Index'])]
                     if e['Index'] in self.error_intersects:
                         emb_intersects.append((int(t[1:]),e))
                         continue
@@ -481,9 +437,6 @@ class Exercise:
                             nw = len(e['Wrong'])
             if emb_intersects:
                 emb_intersects = sorted(emb_intersects,key=lambda x: x[0])
-                ##а что если попробовать брать самый важный, а не самый последний поставленный тег для аннотаций, область которых совпадает?
-                ##лучше этого не делать, можут аолучиться жуть:
-                # emb_intersects = sorted(emb_intersects,key=lambda x: self.get_hierarchy(x[1]['Error']))
                 last = emb_intersects[-1][1]
                 L = -1
                 while 'Right' not in last and abs(L)<len(emb_intersects):
@@ -513,7 +466,7 @@ class Exercise:
         return: nothing. just write files in dir <<processed_texts>>
         """
         with open(filename+'.txt', 'r', encoding='utf-8') as text_file:
-            self.save_processed(text_file.read(), output_filename = self.path_new+new_filename)
+            self.save_processed(text_file.read(), output_filename = self.path_new+new_filename+'.txt')
                 
     def add_to_processed_list(self, filename = None):
         if self.mode != 'direct_input':
@@ -532,7 +485,9 @@ class Exercise:
             for t_key, dic in self.current_doc_errors.items():
                 ##если начало какой-либо ошибки приходится на текущий символ:
                 if dic.get('Index')[0] == i:
-                    dic['from_last_dot'] =  dic.get('Index')[0] - one_text[:i].rfind('.') - 1
+                    if dic.get('Error') == 'Punctuation' and 'Right' in dic and \
+                       not dic.get('Right').startswith(','):
+                        dic['Right'] = ' '+dic['Right']
                     ##если исправление попало в меньшую область ошибки - не берём его:
                     if dic.get('Index') in self.embedded:
                         continue
@@ -540,7 +495,7 @@ class Exercise:
                     if str(dic.get('Index')) in self.embedding:
                         if self.to_include(dic):
                             new_wrong = self.tackle_embeddings(dic)
-                            processed += '**'+str(dic.get('Right'))+'**'+str(t_key)+'**'+str(dic.get('Error'))+'**'+str(dic.get('Relation'))+'**'+str(len(new_wrong))+'**'+new_wrong
+                            processed += '**'+str(dic.get('Right'))+'**'+str(len(new_wrong))+'**'+new_wrong
                             ##устанавливаем, сколько итераций мы не будем дописывать символы:
                             not_to_write_sym = len(dic['Wrong'])
                             break
@@ -551,11 +506,9 @@ class Exercise:
                             overlap2_ind = self.overlap2[self.overlap1.index(dic.get('Index'))]
                             overlap2_err = [x for x in self.current_doc_errors.values() if x['Index'] == overlap2_ind][-1]
                             if 'Right' in dic and 'Right' in overlap2_err:
-                                ##находим число совпадающих элементов в пересекающихся ошибках:
                                 rn = self.find_overlap(dic['Right'],overlap2_err['Right'])
-                                ##разница правой границы первого и левой границы второго:
+                                ##разница правой границы первого и левой границы второго
                                 wn = dic['Index'][1] - overlap2_err['Index'][0]
-                                ##разница между длиной первого и предыдущей разницей:
                                 indexes_comp = dic.get('Index')[1] - dic.get('Index')[0] - wn
                                 if rn == 0:
                                     processed += str(dic.get('Right'))+'#'+str(indexes_comp)+'#'+str(dic.get('Wrong'))[:-wn]
@@ -587,7 +540,7 @@ class Exercise:
                     if dic.get('Right'):
                         indexes_comp = dic.get('Index')[1] - dic.get('Index')[0]
                         if self.to_include(dic):
-                            processed += '**'+str(dic.get('Right'))+'**'+str(t_key)+'**'+str(dic.get('Error'))+'**'+str(dic.get('Relation'))+'**'+str(indexes_comp)+'**'
+                            processed += '**'+str(dic.get('Right'))+'**'+str(indexes_comp)+'**'
                         else:
                             processed += dic.get('Right') +'#'+str(indexes_comp)+ '#'
                     else:
@@ -607,11 +560,11 @@ class Exercise:
                         to_change = intersects[-1]
                         if 'Right' not in to_change or to_change['Right'] == saving['Right']:
                             indexes_comp = saving['Index'][1] - saving['Index'][0]
-                            processed += '**'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'
+                            processed += '**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'
                         else: 
                             indexes_comp = len(to_change['Right'])
                             not_to_write_sym = saving['Index'][1] - saving['Index'][0]
-                            processed += '**'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+to_change['Right']
+                            processed += '**'+str(saving['Right'])+'**'+str(indexes_comp)+'**'+to_change['Right']
                 else:
                     if 'Right' in intersects[-1]:
                         if len(intersects) > 1 and 'Right' in intersects[-2]:
@@ -633,93 +586,93 @@ class Exercise:
             return processed
         
         
-    # ================Write Exercises to the files=================
+    '''================Write Exercises to the files================='''
 
-#     def find_choices(self, right, wrong, new_sent): #TODO @Kate, rewrite this function
-#         """
-#         Finds two more choices for Multiple Choice exercise.
-#         :param right:
-#         :param wrong:
-#         :return: array of four choices (first is always right)
-#         """
-#         right = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',right)
-#         wrong = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',wrong)
-#         choices = [right, wrong]
-#         if self.error_type == ['Number']:
-#             if not self.tagger:
-#                 print('''Cannot proceed - NLTK package with Stanford POS Tagger needed to create Multiple choice questions on
-# Number''')
-#                 raise Exception
-#             quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone',
-#              'no-one', 'nobody', 'something', 'everything', 'nothing')
-#             if self.tagger.tag(right.split())[0][1].startswith('V') and self.tagger.tag(wrong.split())[0][1].startswith('V'):
-# ##                print('Stanford POS Tagger OK')
-#                 quant_presence = False
-#                 tagged_sent = self.tagger.tag(new_sent.replace('_______',right).split())
-#                 for i in range(len(tagged_sent)):
-#                     if tagged_sent[i][0] in quantifiers:
-#                         quant_presence = True
-#                     if tagged_sent[i][0] == right.split()[0] and tagged_sent[i][1].startswith('V') and quant_presence:
-#                         [choices.append(i) for i in (vff.neg(right), vff.neg(wrong))\
-#                          if (i!=right) and (i!=wrong) and (i!='') and (i!=None)]
-#                         break
-#         elif self.error_type == ['Preposotional_noun','Prepositional_adjective','Prepositional_adv', 'Prepositional_verb']:
-#             pr1 = spp.find_prep(right)
-#             pr2 = spp.find_prep(wrong)
-#             if pr1['prep']:
-#                 prep, left, rite = pr1['prep'], pr1['left'], pr1['right']
-#                 preps = 'at', 'for', 'on'
-#                 variants = set(left + i + rite for i in preps)
-#                 if ((left + rite).strip(' ') == (pr2['left']+pr2['right']).strip(' ')):
-#                     [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
-#             elif pr2['prep']:
-#                 prep, left, rite = pr2['prep'], pr2['left'], pr2['right']
-#                 preps = 'at', 'for', 'on'
-#                 variants = set(left + i + rite for i in preps)
-#                 if left+rite.strip(' ') == pr1['left'].strip(' '):
-#                     [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
-#         elif self.error_type == ['Conjunctions','Absence_comp_sent','Lex_item_choice','Word_choice',
-#         'Conjunctions','Lex_part_choice','Often_confused','Absence_comp_colloc','Redundant','Redundant_comp']:
-#             conjunctions1 = ['except', 'besides','but for']
-#             conjunctions2 = ['even if', 'even though', 'even']
-#             if right in conjunctions1:
-#                 [choices.append(i) for i in conjunctions1 if (i != right) and (i != wrong)]
-#             elif right in conjunctions2:
-#                 [choices.append(i) for i in conjunctions2 if (i != right) and (i != wrong)]
-#         elif self.error_type == ['Defining']:
-#             gerund_form = spp.find_verb_form(right,'gerund')
-#             add_forms = vff.find_verb_forms(gerund_form)
-#             new_choices = []
-#             if gerund_form:
-#                 continuous_form = spp.find_anal_form(right,gerund_form)
-#                 new_choices.append(right.replace(gerund_form, 'being ' + add_forms['3rd'], 1))
-#                 new_choices.append(right.replace(continuous_form, add_forms['2nd'], 1))
-#                 if ("n't" in continuous_form) or ('not' in continuous_form):
-#                     new_choices = [vff.neg(i) for i in new_choices]
-#                 [choices.append(i) for i in new_choices if i != right and i != wrong]
-#         elif self.error_type == ['Choice_in_cond','Form_in_cond','Incoherent_in_cond'] and ('would' in right):
-#             neg = False
-#             if "wouldn't" in right:
-#                 neg = True
-#             lex_verb = spp.find_verb_form(right[right.find('would'):],'any')
-#             if lex_verb.count(' ') == 0:
-#                 lex_verb_forms = vff.find_verb_forms(lex_verb)
-#                 if lex_verb_forms:
-#                     new_choices = set([lex_verb_forms['2nd'], 'would have '+lex_verb_forms['3rd'],'would '+lex_verb_forms['bare_inf']])
-#             else:
-#                 be_form, verb_form = lex_verb.split(' ')
-#                 new_choices = set()
-#                 if (be_form == 'are') or (be_form == 'were'):
-#                     new_choices.add('were '+verb_form)
-#                 else:
-#                     new_choices.add('was '+verb_form)
-#                 new_choices.add('would have been '+verb_form)
-#                 new_choices.add('would be '+verb_form)
-#             if neg:
-#                 new_choices = [vff.neg(i) for i in new_choices]
-#             new_choices = [right[:right.find('would')]+i+right[right.find(lex_verb)+len(lex_verb):] for i in new_choices]
-#             [choices.append(i) for i in new_choices if i!=right and i != wrong]
-#         return choices[:4]
+    def find_choices(self, right, wrong, new_sent): #TODO @Kate, rewrite this function
+        """
+        Finds two more choices for Multiple Choice exercise.
+        :param right:
+        :param wrong:
+        :return: array of four choices (first is always right)
+        """
+        right = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',right)
+        wrong = re.sub('[а-яА-ЯЁё].*?[а-яёА-ЯЁ]','',wrong)
+        choices = [right, wrong]
+        if self.error_type == ['Number']:
+            if not self.tagger:
+                print('''Cannot proceed - NLTK package with Stanford POS Tagger needed to create Multiple choice questions on
+Number''')
+                raise Exception
+            quantifiers = ('some', 'someone', 'somebody', 'one', 'everyone', 'everybody', 'noone',
+             'no-one', 'nobody', 'something', 'everything', 'nothing')
+            if self.tagger.tag(right.split())[0][1].startswith('V') and self.tagger.tag(wrong.split())[0][1].startswith('V'):
+                print('Stanford POS Tagger OK')
+                quant_presence = False
+                tagged_sent = self.tagger.tag(new_sent.replace('_______',right).split())
+                for i in range(len(tagged_sent)):
+                    if tagged_sent[i][0] in quantifiers:
+                        quant_presence = True
+                    if tagged_sent[i][0] == right.split()[0] and tagged_sent[i][1].startswith('V') and quant_presence:
+                        [choices.append(i) for i in (vff.neg(right), vff.neg(wrong))\
+                         if (i!=right) and (i!=wrong) and (i!='') and (i!=None)]
+                        break
+        elif self.error_type == ['Preposotional_noun','Prepositional_adjective','Prepositional_adv', 'Prepositional_verb']:
+            pr1 = spp.find_prep(right)
+            pr2 = spp.find_prep(wrong)
+            if pr1['prep']:
+                prep, left, rite = pr1['prep'], pr1['left'], pr1['right']
+                preps = 'at', 'for', 'on'
+                variants = set(left + i + rite for i in preps)
+                if ((left + rite).strip(' ') == (pr2['left']+pr2['right']).strip(' ')):
+                    [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
+            elif pr2['prep']:
+                prep, left, rite = pr2['prep'], pr2['left'], pr2['right']
+                preps = 'at', 'for', 'on'
+                variants = set(left + i + rite for i in preps)
+                if left+rite.strip(' ') == pr1['left'].strip(' '):
+                    [choices.append(i) for i in variants if i.strip(' ') != right.lower().strip(' ') and i.strip(' ') != wrong.lower().strip(' ')]
+        elif self.error_type == ['Conjunctions','Absence_comp_sent','Lex_item_choice','Word_choice',
+        'Conjunctions','Lex_part_choice','Often_confused','Absence_comp_colloc','Redundant','Redundant_comp']:
+            conjunctions1 = ['except', 'besides','but for']
+            conjunctions2 = ['even if', 'even though', 'even']
+            if right in conjunctions1:
+                [choices.append(i) for i in conjunctions1 if (i != right) and (i != wrong)]
+            elif right in conjunctions2:
+                [choices.append(i) for i in conjunctions2 if (i != right) and (i != wrong)]
+        elif self.error_type == ['Defining']:
+            gerund_form = spp.find_verb_form(right,'gerund')
+            add_forms = vff.find_verb_forms(gerund_form)
+            new_choices = []
+            if gerund_form:
+                continuous_form = spp.find_anal_form(right,gerund_form)
+                new_choices.append(right.replace(gerund_form, 'being ' + add_forms['3rd'], 1))
+                new_choices.append(right.replace(continuous_form, add_forms['2nd'], 1))
+                if ("n't" in continuous_form) or ('not' in continuous_form):
+                    new_choices = [vff.neg(i) for i in new_choices]
+                [choices.append(i) for i in new_choices if i != right and i != wrong]
+        elif self.error_type == ['Choice_in_cond','Form_in_cond','Incoherent_in_cond'] and ('would' in right):
+            neg = False
+            if "wouldn't" in right:
+                neg = True
+            lex_verb = spp.find_verb_form(right[right.find('would'):],'any')
+            if lex_verb.count(' ') == 0:
+                lex_verb_forms = vff.find_verb_forms(lex_verb)
+                if lex_verb_forms:
+                    new_choices = set([lex_verb_forms['2nd'], 'would have '+lex_verb_forms['3rd'],'would '+lex_verb_forms['bare_inf']])
+            else:
+                be_form, verb_form = lex_verb.split(' ')
+                new_choices = set()
+                if (be_form == 'are') or (be_form == 'were'):
+                    new_choices.add('were '+verb_form)
+                else:
+                    new_choices.add('was '+verb_form)
+                new_choices.add('would have been '+verb_form)
+                new_choices.add('would be '+verb_form)
+            if neg:
+                new_choices = [vff.neg(i) for i in new_choices]
+            new_choices = [right[:right.find('would')]+i+right[right.find(lex_verb)+len(lex_verb):] for i in new_choices]
+            [choices.append(i) for i in new_choices if i!=right and i != wrong]
+        return choices[:4]
 
     
 
@@ -735,226 +688,68 @@ class Exercise:
         Makes sentences and write answers for all exercise types
         :return: array of good sentences. [ (sentences, [right_answer, ... ]), (...)]
         """
-        def create_short_answer_ex(sent, wrong, other, right_answer, index):
-            if self.bold:
-                new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] #+ '.'
-            else:
-                new_sent = sent + wrong + other[int(index):] #+ '.'
-            answers = [right_answer]
-            return new_sent, answers
-
-        def build_exercise_text(text, answers, index=None, single_question = False):
-            # if sent1 and sent3 and self.context: # fixed sentences beginning with a dot
-            #     text = correct_all_errors(sent1) + '. ' + new_sent + ' ' + correct_all_errors(sent3) #+ '.'
-            # elif sent3 and self.context:
-            #     text = new_sent + ' ' + correct_all_errors(sent3) #+ '.'
-            # else:
-            #     text = new_sent
-            text = re.sub(' +',' ',text)
-            text = re.sub('[а-яА-ЯЁё]+','',text)
-            if self.maintain_log:
-                question_log = {"ex_type":ex_type,"text":text,"answers":answers,"to_skip":to_skip,"result":"not included"}
-            if ('**' not in text) and (not to_skip) and (answers != []):
-                ##закомменть:
-                if self.show_messages:
-                    print('text, answers: ', text, answers)
-                if self.maintain_log:
-                    question_log["result"] = "ok"
-                if not index:
-                    good_sentences[ex_type].append((text, answers, single_question))
-                else:
-                    good_sentences[ex_type+'_variant'+str(index)].append((text, answers, single_question))
-            elif '**' in text:
-                if self.show_messages:
-                    print('text and answers arent added cause ** in text: ', text, answers)
-            elif to_skip:
-                if self.show_messages:
-                    print('text and answers arent added cause to_skip = True: ', text, answers)
-            if self.maintain_log:
-                self.log.append(question_log)
         good_sentences = {x:list() for x in self.exercise_types}
-        if self.make_two_variants:
-            if 'short_answer' in good_sentences:
-                good_sentences.pop('short_answer')
-                good_sentences['short_answer_variant1'] = list()
-                good_sentences['short_answer_variant2'] = list()
-            if 'multiple_choice' in good_sentences:
-                good_sentences.pop('multiple_choice')
-                good_sentences['multiple_choice_variant1'] = list()
-                good_sentences['multiple_choice_variant2'] = list()
         types1 = [i for i in self.exercise_types if i!='word_form']
-        # sentences = [i+'.' for i in new_text.split('.')]
-        sentences = self.sent_tokenize_processed(new_text)
-        ##some debbuging
-        # for i in sentences:
-        #     print(i)
-        #     input()
-        ##end of some debugging
-        # i = 0
-        if self.context:
-            sentences = [''.join(sentences[i:i+3]) for i in range(0,len(sentences),3)]
-            # for sentence in sentences:
-            #     print(sentence)
-        var1 = False
-        for sent2 in sentences:
-            # i += 1
-            single_error_in_sent = False
+        ##Пока что так, потом сделаю, чтобы сплиттил по точке и любому пробельному символу
+        sentences = [''] + new_text.split('.')
+        ##кко
+        i = 0
+        for sent1, sent2, sent3 in zip(sentences, sentences[1:], sentences[2:]):
+            i += 1
             to_skip = False
             if '**' in sent2:
                 ex_type = random.choice(self.exercise_types)
                 try:
-                    sent, right_answer, err_index, err_type, relation, index, other = sent2.split('**')
-                    # print('/'.join([sent, err_index, right_answer, err_type, relation, index, other]))
-                    # input()
+                    sent, right_answer, index, other = sent2.split('**')
                     wrong = other[:int(index)]
                     new_sent, answers = '', []
-                    if self.make_two_variants and self.exclude_repeated and (ex_type=='short_answer' or ex_type=='multiple_choice'):
-                        found_smaller = True
-                        if self.include_smaller_mistakes:
-                            # print(self.embedding, self.include_smaller_mistakes, err_index)
-                            # input()
-                            # raise Exception
-                            biggest_span = self.current_doc_errors[err_index]
-                            # print(biggest_span['Index'], self.embedding, self.include_smaller_mistakes)
-                            region = str(biggest_span['Index'])
-                            if region in self.embedding:
-                                # print('entered')
-                                smaller_mistakes = [val for key,val in self.current_doc_errors.items() if val['Index'] in self.embedding[region]]
-                                # print(smaller_mistakes)
-                                # input()
-                                smaller_mistakes = sorted(smaller_mistakes, key = lambda x: self.get_hierarchy(x.get('Error')))
-                                candidate = smaller_mistakes[0]
-                                # if self.get_hierarchy(biggest_span['Error'])>self.get_hierarchy(candidate['Error']):
-                                #     single_error_in_sent = True
-                                #     new_sent, answers = create_short_answer_ex(sent, wrong, other, right_answer, index)
-                                #     var1 = not var1
-                                # else:
-                                ##с difflib'ом ничего не получается, попробуй тогда:
-                                ##Если одна из границ вложенной ошибки совпадает - обрезать ответ на длину candidate['Right']
-                                ##Если ни одна из границ не совпаадет - регуляркой найти candidate['Right'] c пробельным символом спереди/сзади,
-                                ##Заменить на '<b>'+candidate['wrong']+'</b>'
-                                if self.context:
-                                    ##fsl stands for first sentence length in a given context
-                                    fsl = sent2.find('.')
-                                    left_bord = fsl + candidate['from_last_dot']
-                                else:
-                                    left_bord = candidate['from_last_dot']
-                                original_sent = sent + other
-                                # print(original_sent)
-                                # print(original_sent[:left_bord], original_sent[left_bord+len(candidate['Right']):], sep = '/')
-                                original_sent = original_sent[:left_bord] + candidate['Wrong'] + original_sent[left_bord+len(candidate['Right']):]
-                                edited_sent = sent + right_answer + other[int(index):]
-                                print(original_sent)
-                                print(edited_sent)
-                                matcher = difflib.SequenceMatcher(a = original_sent, b = edited_sent)
-                                ops = matcher.get_opcodes()
-                                print(ops)
-                                # right_bord = candidate['from_last_dot']+len(candidate['Wrong'])
-                                print(left_bord, original_sent[:left_bord])
-                                left_ops = [op for op in ops if op[1]<left_bord]
-                                for i in left_ops:
-                                    print(i, original_sent[i[1]:i[2]], edited_sent[i[3]:i[4]])
-                                len_diff = left_ops[-1][4] - left_ops[-1][2]
-                                bord1 = left_bord + len_diff
-                                bord2 = bord1 + len(right_answer)
-                                # right_ops = [op for op in ops if op[1]>right_bord]
-                                if ex_type == 'short_answer':
-                                    if self.bold:
-                                        new_sent = sent + '<b>' + wrong + '</b>' + other #+ '.'
-                                        new_sent2 = edited_sent[:bord1] + '<b>' + candidate['Wrong'] + '</b>' + edited_sent[bord2:] #+ '.'
-                                    else:
-                                        new_sent = sent + wrong + other #+ '.'
-                                        new_sent2 = edited_sent[:bord1] + wrong + edited_sent[bord2:] #+ '.'
-                                    answers = [right_answer]
-                                    answers2 = [candidate['Right']]
-                                # elif ex_type == 'multiple_choice':
-                                #     pass
-                            else:
-                                found_smaller = False
-                        if not self.include_smaller_mistakes or not found_smaller:
-                            if ex_type == 'short_answer':
-                                single_error_in_sent = True
-                                new_sent, answers = create_short_answer_ex(sent, wrong, other, right_answer, index)
-                                var1 = not var1
-                    elif ex_type == 'word_form':
+                    if ex_type == 'word_form':
                         try:
                             new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + ' (' +\
-                                   self.check_headform(right_answer) + ')' + other[int(index):] #+ '.'
+                                   self.check_headform(right_answer) + ')' + other[int(index):] + '.'
                             answers = [right_answer]
                         except:
                             if len(self.exercise_types) > 1:
                                 ex_type = random.choice(types1) 
                             else:
                                 continue
-                    elif ex_type == 'short_answer':
-                        new_sent, answers = create_short_answer_ex(sent, wrong, other, right_answer, index)
-                    elif ex_type == 'open_cloze':
-                        new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):] #+ '.'
+                    if ex_type == 'short_answer':
+                        if self.bold:
+                            new_sent = sent + '<b>' + wrong + '</b>' + other[int(index):] + '.'
+                        else:
+                            new_sent = sent + wrong + other[int(index):] + '.'
                         answers = [right_answer]
-                    # if ex_type == 'multiple_choice':
-                    #     new_sent = sent + "_______ " + other[int(index):] #+ '.'
-                    #     answers = self.find_choices(right_answer, wrong, new_sent)
-                    #     if len(answers)<3:
-                    #         sentences[i] = sent + ' ' + right_answer + ' ' + other[int(index):] #+ '.'
-                    #         answers = []
-                    #     else:
-                    #         if self.show_messages:
-                    #             print('choices: ',answers)
+                    if ex_type == 'open_cloze':
+                        new_sent = sent + "{1:SHORTANSWER:=%s}" % right_answer + other[int(index):] + '.'
+                        answers = [right_answer]
+                    if ex_type == 'multiple_choice':
+                        new_sent = sent + "_______ " + other[int(index):] + '.'
+                        answers = self.find_choices(right_answer, wrong, new_sent)
+                        if len(answers)<3:
+                            sentences[i] = sent + ' ' + right_answer + ' ' + other[int(index):] + '.'
+                            answers = []
+                        else:
+                            if self.show_messages:
+                                print('choices: ',answers)
                         
                 except:
                     ## вот здесь работаем с предложениями, где больше одной ошибки
                     ## сюда имплементируй иерархию тегов:
                     split_sent = sent2.split('**')
-                    n = (len(split_sent) - 1) / 6
-                    if n%1:
+                    n = (len(split_sent) - 1) / 3
+                    try:
+                        chosen = random.randint(0,n-1)
+                    except:
                         print('Some issues with markup, skipping:',sent2)
                         continue
-                        # raise Exception
                     new_sent,answers = '',[]
-                    if ex_type=='short_answer' or ex_type=='multiple_choice':
-                        if not self.hier_choice:
-                            chosen = random.randint(0,n-1)
-                            if self.make_two_variants:
-                                other_err_ids = list(range(0,n))
-                                other_err_ids.pop(chosen)
-                                chosen2 = random.choice(other_err_ids)
-                        else:
-                            err_types = list(enumerate([split_sent[i] for i in range(len(split_sent)) if i%6==3])) ##находим все типы ошибок в предложении
-                            err_types = sorted(err_types, key = lambda x: self.get_hierarchy(x[1]), reverse = True) ##сортируем порядковые номера (по нахождению в тексте слева направо тегов
-                            # print(err_types)
-                            ##ошибок в согласии с иерархией тегов ошибок)
-                            chosen = err_types[0][0]
-                            if self.make_two_variants:
-                                new_sent2, answers2 = '',[]
-                                if split_sent[chosen*6+3]!='Parallel_construction':
-                                    chosen2 = err_types[1][0]
-                                else:
-                                    chosen2 = -1
-                                    for i in range(1,len(err_types)):
-                                        if split_sent[i*5+3]=='Parallel_construction' and split_sent[i*5+1]==split_sent[chosen*5+1]:
-                                            continue
-                                        else:
-                                            chosen2 = err_types[i][0]
-                                    if chosen2 == -1:
-                                        if self.exclude_repeated:
-                                            continue
-                                        else:
-                                            chosen2 = err_types[1][0]
-                            # print(chosen, chosen2)
-                    sent_errors = [{'sent':split_sent[i],'right_answer':split_sent[i+1],'err_index':split_sent[i+2],'err_type':split_sent[i+3],
-                    'relation':split_sent[i+4],'index':split_sent[i+5],'other':split_sent[i+6]} for i in range(0,len(split_sent),6) if len(split_sent[i:i+5]) > 1]
-                    # print(chosen, len(sent_errors))
-                    for i in range(len(sent_errors)):
-                        if not to_skip:
-                            # sent, right_answer, err_type, relation, index, other = split_sent[i],split_sent[i+1],split_sent[i+2],split_sent[i+3],split_sent[i+4],split_sent[i+5]
-                            sent,right_answer,index,relation,other = sent_errors[i]['sent'],sent_errors[i]['right_answer'],sent_errors[i]['index'],sent_errors[i]['relation'],sent_errors[i]['other']
-                            # print('/'.join([sent, err_index, right_answer, err_type, relation, index, other]))
-                            # input()
+                    for i in range(0,len(split_sent),3):
+                        if len(split_sent[i:i+4]) > 1 and not to_skip:
+                            sent, right_answer, index, other = split_sent[i],split_sent[i+1],split_sent[i+2],split_sent[i+3]
                             try:
                                 index = int(index)
                             except:
                                 to_skip = True
-                                # print('index: ', index)
                                 continue
                             if ex_type == 'open_cloze' or ex_type == 'word_form':
                                 if ex_type == 'open_cloze':
@@ -966,88 +761,54 @@ class Exercise:
                                     except:
                                         new_sent += right_answer + other[int(index):]
                             else:
-                                wrong = other[:int(index)]
-                                if i == chosen:
+                                ## всё-таки берём случайную ощибку, т.к. пременная chosen - выход ГСЧ
+                                ## вместо этого нужно имплементировать иерархию
+                                ## кмк лучше переписать функцию с нуля
+                                if i == chosen*3:
+                                    wrong = other[:int(index)]
                                     if ex_type == 'short_answer':
                                         if self.bold:
                                             new_sent += '<b>' + wrong + '</b>' + other[int(index):]
                                         else:
                                             new_sent += wrong + other[int(index):]
                                         answers = [right_answer]
-                                        # print(right_answer)
-                                    if self.make_two_variants:
-                                        new_sent2 += right_answer + other[int(index):]
-                                    # elif ex_type == 'multiple_choice':
-                                    #     new_sent2 += "_______ " + other[int(index):]
-                                    #     answers2 = self.find_choices(right_answer, wrong, sent)
-                                    #     if len(answers)<3:
-                                    #         new_sent2 += right_answer + other[int(index):]
-                                    #         answers2 = []
-                                elif self.make_two_variants:
-                                    if i==chosen2:
-                                        if ex_type == 'short_answer':
-                                            if self.bold:
-                                                new_sent2 += '<b>' + wrong + '</b>' + other[int(index):]
-                                            else:
-                                                new_sent2 += wrong + other[int(index):]
-                                            answers2 = [right_answer]
-                                        # elif ex_type == 'multiple_choice':
-                                        #     new_sent2 += "_______ " + other[int(index):]
-                                        #     answers = self.find_choices(right_answer, wrong, sent)
-                                        #     if len(answers)<3:
-                                        #         new_sent += right_answer + other[int(index):]
-                                        #         answers = []
-                                        new_sent += right_answer + other[int(index):]
-                                    else:
-                                        new_sent += right_answer + other[int(index):]
-                                        if relation == 'Parallel_construction' and right_answer == sent_errors[chosen2]['right_answer']:
-                                            if ex_type == 'short_answer':
-                                                if self.bold:
-                                                    new_sent2 += '<b>' + wrong + '</b>' + other[int(index):]
-                                                else:
-                                                    new_sent2 += wrong + other[int(index):]
-                                            # elif ex_type == 'multiple_choice':
-                                            #     new_sent2 += "_______ " + other[int(index):]
-                                        else:
-                                            new_sent2 += right_answer + other[int(index):]
+                                    elif ex_type == 'multiple_choice':
+                                        new_sent += "_______ " + other[int(index):]
+                                        answers = self.find_choices(right_answer, wrong, sent)
+                                        if len(answers)<3:
+                                            new_sent += right_answer + other[int(index):]
+                                            answers = []
                                 else:
-                                    if relation == 'Parallel_construction' and right_answer == sent_errors[chosen]['right_answer']:
-                                        if ex_type == 'short_answer':
-                                            if self.bold:
-                                                new_sent += '<b>' + wrong + '</b>' + other[int(index):]
-                                            else:
-                                                new_sent += wrong + other[int(index):]
-                                        # elif ex_type == 'multiple_choice':
-                                        #     new_sent += "_______ " + other[int(index):]
-                                    else:
-                                        new_sent += right_answer + other[int(index):]
+                                    new_sent += right_answer + other[int(index):]
                             if i == 0:
                                 new_sent = sent + new_sent
-                                if self.make_two_variants:
-                                    new_sent2 = sent + new_sent2
                         else:
-                            new_sent = new_sent #+ '.'
-                            if self.make_two_variants:
-                                new_sent2 = new_sent2 #+ '.'
-                if self.make_two_variants:
-                    if ex_type in ('short_answer','multiple_choice'):
-                        if single_error_in_sent:
-                            # print(var1)
-                            if var1==True:
-                                build_exercise_text(new_sent, answers, 1, single_error_in_sent)
-                            elif var1==False:
-                                build_exercise_text(new_sent, answers, 2, single_error_in_sent)
-                        else:
-                            if sent2.count('**')>6:
-                                build_exercise_text(new_sent,answers,1, single_error_in_sent)
-                                build_exercise_text(new_sent2,answers2,2, single_error_in_sent)
-                            else:
-                                build_exercise_text(new_sent,answers,1, single_error_in_sent)
-                                build_exercise_text(new_sent,answers,2, single_error_in_sent)
-                    else:
-                        build_exercise_text(new_sent,answers, single_question = single_error_in_sent)
+                            new_sent = new_sent + '.'
+                if sent1 and sent3 and self.context: # fixed sentences beginning with a dot
+                    text = sent1 + '. ' + new_sent + ' ' + sent3 + '.'
+                elif sent3 and self.context:
+                    text = new_sent + ' ' + sent3 + '.'
                 else:
-                    build_exercise_text(new_sent,answers, single_question = single_error_in_sent)
+                    text = new_sent
+                text = re.sub(' +',' ',text)
+                text = re.sub('[а-яА-ЯЁё]+','',text)
+                if self.maintain_log:
+                    question_log = {"ex_type":ex_type,"text":text,"answers":answers,"to_skip":to_skip,"result":"not included"}
+                if ('**' not in text) and (not to_skip) and (answers != []):
+                    ##закомменть:
+                    if self.show_messages:
+                        print('text, answers: ', text, answers)
+                    if self.maintain_log:
+                        question_log["result"] = "ok"
+                    good_sentences[ex_type].append((text, answers))
+                elif '**' in text:
+                    if self.show_messages:
+                        print('text and answers arent added cause ** in text: ', text, answers)
+                elif to_skip:
+                    if self.show_messages:
+                        print('text and answers arent added cause to_skip = True: ', text, answers)
+                if self.maintain_log:
+                    self.log.append(question_log)
         return good_sentences
 
     def write_sh_answ_exercise(self, sentences, ex_type):
@@ -1173,15 +934,6 @@ class Exercise:
         """Write it all in moodle format and txt format"""
         print('Making exercises...')
         all_sents = {x:list() for x in self.exercise_types}
-        if self.make_two_variants:
-            if 'short_answer' in all_sents:
-                all_sents.pop('short_answer')
-                all_sents['short_answer_variant1'] = list()
-                all_sents['short_answer_variant2'] = list()
-            if 'multiple_choice' in all_sents:
-                all_sents.pop('multiple_choice')
-                all_sents['multiple_choice_variant1'] = list()
-                all_sents['multiple_choice_variant2'] = list()
         if self.use_ram:
             list_to_iter = self.processed_texts
         else:
@@ -1192,8 +944,6 @@ class Exercise:
                 text_array = f.split('#')
             else:
                 with open(self.path_new + f,'r', encoding='utf-8') as one_doc:
-                    ##comment out when ready:
-                    # print(f)
                     text_array = one_doc.read().split('#')
             current_number = 0
             for words in text_array:
@@ -1209,24 +959,12 @@ class Exercise:
             if '**' in new_text:
                 new_sents = self.create_sentence_function(new_text)
                 for key in all_sents:
-                    if self.make_two_variants:
-                        for ex in self.exercise_types:
-                            if len(new_sents[ex+'_variant1'])>len(new_sents[ex+'_variant2']):
-                                for i in range(len(new_sents[ex+'_variant1'])):
-                                    if new_sents[ex+'_variant1'][i][3] == True:
-                                        new_sents[ex+'_variant1'].pop(i)
-                                        break
                     all_sents[key] += new_sents[key]
         for key in all_sents:
             print('Writing '+key+' questions, '+str(len(all_sents[key]))+' total ...')
-            if '_variant' in key:
-                ex_type = '_'.join(key.split('_')[:-1])
-                self.write_func[ex_type](all_sents[key],key)
-            else:
-                self.write_func[key](all_sents[key],key)
-        if not self.use_ram:
-            if not self.keep_processed:
-                shutil.rmtree('./processed_texts/')
+            self.write_func[key](all_sents[key],key)
+
+        shutil.rmtree('./processed_texts/')
 
         if self.maintain_log:
             self.write_log()
@@ -1302,24 +1040,21 @@ def test_with_ram():
 def test_direct_input():
     with open (r'./2nd-year-thesis/realec_dump_31_03_2018/exam/exam2014/DZu_23_2.txt','r',encoding='utf-8') as inp:
         text = inp.read()
-    with open (r'./2nd-year-thesis/realec_dump_31_03_2018/exam/exam2014/DZu_23_2.ann','r',encoding='utf-8') as inp:
+    with open (r'./2nd-year-thesis/realec_dump_31_03_2018/exam\exam2014\DZu_23_2.ann','r',encoding='utf-8') as inp:
         ann = inp.read()
     #for ex_type in ('open_cloze', 'short_answer', 'word_form'):
     main(ann=ann, text=text, exercise_types = ['open_cloze', 'short_answer', 'word_form'], use_ram = True,
      output_path = './test_with_direct_input_output_file_input', error_types = [], mode='direct_input', context=False,
       maintain_log = True, show_messages = True, bold = True)
 
-def generate_exercises_from_essay(essay_name, context=False, exercise_types = ['short_answer'],file_output = True, show_messages = False,
- write_txt = False, use_ram = True, output_file_names = None, keep_processed = False, maintain_log = False, hier_choice = False,
- make_two_variants = False, exclude_repeated = False, output_path = 'quizzes', include_smaller_mistakes = True, file_prefix = os.getcwd()+'/'):
+def generate_exercises_from_essay(essay_name, context=False, exercise_types = ['short_answer'],file_output = True,
+ write_txt = False, use_ram = True):
     helper = realec_helper.realecHelper()
     helper.download_essay(essay_name, include_json = False, save = False)
     e = Exercise(ann=helper.current_ann, text=helper.current_text,
      exercise_types = exercise_types, use_ram = use_ram,
-     output_path = output_path, error_types = [], mode='direct_input', context=context,
-     maintain_log = maintain_log, show_messages = show_messages, bold = True, file_output = file_output, write_txt = write_txt, output_file_names = output_file_names,
-     keep_processed = keep_processed, hier_choice = hier_choice, make_two_variants = make_two_variants, exclude_repeated = exclude_repeated,
-     include_smaller_mistakes = include_smaller_mistakes, file_prefix = file_prefix)
+     output_path = './test_with_direct_input_output_file_input', error_types = [], mode='direct_input', context=context,
+     maintain_log = False, show_messages = False, bold = True, file_output = file_output, write_txt = write_txt)
     e.make_data_ready_4exercise()
     e.make_exercise()
     if file_output:
@@ -1340,7 +1075,7 @@ def test_with_relations():
     print(essay_paths)
 
 if __name__ == '__main__':
-   console_user_interface()
+#    console_user_interface()
 #    test_launch()
 #    test_ideally_annotated()
 #    test_direct_input()
@@ -1348,9 +1083,4 @@ if __name__ == '__main__':
     # file_objects = generate_exercises_from_essay('/exam/exam2014/DZu_23_2', file_output = False, write_txt = False)
     # for i in file_objects:
     #     print(i, file_objects[i].getvalue())
-    # file_addrs = generate_exercises_from_essay('http://realec.org/index.xhtml#/exam/exam2017/EGe_105_2', file_output = True, write_txt = False, use_ram=False,
-    # keep_processed=True, maintain_log = True, hier_choice = True, make_two_variants = True, exclude_repeated = True, context = False, output_path='quizzes',
-    # include_smaller_mistakes=False, show_messages = True)
-    # for i in file_addrs:
-    #     print(i, file_addrs[i]+'.xml')
-    # console_user_interface()
+    console_user_interface()
