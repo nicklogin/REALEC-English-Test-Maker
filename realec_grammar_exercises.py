@@ -1284,12 +1284,12 @@ Number''')
 
 def main(path_to_data = None,exercise_types = None,output_path = None,error_types = None,mode = 'direct_input',
 context = True, maintain_log = True, show_messages = False, bold = True, use_ram = False, ann = None, text =None,
-make_two_variants = False, exclude_repeated = False):
+make_two_variants = False, exclude_repeated = False, hier_choice = True):
     e = Exercise(path_to_realecdata = path_to_data, exercise_types = exercise_types, output_path = output_path,
      ann = ann, text = text, error_types = error_types, bold=bold, context=context,mode=mode, maintain_log=maintain_log,
      show_messages=show_messages,use_ram = use_ram,
      make_two_variants = make_two_variants,
-     exclude_repeated=exclude_repeated, keep_processed = False, hier_choice = True)
+     exclude_repeated=exclude_repeated, keep_processed = False, hier_choice = hier_choice)
     e.make_data_ready_4exercise()
     # e.test_tokenizing()
     ## commented out for testing purposes:
@@ -1320,7 +1320,8 @@ To proceed, enter either 'Number','Preposotional_noun Prepositional_adjective Pr
         context = False
     from datetime import datetime
     startTime = datetime.now()
-    main(path_to_data, exercise_types, output_path, error_types,mode='folder',context=context,bold = True)
+    main(path_to_data, exercise_types, output_path, error_types,mode='folder',context=context,bold = True,
+    make_two_variants=True, hier_choice=True)
     print('finished in '+str(datetime.now() - startTime))
 
 def test_launch():
