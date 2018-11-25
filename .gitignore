@@ -4,3 +4,5 @@
 *.db
 *.model
 *.npy
+/moodle_exercises
+/exam2017

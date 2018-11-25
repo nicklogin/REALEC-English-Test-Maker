@@ -286,9 +286,9 @@ class Exercise:
         else:
             self.path_old = path_to_realecdata
         if self.file_output:
-            self.output_path = self.file_prefix + output_path
             if not output_path:
                 output_path = 'moodle_exercises'
+            self.output_path = self.file_prefix + output_path
             os.makedirs(self.output_path, exist_ok = True)
             if output_file_names:
                 self.output_file_names = output_file_names
@@ -801,7 +801,7 @@ Number''')
         corrected_sent = ''
         for i in sent:
             if '>>' in i:
-                corrected_sent += ''.join(i.split('**')[-1].split('>>'))
+                corrected_sent += i.split('**')[0] + i[i.find('>>')+2:]
             else:
                 corrected_sent += i
         return corrected_sent
@@ -865,6 +865,9 @@ Number''')
             #     print(sentence)
         var1 = True
         for sent2 in sentences:
+            if 'unamployment' in sent2:
+                print(sent2)
+                exit()
             # c += 1
             single_error_in_sent = False
             to_skip = False
@@ -1389,18 +1392,17 @@ def test_with_relations():
     essay_paths = generate_exercises_from_essay(essay_name, use_ram=False)
     print(essay_paths)
 
+def download_folder_and_make_exercises(folder_name, output_path=None):
+    r = realec_helper.realecHelper()
+    r.download_folder(folder_name)
+    exercise_types = ['short_answer']
+    error_types = []
+    context=True
+    main(path_to_data = r.path, exercise_types=exercise_types,
+    output_path=output_path, error_types=error_types,
+    mode='folder',context=context,bold = True,
+    make_two_variants=True, hier_choice=True)
+
 if __name__ == '__main__':
-   console_user_interface()
-#    test_launch()
-#    test_ideally_annotated()
-#    test_direct_input()
-    # test_with_realec_helper()
-    # file_objects = generate_exercises_from_essay('/exam/exam2014/DZu_23_2', file_output = False, write_txt = False)
-    # for i in file_objects:
-    #     print(i, file_objects[i].getvalue())
-    # file_addrs = generate_exercises_from_essay('http://realec.org/index.xhtml#/exam/exam2017/EGe_105_2', file_output = True, write_txt = False, use_ram=False,
-    # keep_processed=True, maintain_log = True, hier_choice = True, make_two_variants = True, exclude_repeated = True, context = False, output_path='quizzes',
-    # include_smaller_mistakes=False, show_messages = True)
-    # for i in file_addrs:
-    #     print(i, file_addrs[i]+'.xml')
-    # console_user_interface()
+    download_folder_and_make_exercises('/exam/exam2017/')
+#    console_user_interface()
