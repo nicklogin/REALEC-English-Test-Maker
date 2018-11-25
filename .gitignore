@@ -4,6 +4,7 @@
 *.db
 *.model
 *.npy
+*.spec
 /moodle_exercises
 /exam2017
 /build
