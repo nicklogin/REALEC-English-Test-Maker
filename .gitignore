@@ -6,3 +6,5 @@
 *.npy
 /moodle_exercises
 /exam2017
+/build
+/dist

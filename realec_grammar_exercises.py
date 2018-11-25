@@ -1404,5 +1404,4 @@ def download_folder_and_make_exercises(folder_name, output_path=None):
     make_two_variants=True, hier_choice=True)
 
 if __name__ == '__main__':
-    download_folder_and_make_exercises('/exam/exam2017/')
-#    console_user_interface()
+   console_user_interface()
