@@ -1,0 +1,5 @@
+The graphs below show temperatures in Yakutsk, Russia and Rio de Janeiro, Brazil. 
+
+Overall, temperatures in Yakutsk change more than in Rio de Janeiro. In Yakutsk, the temperature can go from approximately -40*C in winter to +25*C. 
+
+To conclude, in Yakutsk<<, Russia,**T1**Punctuation**None**8**, Russia>> the climate is <<quite**T2**Spelling**None**5**quiet>> severe, compared to <<the climate**T3**Articles**None**7**climate>> in Rio de Janeiro, Brazil.

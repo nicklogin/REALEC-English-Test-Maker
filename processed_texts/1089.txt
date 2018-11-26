@@ -1,0 +1,7 @@
+The line graphs give information about average highest and lowest temperatures in 2 diffirent contries in each month.
+
+Overall, we can see that trend of maximum and minimum temperatures is almost equal. in each contries, however level of owns temperatures is different. Furthemore average temperatures in Yakutsk, Russia is increasing and droping while it in Rio de Janeiro is stabily not changing.
+
+First of all, in Jan in Russia highest temperature is almost -35 °C and it slowly rising to less than 30 °C, while in the same mounth lowest temprechure has the same changes and grow from - 40 °C to a bit more than 10 °C. Than both lines signifently decline by almost 60 °C and became equal the same temperature which was at the begining.
+
+Situation with the second graphs is vase versa. In the begining Maximum and minimum temperature are 30 °C and almost 22 °C then their lines have a bit drop to almost 15 °C and 25 °C respectively with fluctuete and in the end they go up to the same temperatures.

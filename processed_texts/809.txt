@@ -1,0 +1,7 @@
+﻿The bar chart provides <<information**T212**Articles**None**15**the information>> about development of <<the book market**T213**Articles**None**11**book market>> in such countries as <<the USA**T214**Articles**None**3**USA>>,Germany, China and <<the UK**T219**Articles**None**2**uk>> between 2014 and 2018.
+The tend is that Print 2014 was a significant decrease in different countries.
+In USA there was 10.5 Billion Dollars for print 2014, but it decreased to 7,5 for print 2018.
+However eBook 2014 was a significand increase for eBook 2018.In Germany, The number of Print between 2014 and 2018 remained stable, but number eBook was a significant rise from 1 for 2014 to 1,5 for 2018 Billion US Dollars.
+On the other hand, it can be noticed that in China Print 2014 decreased from 4,8 to 4,2 for Print 2018.Also in China eBook 2014 was rise from 0,5 to 1 of eBook 2018.
+In Uk , Print 2014 was 2,6 Billion and it went down for 2 Print 2018. EBook was s<<underwent**T218**lex_item_choice**None**3**was>>i<<a significant increase**T219**Articles**None**20**significant increase>>from 1,8 of Print 2014 it reached 2,3 of eBook 2018.
+By observing the chart given, it can be concluded that maximum was Print 2014 in USA and minimum was eBook 2014 in China.

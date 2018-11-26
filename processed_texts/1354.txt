@@ -1,0 +1,7 @@
+The <<charts**T1**Noun_number**None**5**chart>> <<show**T2**Agreement_errors**None**5**shows>> <<the difference**T3**Articles**None**10**difference>> of <<goods' transportation**T4**Possessive**None**20**goods transportation>> by rail and by road between countries in Eastern Europe in 2008. Manufactured goods almost <<the leader**T24**Articles**None**11** the leader>> in both types of transportation. It consisted 25% by rail transported and 28% by road. Other goods were different in transported ways.
+
+The leader of <<the rail transportation**T7**Articles**None**19**rail transportation>> were metals, which consist 35%. The second place had manufactured goods. All other types of goods consisted <<about**T8**lex_item_choice**None**5**above>> the same <<percentage**T9**lex_item_choice**None**4**part>>.
+
+<<There was a different situation in the road transportation**T15**Standard**None**76**In the road transportationtransportation way there was a different situation>>. The <<leading**T16**Category_confusion**None**4**lead>> position had food products #DELETE#5#goods, <<when**T18**Spelling**None**4**whes>> metals consisted only 11%. The smallest <<percentage**T19**lex_item_choice**None**4**part>> had machinery goods.
+
+To <<sum**T20**Spelling**None**3**sun>> up, <<the percentages**T24**Often_confused**None**7**percent>> of goods changed in different ways of transportion. Only manufactured goods <<had**T23**Tense_choice**None**4**were>> <<the same proportions**T24**Absence_explanation**None**8**the same>> by rail and by road transportation.

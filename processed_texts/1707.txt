@@ -1,0 +1,3 @@
+The bar chart illustrates data on the ebook and print market in several countries from 2014 to 2018.
+According to the chart the highest revenue from the book markets was in <<the USA**T104**Articles**None**3**USA>> in 2014 and the lowest will be in China in 2018.
+The eBook will be widespread in <<the USA**T105**Articles**None**3**USA>> in 2018, meanwhile in China in this period they <<will not be rather popular**T106**Absence_comp_sent**None**23**will not rather popular>>. In Germany print in the period from 2014 to 2018 is <<sold**T107**Tense_form**None**6**sailed>> for 6 billion US Dollars. In <<the UK**T108**Articles**None**2**UK>> in this time revenue fluctuated about 2,3 or 2,6 billion US Dollars.

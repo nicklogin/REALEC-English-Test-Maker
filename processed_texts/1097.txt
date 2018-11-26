@@ -1,0 +1,5 @@
+In the beginning, after viewing the first and second line graphs you can see the minimum and maximum temperatures in a different cities. As is seen in the given illustration, the data in the line graphs is presented for 1 year.
+
+From the first line graph it can be seen that the biggest indicator of temperature is about 25° in the Jule. The minimum is equal to about 12°. While the smallest indicator of temperature in Rio de Janeiro is equal to 13° in this month. It must be noted that the maximum is equal to about 25°. The analysis shows that the smallest indicator of temperature in Yakutsk is equal to -40° in the janyar. It is important to note that the maximum is equal to -35°. While the higgest indicator of temperature in Rio is equal to 30° in this month. As is presented in the illustration the minimum is equal to about 23°.
+
+In conclusion, for me it is obvious that the maximum and minimum temperatures in Rio de Janeiro and Yakutsk is very different. When temperature is increas in the first city, the temperature is decreas in the other city.

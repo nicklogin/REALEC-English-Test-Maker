@@ -1,0 +1,5 @@
+The charts <<represent**T1**Tense_form**None**10**represents>> transportation of goods between countries in Eastern Europe.
+Firstly, manufactured goods <<make up**T2**lex_item_choice**None**7**consist>> one of the largest part of goods transport <<both by rail and by road**T3**Linking_device**None**22**as by rail, as by road>>.
+The percentage of transporting metals by rail <<accounts for**T11**lex_item_choice**None**2**is>> 35%, compared to 11%, <<transported**T10**Voice**None**12**transporting>> by car.
+On the other <<hand**T4**lex_part_choice**None**4**side>>, <<products**T5**Spelling**None**8**produsts>> <<constitute**T8**lex_item_choice**None**3**are>> 30% of goods, transported by road, compared to 11% <<transported**T9**Voice**None**12**transporting>> by train.
+Overall, metals, machinery and manufactured goods mostly <<are transported**T6**Voice**None**9**transport>> by rail and food <<products**T7**Spelling**None**9**productst>>, manufactured goods, chemicals and non-metallic minerals by car.

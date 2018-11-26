@@ -1,0 +1,7 @@
+The bar chart gives the information about volume of unemployment people from different regions in the world and compares differences between 2014 and 2015.
+
+As it can be observed the worldwide rate ammounted to 5,9 % in 2014 and it remained at the same level in 2015. Moreover, the unemployment rate in North Africa accounted for 12,5% and it stayed at the same level too.
+
+In Middle East the volume of unemploued people decrease from 11% to 9,6%, whereas in Europe the rate of unemployed people increased slightly. It can be seen that in Latin America the rate was 6,8 in 2014 and 2015 it decreased by one persantage point. In South Asia the economic situation did not change and the rate accouned for 3,9 % for both 2014 and 2015.
+
+Overall, it can be noticed that the most significant change was in Middle East, where the rate decline on 2 % in 2015. Besides, the highest unemployment rate in North Africa, while the smalest in South Asia.

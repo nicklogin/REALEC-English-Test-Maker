@@ -1,0 +1,7 @@
+﻿The chart represents the data that concerns the percentage of prison population among white and non-white races. In the USA and the UK there are contrary tendencies.
+
+Generally, in the UK the ethnic background is considered to be an im<<important**T1**Spelling**None**10**impportant>>haracteristic.The vast majority of population are white people while less than 15 percent of people are of other races. What is more, nearly three fo<<quarters**T6**lex_item_choice**None**6**fourth>>f people who can be called as#DELETE#2# "white" were imprisoned. However, for non-white part of the population this figure is much less - 26 percents.
+
+By and large, the society in the USA is a bit more homo<<homogeneous**T2**Spelling**None**11**homogenious>>ertheless, the vast majority of the population are still people belonging to white race. But,<<But**T3**Punctuation**None**4**But,>> rates of imprisoned citizens are higher for so-called "non-white" race whic<<, which**T8**Punctuation**None**5**which>>p<<constitutes**T9**lex_item_choice**None**8**compound>>percent.
+
+Taking the information into account, it is important to emphasize that both in the USA and the UK white part of the population prevai<<prevails**T4**Tense_choice**None**9**prevailed>>non-white one. However, the levels<<distribution of the levels**T11**Absence_explanation**Dependent_change**6**levels>>ime (in ac<<by the ethnic background**T12**Punctuation**None**42**(in accordance with the ethnic background)>>rs greatly.

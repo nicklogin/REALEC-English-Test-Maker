@@ -1,0 +1,11 @@
+﻿The graph below shows <<the usage of three different social networks in percentage**T1**Standard**None**52**the percentage use of three different social network>>s by online adults in the USA by age group.
+
+Talking about the youngsters it could be mentioned that using Fa<<Facebook is the most popular social network.**T2**Absence_comp_sent**None**28**Facebook is the most popular>>Moreover,this web-site is on top for<<among**T3**Word_choice**None**3**for>>ople of all ages.
+
+Situation with Instagram has s<<is different**T4**lex_item_choice**None**16**has some changes>>re is no doubt,that more that half teenagers use Instagram whereas percentage of adults has d<<is different**T5**Word_choice**None**15**has differences>>y forty <<fourty-two**T7**Numerals**None**10**fourty two>>nts of older generation use Instagram in comparison with Facebook,where these charts reach the top of seventy and more.
+
+It could be noticable,that the amount of people from eighteen to twenty n<<rwenty-nine**T8**Numerals**None**11**twenty nine>>lore Linkedin,has dropped dramatically.
+However, percents <<percentage**T10**Category_confusion**None**8**percents>>s,who are conne<<are connected to**T9**Prepositions**None**16**are connected in>>ial network are on th<<is**T11**Agreement_errors**None**3**are>>ame level.
+
+To sum up,it should be said that the most popular website for all age<<among**T12**Prepositions**None**3**for>>s Facebook.
+Percentage balances from fifty six to<<fifty-six**T13**Numerals**None**9**fifty six>>even<<eighty-seven**T14**Numerals**None**12**eighty seven>>for youngsters is Linkedin,whereas for adults is Instagram.

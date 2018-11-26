@@ -1,0 +1,9 @@
+These line graphs provide us with the comparison of average temperatures in Yakutsk, Russia and Rio de Janeiro, Brazil.
+
+<<The first graph**T1**Articles**None**11**First graph>> illustrates that both average temperatures grow steadily through the 1st half of the year, rising from -35*C to 25*C for maximum and -41*C to 12*C. However, the trend is different for Brazil. The maximum <<temperature**T2**Noun_number**None**12**temperatures>> <<there**T3**Ref_device**None**4**here>> decreases from -30*C in January to 25*C in June. But <<the minimum temperature**T4**Articles**None**19**minimum temperature>> rises through the first two months and <<then start to fall**T5**Absence_explanation**None**5**falls>> <<up to**T6**lex_item_choice**None**4**till>> July. 
+
+<<The period**T7**Articles**None**6**Period>> from July to December is connected with the slight falling of temperatures in Russia and <<increase**T8**lex_item_choice**None**6**rising>> in Brazil.
+
+The highest values of maximum average <<temperatures**T9**Noun_number**None**11**temperature>> for both regions have <<similar numbers**T10**Articles**None**19**the similar numbers>>, 25*C in Russia and 30*C in Brazil. Moreover, the result is the same for minimum temperatures, 12*C and +17*C. 
+
+The differences between maximum and minimum temperatures significantly change <<in**T12**Prepositions**None**3**for>> each region, 60*C in Russia and only 5*C in Brazil.

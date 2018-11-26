@@ -1,0 +1,9 @@
+The chart illustrates the changes of unemployment in different world regions between 2014 and 2015. 
+
+We can see that during the period of 2014 and 2015 the biggest unemployment rate was in North Africa. And it is clear that the charts of this region were the <<same**T1**Spelling**None**4**saim>> in both years (12,5%). Although, there is one more region, South Asia, which unemployment <<rates**T2**lex_item_choice**None**5**spots>> were <<stable**T3**lex_item_choice**None**9**stibilize>> during 2014 and 2015 (3,9% in each year).
+
+But we can see <<good things**T4**Articles**None**13**a good things>> too, it is clear that there was a small dicrease in <<the rates**T15**Noun_number**None**4**rate>> of 2 <<regions.**T7**Punctuation**None**8**regions,>> Firstly, there was a slightly dip of unemployment in Latin America from 6,8% to 5,8%. And secondly, the charts of Middle East have shown the biggest decline <<among all**T8**Prepositions**None**6**of all>> other regions, from 11% to 9,6%. 
+
+However, the unemployment rate of EU <<grew**T9**Tense_choice**None**9**has grown>> slightly in 2015, from 7,5% to 7,9%. 
+
+Overall, the last charts, worldwide, <<show**T10**Tense_choice**None**10**have shown>> that this fluctuation of unemployment <<in all regions**T11**Prepositions**None**14**of all regions>> <<had not made**T12**Tense_choice**None**12**did not make>> any <<differences to them**T14**Prepositions**None**18**difference on them>>. The unemployment charts of worldwide were <<stable**T15**lex_item_choice**None**9**stibilize>> in both years (5,9%).

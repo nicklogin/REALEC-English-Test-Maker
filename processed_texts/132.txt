@@ -1,0 +1,5 @@
+The graph gives us the information about the proportion of American adults who use three popular social networks depending on their age.
+It is obvious that Facebook is the most popular social network among all age groups in the USA. The shares of people who use Facebook are bigger for the all age groups.
+While Facebook excells other social networks, Instagram and LinkedIn both have almost the same popularity but in the different age groups. Instagram is more popular for people whose age is between 18 and 29 than LinkedIn: 53% versus 22%. LinkedIn, however, is used more by people who have age 30+.
+People from 18-29 age group prefer using Instagram and Facebook to LinkedIn. People from 30-49 age group use Facebook and LinkedIn more than Instagram. The same pattern is observed in 50-64 and 65+ groups.
+In general, young people (18-29 age group) tend to use social networks more than other groups of adults. As the people grow older, they tend to use social networks less.

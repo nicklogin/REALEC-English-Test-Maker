@@ -1,0 +1,4 @@
+﻿The graph shows how different social networks are used by online adults in the USA by age group, which are 18-29, 30-49, 50-64 and 65+. In case, there are three different social networks - Facebook, Instagram, LinkedIn.
+It can be clearly seen that Facebook is the most popular social network in the USA. More than 50 % even of people older than 65 years use it. Without any doubt, the highest number of users consists by teenagers. Also, there are another popular network, which is used by teenagers called Instagram.
+
+Another prominent thing is that only 22% of teenagers use LinkedIn. Often it is used by adults, especially by two different groups - by 30-49 years old and them who are older than 50. But, despite of that people who are older than 65 don't use this network so much. The percentage not exceed than 22%, as the percentage of teenagers.

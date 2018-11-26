@@ -1,0 +1,7 @@
+The given chart provides <<the information**T4**Articles**None**11**information>> about the transportation of goods between European countries in 2008 by rail and by road in a form of comparison.
+
+It is evident that the greatest amount of goods transported by rail is made up by metals (35%), while non-metallic minerals make up less than 10% of the whole amount of transported goods. As for the road transportation, according to the chart, it is used mainly for food products and manufactured goods transportation. It is obvious that the road <<transportation**T1**lex_item_choice**None**9**transport>> is not specified for metals and machinery transportation (which make up 13% of the whole amount together).
+
+It is easily seen that both transportation ways seem to be suitable for <<the transportation of**T2**Category_confusion**None**12**transporting>> manufactured goods (25% and 28%) and chemicals (11% and 16% of the whole amount of transportated goods respectively).
+
+To summarise  up the information below, it is needed to emphasize the fact that road and rail <<transportation systems**T3**Absence_explanation**None**9**transport>> are used for different needs.

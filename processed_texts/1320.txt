@@ -1,0 +1,9 @@
+The pie charts demonstrate the comparison between the amount of goods<< transported**T1**Punctuation**None**13**, transported>> by rail and by road in Eastern Europe in 2008. 
+
+It is obvious<< that**T2**Punctuation**None**6**, that>> the majority of goods<< which were moved by rail**T3**Defining**None**27**, which were moved by rail,>> <<are**T5**Agreement_errors**None**2**is>> metals. When the most transported goods by road are food products. 
+
+Looking at the charts <<more detaily**T6**Category_confusion**None**15**in more details>>, we can see that manufactured goods <<were**T7**Tense_choice**None**3**are>> transported both by rail and by road with the <<percentages**T8**Noun_number**None**10**percentage>> of 25% and 28%. The same trend is with chemicals, the <<proportions**T9**lex_item_choice**None**6**amount>> of them moved by rail and by road <<are**T10**Tense_choice**None**2**is>> almost the same. 
+
+In contrast, there is a significant difference in the range of machinery, 2% of which <<was**T11**Tense_choice**None**2**is>> transported by road and 12% <<was**T12**Tense_choice**None**2**is>> moved by rail. The noticeable difference of 7% can be mentioned in the <<proportions**T13**lex_item_choice**None**6**amount>> of non-metallic minerals.  
+
+All in all, the main ideas are that people prefer to transport metals by rail and food by road, while they can use both methods to <<transport**T14**lex_item_choice**None**4**move>> manufactured goods. 

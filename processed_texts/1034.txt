@@ -1,0 +1,5 @@
+The graph depicts unemployment rate in different parts of the world in 2014 and 2015 and changes between these two years. From this graph it is clearly seen that there is a big difference of unemployment rate depending on the region.
+
+North Afica has the biggest percentage of unemployment people in this years. The rate didn’t change between 2014 and 2015 and staied at 12,5%. The situation in the Middle East was better: rate was 11% in 2014 and then there was a little decrease, it felt slightly to 9,6%. The countries of the EU showed a not very good trend: there was 7,5% in 2014 and then it rose to 7,9% in 2015. The rate was reduced in Latin America, it was at 6,8% high in 2014 and then it felf slowly to 5,8%, so it follows Middle Eeast in reduction of unemployments
+
+South Asia and Worldwide had the same trend as North Africa and their data didn’t changed between 2014 and 2015. S. Asia stayed at 3,9% and their rate was better than every other region had. Worldwide kept 5,9% of unemployment rate and it was on a good position too.

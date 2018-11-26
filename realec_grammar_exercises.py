@@ -640,12 +640,12 @@ class Exercise:
                     intersects.remove(saving)
                     if intersects:
                         to_change = intersects[-1]
+                        not_to_write_sym = saving['Index'][1] - saving['Index'][0]
                         if 'Right' not in to_change or to_change['Right'] == saving['Right']:
                             indexes_comp = saving['Index'][1] - saving['Index'][0]
-                            processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+'>>'
+                            processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+saving['Wrong']+'>>'
                         else: 
                             indexes_comp = len(to_change['Right'])
-                            not_to_write_sym = saving['Index'][1] - saving['Index'][0]
                             processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+to_change['Right']+'>>'
                 else:
                     if 'Right' in intersects[-1]:

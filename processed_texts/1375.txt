@@ -1,0 +1,5 @@
+The pie charts compare <<the transportations**T11**Articles**None**14**transportation>> of goods by road and rail in Eastern Europe in 2008. The diagrams have many differences between each other.
+
+The most popular good transported by rail is metals – 35%. But in <<the other chart**T3**Articles**None**11**other chart>> the most popular is food products – 30% of this good <<were transported**T5**Voice**None**11**transported>> by road in 2008. The <<proportion**T6**lex_item_choice**None**6**number>> of metals transported by road is only 11 per cent. <<Also,**T7**Punctuation**None**4**Also>> we can see the great difference between <<the proportions of machinery transportation**T8**Absence_explanation**None**24**machinery transportation>>. Only 2 % <<were transported**T9**Voice**None**11**transported>> by road, and 12 by rail. <<the transportation**T10**Articles**None**14**Transportation>> of food products and non-metallic minerals is more popular <<by road**T11**Prepositions**None**7**on road>> (43%).
+
+As to the number of manufactured goods and chemicals

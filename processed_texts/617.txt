@@ -1,0 +1,9 @@
+﻿The two pie charts given demonstrate the two means of transport by which various goods in Eastern Europe were transported in 2008: trains and trucks.
+The data a<<is**T1**Agreement_errors**None**3**are>>provided in persents.
+
+It can be deduced from the charts that many types of goods were transported by rail as successfully as by roads in 2008.
+Namely, the amount of chemicals delivered by trains was only 5% lower than one by trucks: 11% and 16% respectively. Similarly, 25% of mani<<manufactured**T2**Spelling**None**12**manifactured>>ds were transported with the help of trains and 28% - by road.
+But the differences also exist. For example, six-time more machinery was transported by rail: it was 12% when only 2% are delivered by road.
+Trains were also more preferable for transporting metals: approximately three-time more metals were transported by them - 35%, when only 11% were moved with the help of trucks.In contrast, three-time more food products were transported by roads then by trains: 30% and 11% respectively. Speaking about non-me<<non-metallic**T3**Spelling**None**11**non-metalic>>als,it can also be noticed, that they were moved more often with the help of trucks than with the help of trains.
+
+Overall, after analyzing the information provided, it can be stated that these two means of transportation are equally popular, but for some type of good one semms to<<seems**T4**Spelling**None**5**semms>>ore beneficial than the other.

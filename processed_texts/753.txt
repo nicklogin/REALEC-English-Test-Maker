@@ -1,0 +1,7 @@
+﻿The bar chart illustrates the distribution of adult users in the USA by age group according to the use of three social networks, <<namely**T244**Punctuation**None**7**namely:>> Facebook, Instagram and <<LinkedIn**T245**Spelling**None**8**LinkedId>>.
+
+Overall, the most striking feature is that LinkedIn is used mainly by people aged 30-49, while both Facebook and Instagram are more popular among people aged 18-29.
+
+As it is illustrated, the percentage of those people, ag<< aged**T246**Punctuation**None**6**, aged>>29, who use Facebook comprises 87%, which makes Facebook the most popular social network. Considering the proportion of people, ag<< aged**T247**Punctuation**None**6**, aged>>49, 50-64 and 65+, the figures do not vary dramatically, with 73%, 63 and 56% respectively. Regarding Instagram, it is obvious that it repeats the same pattern with the highest percentage of young (aged 18-29) online users, which makes up 53%. However, the figures for all the other age groups are poor, with 25%, 11% and 6% respectively.
+
+As for LinkendIn, it is shown that the proportion of users, aged<< aged**T248**Punctuation**None**6**, aged>>, is quite similar to the adults aged 50-64, with 31% and 30% respectively. Moreover, the percentage of users, aged<< aged**T249**Punctuation**None**6**, aged>> and 65+, stands at 22%.

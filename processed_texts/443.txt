@@ -1,0 +1,7 @@
+﻿The bar chart illustrates the percentage of adults in the USA who use different social networks according to their age.
+
+To start with, it is clear from the graph that Facebook is more popular among young people from 18 to 29, 87% of this age group use this social network. Adults of the age from 30 to 49 and from 50 to 64 are also active users of Facebook - 73% and 63% respectively. And people of 65 years and mo<<above**T1**Prepositions**None**4**more>>re no<<not in favour of**T5**Redundant**None**23**not in such a favour of>>acebook, only 56% of them use this network.Instagram is not as popular as Facebook but it is also mostly used by the age group of 18-29 years old.And people of the age from 30 to 49, from 50 to 64, from 65 and mo<<above**T2**Prepositions**None**4**more>>se this social network very rarely (25%, 11%, 6% respectively).
+
+On the contrary, the number of LinkedIn users prev<<prevails**T3**Tense_form**None**7**prevail>>ng adults from 30 to 64, while only 22% of people from 18 to 29 and from 65 and more<<above**T4**Prepositions**None**4**more>> it.
+
+Overall, the most popular social network is Facebook which is used by more than 50% of each age group. But the main audience for it are young people from 18 to 29 years old.

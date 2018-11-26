@@ -1,0 +1,7 @@
+The graphics show <<difference**T1**Spelling**None**10**differense>> between maximum and minimum temperatures in two cities: Yakutsk in Russia and Rio de Janeiro in Brazil.
+
+On the first graph we can see that in Yakutsk <<the temperature**T3**Articles**None**11**temperature>> highly <<rises**T2**Agreement_errors**None**4**rise>> from above -35*C in January to more than 20*C in July. At the same time in Rio de Janeiro <<the difference**T4**Articles**None**10**difference>> <<between**T5**Spelling**None**6**betwee>> <<the temperature**T6**Articles**None**11**temperature>> in January and July is approximately 5*C.
+
+In Yakutsk <<the range**T7**Articles**None**5**range>> of maximum and minimum <<the temperature is higher**T9**Absence_comp_sent**None**19**temperatures higher>> in July (over 10*C) and from <<October**T10**Capitalisation**None**7**october>> to January <<it was**T11**Inappropriate_register**None**5**itwas>> about 5-7*C. At second graph we see that in Rio de Janeiro have stable different betwee maximum and minimum temperature about 6-7*C.
+
+In conclusion of two graphs we can say that temperature in summer mounth (from June to August) in both cities the same and about 25 to 30*C. But in Rio in winter and spring months temperature move highly than at same time in Yakutsk.

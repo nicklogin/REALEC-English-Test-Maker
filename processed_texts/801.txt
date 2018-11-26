@@ -1,0 +1,6 @@
+﻿The bar chart illustrates the statistics about the popularity of three social cites (Facebook, Instagram and Linked In) for four age groups.
+
+Speaking about the leading network, it can be noticed that Facebook is the most popular network for each generation because the vast majority of young and middle aged people, 6 out of ten persons in their 50s and early 60-s and about a half of elder generation use this cite.
+Focusing on the least popular variants for each peers, it should be said that the younger generation is not interested in chating Linked In and only two people out of ten chose this network.Only a quater of people in middle ages, a tenth of people from 50 to 64 and six out of 100 respondents from the last age group (65+) use Instagram.
+
+Overall, Facebook as a leader in all four age groups has more audience then the rest networks.

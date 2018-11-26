@@ -1,0 +1,7 @@
+The bar chart gives the information on the data about unemployment comparing two years in five different regions and worldwide.
+
+It can be clearly seen that the biggest percentage of unemployment was in countries of North America, while in South Asia it had minimal figures. The rate went down in Middle East and Latin America, increased in European Union, remained stable in North America, South Asia and average in the world. 
+
+The difference between North America and South Africa in the number of unemployees is 8,6 per cent (12,5 per cent and 3,9 per cent respectively). There were no any changes in these regions as in worldwide to. Both in 2014 and 2015 worldwide unemployment rate reached 5,9 per cent.
+
+Middle East and Latin America had similar situations: there was small decrease which was not under 2 per cent (in the first case it was only 1,4 and in the second case - 2). Only in countries of EU was some increase: the rate went up by 0,4 per cent to reach 7,9 per cent.

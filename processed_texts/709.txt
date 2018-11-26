@@ -1,0 +1,6 @@
+﻿The given graphs present the maximum and minimum temperature (C) in two cities, Yakutsk (Russia) and Rio de Janeiro (Brazil).
+Maximum temperature in Rio de Janeiro is between +25 and +30 degrees approximately. The temperature is the coldest in t<<summer months**T2**Articles**None**17**the summer months>> Minimum temperature in Rio de Janeiro changes between 23 (most of the year) and 18 (summer and spring). June, July and August a<<again show**T3**Voice**None**14**are again show>>the lowest numbers.
+
+The graph shows that temperature in Yakutsk increases slowly but steadily till July and then goes down the same way. Maximum temperature giv<<goes**T4**lex_item_choice**None**17**gives the numbers>>om -35 (winter months) to +25 (summer months). Minimum temperature in Yakutsk goes from -41 to +12 and then back to -40, approximately.
+
+In general, as the graphs show, the average temperatures in Rio de Janeiro have way more smaller changes than temperatures in Yakutsk that have a difference in somewhat 50 degrees.

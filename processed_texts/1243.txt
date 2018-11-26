@@ -1,0 +1,7 @@
+The pie charts show the <<proportions**T1**Noun_number**None**10**proportion>> of different kinds of goods transported in Eastern Europe by rail and by road in 2008. 
+
+Overall, it is clear that metal is primeraly transported by rail, while food goods by road. Manufactured goods have a substantial share in each type of transport. 
+
+More than <<a third**T2**Articles**None**5**third>> of all goods transported by rail are metals, probably, due to their high weight. The average share of other goods like chemicals, machinery, food products and non-metallic metallic minerals is rather low – 11%. 
+
+Road transport is more appreciated by food <<manufactures**T3**Spelling**None**13**manufacturers>>. 30% of all transported goods by road are food products. Machinery goods are not frequently transported by road and <<take**T4**lex_item_choice**None**5**share>> 2%. Chemicals are more often transported by road <<than**T5**Often_confused**None**4**then>> by rail in Eastern Europe #DELETE#11#sharing 16%. Metals and non-metallic minerals share 24% in road transportation, while in rail transportation they <<have**T7**lex_item_choice**None**5**share>> almost twice as many.

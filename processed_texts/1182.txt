@@ -1,0 +1,7 @@
+The given graphs give information about the average maximum  and minimum temperatures in Yakutsk (Russia) and Rio de Janeiro (Brazil).
+
+It can be seen that the smallest maximum temperature in Yakutsk is -35*C in January, while in Rio de Janeiro it is 25*C in June, July and September. Then the maximum temperature in Yakutsk <<increases**T1**Agreement_errors**None**8**increase>> rapidly <<until**T2**Inappropriate_register**None**4**till>> <<July**T3**Articles**None**8**the July>> when both maximum and minimum reach the pick of 25*C and 11*C. After that <<the temperatures**T4**Articles**None**12**temperatures>> <<fall**T5**Tense_choice**None**4**fell>> dtamatically to the maximum of -23*C and minimum of -31*C in November and -32*C with -40*C in December. 
+
+Meanwhile, in Rio de Janeiro the minimum and maximum temperatures do not fluctuate a lot. From January to June <<the temperature**T6**Articles**None**11**temperature>> falls gradually from 30*C, reaches the bottom of 25*C and then rises back to 30*C in December. The minimum increases from 23*C in January to its pick of 24*C in February and then declines steadly to its bottom of 17*C in July. After that <<the temperature**T7**Articles**None**11**temperature>> rises to 22*C in December. 
+
+Overall, in Yakutsk the hottest month is July and the coldest is January. But in Rio de Janeiro January is the hottest month, and July is <<the coldest one**T8**Superlative_adj**None**7**coldest>>.

@@ -1,0 +1,7 @@
+﻿The graphs indicate information about the highest and the lowest temperatures in two cities, Yakutsk and Rio de Janeiro, which are situated in Russia and Brazil respectively.
+
+To begin with, it is clear from the graphs that the average minimum temperatures in Rio de Janeiro reached a peak of almost 25 degrees in February. On the contrary, the highest minimum temperatures in Yakutsk is lower (approximately 11 degrees).The average maximum temperatures in Rio de Janeiro peacked at 30 degrees, while in Yakutsk it<<they were**T1**Lack_par_constr**Parallel_construction**5**it is>>nly 25 degrees.
+
+From the graphs it is clear that in Rio de Janeiro the average temperatures (both minimum and maximum) fluctuated gently, and there is no real sharp decreases or increases from January to December. In contrast, the trends for Yakutsk differ dramatically. The average temperatures rised between January and July, peacked in July and then decreased.
+
+Overall, as can be seen from the graphs, tempar<<temparature**T3**Noun_number**None**12**temparatures>>ncies in Yakutsk and Rio de Janeiro are rather different. The difference between the lowest and the highest minimum temperatures in Russian city is almost 50 degrees (from -40 to 10), whereas in Rio de Janeiro the difference is only 7 degrees (from nearly 17 to almost 24).

@@ -1,0 +1,9 @@
+We can see the bar chart which illustrate the unemployment rate changes in a number of selected regions in 2014 and 2015.
+
+The chart shows the changes in North Africa, Middle East, Europian Union, Latin America, South Asia and the worldwide rate. Geerally it is clear that there was no sharp falls and rises in percents of unemployment. Three rates from six we have in the chart remain stable.
+
+The unemployment rate in the Middle East and Latin America lightly dropped. In 2014 the rate of unemployment in the Middle East was higher for 1,4%. As for Latin America it dropped from 6,8% to 5,8. This changes shows that situation in this regions becomes better and more and more people get their job.
+
+The situation in European Union is not so good. In a year the level of unemployment slightly shot up for 0,4%. Looking at this changes we can see that european employees face some difficulties.
+
+The rates of north Africa and South Asia are stable, but the difference between this two regions is great. As for worldwide rate it remains in the middle because of this difference of rate changes of different countries.

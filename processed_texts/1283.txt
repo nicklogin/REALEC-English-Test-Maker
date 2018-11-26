@@ -1,0 +1,7 @@
+   The illustrations demonstrate structures of transportation by rail and by road in 2008 in Eastern Europe. 
+
+Overall, food products were mostly transported by road, while metals and machinery were transferred by rail. Both roads and rail were intensively used for <<manufactured goods**T1**Possessive**None**18**manufactured goods>> transportation. 
+
+To begin with, metals were the major good for <<rail transportation**T2**Absence_explanation**None**4**rail>> with 35% of all <<goods**T3**Noun_number**None**4**good>> transported #DELETE#2#in that way,  comparing to only 11% transported by road. The proportion <<of**T5**Prepositions**None**3**for>> machinery transportation was six times higher using railways than roads. By contrast, <<food products**T6**Possessive**None**13**food products>> transportation is only 11% for railways, while the proportion for road transportation is 30%. However, there are some goods which were transported in similar proportions for both road and rail transport. The percentage <<of**T7**Prepositions**None**3**for>> <<manufactured goods**T8**Noun_number**None**18**manufactured goods>> transportation were almost the same with 28% transferred by road and 25% by rail. 
+
+In conclusion, a significant difference can be seen only in metals, food products and machinery transportation. 

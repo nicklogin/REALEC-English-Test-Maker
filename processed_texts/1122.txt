@@ -1,0 +1,7 @@
+The given chart illustrates the <<differences**T1**Noun_number**None**10**difference>> in unemployment <<rates**T2**Noun_number**None**4**rate>> between some world regions in 2014 and 2015. 
+
+Overall, the highest percentage of unemployment was in North Africa with 12,5%. The lowest rate was held by South Asia with only 3,9%. Both of these results were the same in 2014 and 2014, where other regions’ unemployment rates changed depending on <<the year**T3**Articles**None**4**year>>. <<Worldwide**T4**Punctuation**None**10**Worldwide,>> the percentage was 5,9% in 2014 as well as in 2015.
+
+In the Middle East, as well as in Latin America, the number of unemployment people decreased in 2015 comparing to 2014. The percentage of <<unemployment**T5**Spelling**None**12**unemployance>> <<in**T6**Spelling**None**1**I>> the Middle East reduced by 1,4%, from 11% to 9,6%, while in Latin America it dropped by 1%, from 6,8% to 5,8%.
+
+The <<one**T7**lex_item_choice**None**4**only>> region among others selected <<that had**T8**lex_item_choice**None**7**to have>> <<the increase**T10**Articles**None**11**an increase>> of unemployance wes European Union. In 2014 there were 7,5% of people without job, but <<the percentage**T11**Absence_explanation**None**2**it>> rised in 2015 by 0,4%, giving 7,9% of unemployment rate in EU.

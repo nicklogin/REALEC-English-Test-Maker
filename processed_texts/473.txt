@@ -1,0 +1,6 @@
+﻿The chart given below provides the numbers on the time spent on sport activities and exercise in Egland in 2012. It is specified for men and women of ages from 16 to over 75 and the time is given in minutes.
+
+The overall trend suggests that the older people get the less time they spend on exercise. The chart peaks at 282,1 minutes for men in the age of 16 to 24 and reaches its lowest point at the number of 10 for women over 75.
+Generally, men spend more time on sports than women: the only age group which contradicts with this statement is 55 to 64 years old. For them, women do exercise for 2.7 minutes more than men on the average.
+
+In the age 16-24, Enligh people do sports for longer time than ever in their lives. In the age of 25-34, the number for men falls dramatically from 282.1 to 153.8 and for women it gets slightly lower - from 114.1 to 92.8. After that, the duration of exercise is tend to lower not so importantly both for men and women. For men, it even fluctuates rising by 7.8 minutes from the age of 45-54 to 55-64.

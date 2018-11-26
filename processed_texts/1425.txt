@@ -1,0 +1,5 @@
+The pie charts compare the information about the transportation of different things by rail and by road in 2008. 
+
+As can be seen from the graphs, metals are more likely to be transported by rail, because the percentage here is the highest: 35%. <<As for**T2**lex_part_choice**None**12**As it is for>> the manufactured goods, the percentage is higher in the second chart: 28%, as for the rail it is 25%. A great difference can be noticed in the transportation of machinery and food products. It is clear from the graphs that the most comfortable way of transporting machinery is by rail (12%). At the same time, it is not a good way of transporting foods: only 11% of food products <<were**T1**Tense_choice**None**3**are>> transported by rail, when by <<road**T3**Spelling**None**4**food>> the percentage gets to 30%.
+
+A closer look to the graph helps to understand that for the transportation of chemicals rails and roads are used nearly the same: 11% and 16% respectively. But when it comes to the non-metallic minerals, people from Eastern Europe have more trust in the road transportation (13%).

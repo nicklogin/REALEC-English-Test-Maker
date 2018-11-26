@@ -1,0 +1,5 @@
+﻿The bar chart illustrates the proportion of the usage of three social networks, namely: Facebook, Instagram, LinkedIn, by people of different age categories. It can be seen clearly from the chart, that while Facebook and Instagram are used mainly by people #DELETE#2#of 18-29 years old, LinkedIn is mainly deployed by people #DELETE#2#of 30-49 years old.
+
+For example, the percentage of people aged 18-29, << who use Facebook**T7**Punctuation**None**19**, who use Facebook,>>t<<stands out**T2**lex_part_choice**None**6**stands>>t 87%, while the number of 30-39 year olds comprises 63%, and the qu<<percentage**T3**lex_item_choice**None**8**quantity>>f people older than 65 co<<makes up**T8**lex_item_choice**None**8**composes>>6%. A similar pattern is repeated by Instagram with 53% of 18-29 year old people, 25% of 30-49 year old ones and 6% of population older than 65.
+
+At the same time, most of the people deploying LinkedIn belong to the age category of 30-49 years olds<<old**T4**lex_part_choice**None**4**olds>>nstituting 31%, while the percentage of population of 18-29 years old and more than 65 years old is equal, composing 22% each.

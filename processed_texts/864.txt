@@ -1,0 +1,7 @@
+﻿On the turn of the 21st century huge companies are gaining more and more popularity and replacing small businesses all over the world. This trend has various benefits and drawbacks and is quite arguable.
+I am of the opinion that t<<these changes**T1**Agreement_errors**None**12**this changes>>bring more efficiency than harm. Although, it has some huge disadvantages.
+
+One of them is the fact that there is no variety of products on the market. If all small businesses stop functioning, our world wil<<will look like as if it has been**T5**lex_part_choice**None**12**will be like>>pied and pasted millions of times. People will be wearing the same clothes, living in the same apartments, driving the same cars.
+On the other hand, specialists that used to work in small businesses could be invited to the world-known companies and present their ideas there. In that case the same production variety could be o<<appear**T5**lex_item_choice**None**2**be>>the market.
+Moreover, it is more convenient for the government to control such companies.
+In conclusion, there is no still clear opinion about that diffference.

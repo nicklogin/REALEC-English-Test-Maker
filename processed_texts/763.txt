@@ -1,0 +1,4 @@
+﻿The graph demonstrates the percentage of adult users of three social networks (Facebook, Insagram and LinkedIn) in the USA divided into four age groups 18 to 29, 30 to 49, 50 to 64 and 65+.
+Overall, it is clear that the most popular social network among all is Facebook as it has the highest percentfge of users in all four age groups.
+Instagram in comparison to LinkedIN has the highest per cent (53%) of the people from 18 to 29. Also, this social network has the lowest per cent of adults in oter three groups which are 25% for 30 to 49, 11% for 50 to 64 and only 6% for 65 and older.
+The most active LinkedIn users are in the age groups of 30 to 49 and 50 to 64 which are 31% and 30% respectively. This network has an equel 22% of users in age groups from 18 to 29 and from 65 and older.

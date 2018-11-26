@@ -1,0 +1,5 @@
+The graph illustrates the percentage of adults of different ages <<use**T1**Category_confusion**None**7**who use>> social networking sites in the USA.
+
+As can be seen from the chart, there are three major social networks used by Americans - Facebook, Instagram an<<, and**T3**Punctuation**None**3**and>>inkedIn. The majority of people using Facebook are aged 18 an#DELETE#6#d up to 29 with 87%. The 65+ age group tends to go for this social network less with only 56%. However, it is evident that Facebook is the most popular site among al<<all three given groups**T6**Absence_explanation**None**15**all three given>>Instagram is used by 53% of the 18-29 age group, which is also the majority for this particular network. But it is unpopular among those of the age of 65 and above (with only 6% of them using this app). LinkedIn is equally used by those of the age groups 18-29 and 65+ with 22% for each of them. The majority of people using this platform are of the ag<<ages**T1**Noun_number**None**3**age>>f 30-49 and 50-64 (with 31% and 30% respectively).
+
+Overall, it can be noticed that Facebook is the leading site among people of different ages.

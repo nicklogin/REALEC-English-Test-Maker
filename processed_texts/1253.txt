@@ -1,0 +1,7 @@
+The diagrams illustrate <<the differences**T1**Articles**None**10**differents>> between transportation by rail and transportation by road in Eastern Europe in 2008.
+
+We can see that <<manufactured**T2**Spelling**None**12**manufactures>> goods <<were transported**T3**Voice**None**11**transported>> more then other kinds of goods between all <<types of transportation**T4**Absence_explanation**None**15**transportations>>. <<The first chart**T5**Articles**None**11**First chart>> shows that non-metallic <<is**T21**Inappropriate_register**None**4**it’s>> the most unpopular good transported by rail. But metals have a better posicion there. <<On the second chart**T8**Articles**None**15**On second chart>> non-metallic minerals have a middle <<proportion**T9**lex_item_choice**None**6**result>>. Also we can notice that metals and <<machinery goods**T12**Absence_comp_colloc**None**9**machinery>> <<were often transported**T11**Voice**None**17**often transported>> by rail.
+
+<<The second diagram**T13**Articles**None**14**Second diagram>> shows than food products <<is**T21**Inappropriate_register**None**4**it’s>> the most popular <<kind of goods**T16**Absence_comp_colloc**None**4**kind>> for road transportation, while <<machinery goods was used there on minimum**T19**Standard**None**38**machinery goods minimum was used there>>. 
+
+Chemicals and food products <<in the first chart**T20**Prepositions**None**18**an the first chart>> have the same results.

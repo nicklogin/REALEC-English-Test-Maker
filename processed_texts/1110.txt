@@ -1,0 +1,5 @@
+The bar chart provides information about how the <<amount**T1**lex_item_choice**None**5**numbe>>r of unemployment people changes worldwide between 2014 and 2015.
+
+Overall, the most significant rate of unemployment can be seen in N.Africa and the smallest one in S.Asia. Althought, their bars remain constant during all <<period**T2**Articles**None**10**the period>>. When it comes to such zones like Middle East, Europe and Latin America, the rates are <<average**T4**lex_item_choice**None**6**middle>> and <<do not**T3**Inappropriate_register**None**5**don’t>> change dramatically.
+
+A closer look at the bars <<reveals**T5**Agreement_errors**None**6**reveal>> that N.Africa has almost 12,5% of unemployment per year, but S.Asia – 3,9% at all. The worldwide percentage is 5,9% and <<it remains**T10**Agreement_errors**None**6**remain>> stable. The biggest change can be seen in <<the**T8**Spelling**None**2**th>> M.East, <<the rate**T9**Absence_explanation**None**2**it>> has dropped <<by 1,4%**T10**Prepositions**None**4**1,4%>> from 11 to 9,6%.

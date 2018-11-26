@@ -1,0 +1,6 @@
+﻿The graphs describe the average highest and lowest temperatures in two cities, Yakutsk, Russia and Rio de Janeiro, Brazil.
+Overally, w<<within a year**T3**Punctuation**None**14**within a year,>>the maximum and minimum temperatures in Rio de Janeiro slightly fluctuated around numbers, whereas in Yakutsk the same rates showed drastic changes t<<throughout**T4**Spelling**None**9**thorought>>the time.
+
+It is clear that the year temperatures rates in Brazil remained above zero degrees in the contrast to the same temperature numbers in Russia due to the climate differences in two semispheres. While in Rio de Janeiro the average lowest temperatures fluctuated slightly around 20C during the whole period, in Yakutsk the minimum numbers rose from -40C in January to almost 10C in the middle of the summertime, then falling dramatically to the primary state in the beginning of winter.
+
+The same pattern may be related to the proportions of the highest temperature rates in the two cities. Whereas the year maximum numbers in Rio de Janeiro stayed almost stable at 30C, just falling to 25C from March to October, in Yakutsk the maximum temperatures rates increased significantly from -40C in January, peaking at 20C in July, and fell back to the original numbers in decem<<December**T1**Capitalisation**None**8**december>>

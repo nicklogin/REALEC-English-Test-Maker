@@ -1,0 +1,7 @@
+The bar chart illustrates how the percentage of unemployment changes during 2014 and 2015 in some regions. We can compare and contrast the main features.
+
+There are three regions that have the same main features. It can be clearly seen that N. Africa, S. Asia and worldwide have the same level of unemployment in 2014 and 2015. In N. Africa the percent of unemployment was 12,5 in 2014 and remained stable in 2015. The unemployment rate stayed 3,9 percent in 2014 and 2015 in S. Asia. Nothing changed in worldwide since 2014 to 2015, the percent of unemployment was 5,9.
+
+However, there are also three regions where the unemployment rate changed. In the Middle East the percent of unemployment fall to 9,6 in 2015. In contrast in the EU the percent of unemployment increased from 7,5 to 7,9 in 2015. Latin America has the same tendency as the Middle East. The amount of unemployment decreased to 5,8% in 2015.
+
+The most pivotal difference that we can recognise is that regions like N. Africa, S. Africa and worldwide have no changes in the unemployment rate in 2014-2015. Nevertheless, the percentage of unemployment in the Middle East, the EU and Latin America fluctuated in 2014-2015.

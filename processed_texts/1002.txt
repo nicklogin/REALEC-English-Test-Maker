@@ -1,0 +1,7 @@
+The bar chart provides information about the statistics of unemployment people in six regions, during 2014-2015 years.
+
+In general, the highest level of unemployment in N. Africa. The rate remained stable (12,5%) in both years.
+
+According to the chart, the lowest level of unemployment in S. Asia - 3,9 per cent. It also remained constant point over two years. We can see positive changes in Middle East and Latin America. The number of people without work decreased from 11% to 9,6%. The quantity of unemployment reduce on 1% in Latin America (6,8% to 5,8%).
+
+As we can see from the bar chart, there is negative trend in EU. The rate of unemployment grew from 7,5% to 7,9%. Moreover, according to the chart, it is only one region where it happened. In worldwide the number of unemployment remained stable on 5,9%. Overall, we can observe positive changes, but there is serious problem in N. Africa.

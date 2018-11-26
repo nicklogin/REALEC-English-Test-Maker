@@ -1,0 +1,5 @@
+﻿The bar chart illustrates the usage of three social sites by different age groups people online in America.
+
+To begin with, the highest percentage of people who use Facebook is 87 and those users' age is between 18 and 29 years. Adults who prefer Facebook as the social network the least are people from 65 and older.
+The next social media site is Instagram. The number of users who chose it strongly varies. People from 18 to 29 years use it the most while users from 50 to 64 years and 65+ don't use it that much with 11 per cent and 6 per cent, respectively. Finally, the last site,LinkedIn, is chosen by adults from 30 to 49 years and from 50 to 64 years. The percentage is very similar- 31 and 30 per cent. The number of users,who are between 18 and 29 years and 65+, of this social networking site is the same with 22%.
+In conclusion, younger adults use Facebook the most whereas they prefer LinkedIn the least.In comperison the percentage of people who use Instagram is the lowest in the group of older people. The same age group choses Facebook from other given networks.

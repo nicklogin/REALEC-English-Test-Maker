@@ -1,0 +1,7 @@
+﻿The bar chart provides <<information**T8**Articles**None**15**the information>> about the proportion of people using three social networks <<presented by**T2**Absence_explanation**None**2**by>> four age groups in the USA.
+
+Overall, it is clear from the graph that the ma<<majority**T3**Spelling**None**9**magiority>>f people of all ages us<<use**T1**Agreement_errors**None**4**uses>>acebook.
+
+The most significant figure is the percentage of 18-29 year old adults who use Facebook whic<<, which**T4**Non_defining**None**5**which>>ounts for 87%. On the contrary, the smallest number is b<<belongs**T5**Voice**None**11**is belonged>>65 y<<people 65 years old and over**T9**Standard**None**28**65 years old and over people>> use Instagram and <<, and it is**T11**Absence_comp_sent**None**8**, and is>>y 6%.
+
+However, Instagram is quite popular among the first age group, 53% <<:**T12**Punctuation**None**1**,>>f them use it. For 30-49 age group Facebook also is considered to be the most popular. 73% of them use this network while <<, while**T13**Punctuation**None**5**while>>31% use Linkedin which <<, which**T14**Coordinate**None**5**which>>re t<<less than a half**T15**Comparative_constr**None**23**more then twice as less>>over, only 25% of people from this group use Instagram. People aged 50-64 prefer Facebook and not many of them use Linkedin and Instagram. The figure comprises 63%, 30% and 11% respectively.

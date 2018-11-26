@@ -1,0 +1,12 @@
+﻿The given graph contains information about time <<English**T1**Capitalisation**None**7**english>> men and women <<spent**T9**Tense_choice**None**5**spend>> on sport in 2015.
+From the first glance it's easy n<<to notice**T10**Tense_choice**None**7**noticed>>that men d<<did**T14**Tense_choice**None**2**do>>much more sport.
+Each ta<<column in the table**T2**Absence_comp_colloc**None**5**table>>hat shows mens' time is higher, << than**T11**Punctuation**None**6**, than>>o<<the corresponding index of women**T12**Confusion_of_structures**None**7**womens'>>The biggest difference in numbers is in teenagers group of 16-24 years old young people.
+Here the amount of time men spen<<spent**T13**Tense_choice**None**5**spend>>ng exercise is b<<was**T15**Conjunctions**None**2**is>>g<<more than twice as big**T16**Numerical**None**22**bigger more than twice>>pared to the women: 282,1 minutes vs. 114,1.
+The only group, whe<< where**T18**Defining**None**7**, where>>a<<the situation**T3**Articles**None**9**situation>>p<<was**T19**Conjunctions**None**2**is>>s<<the opposite**T25**Articles**None**7**opposit>>a group of 55-64 years old people, where women spend 2,7 minutes more.
+Another obvious data in the chart is that sport time decreases as people become older.
+Only two groups rumbled<<deviated**T21**lex_item_choice**None**7**rumbled>>his statistics.
+Women in age gap from 25 to 44 show sta<<showed**T24**Tense_choice**None**4**show>>time on the l<<at**T22**Prepositions**None**2**on>>el of 92,8 minutes.
+Men in 65-74 ages made<<age group**T23**lex_item_choice**None**4**ages>>mall jump compared to 55-64 years opd men.
+<<old**T5**Spelling**None**3**opd>>y spent 7,8 minutes more than the younger group.
+To sum up, I let myself to conclude that people in England respect sport, because none of the group showed 0 minutes result.
+The shortest time is 10 minutes for women over 75 years old, what is also<<which**T7**Non_defining**None**4**what>>t time fo<<a good time**T25**Articles**None**9**good time>>ies.

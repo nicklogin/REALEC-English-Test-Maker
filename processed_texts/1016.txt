@@ -1,0 +1,9 @@
+This bar chart provides information on the dynamics of unemployment level in five world regions in 2014 and 2015. There also presented data on worldwide unemployment rate.
+
+Overall, the highest unemployment rate was observed in North America where his indicator accounted for 12,5% in both years. Another noticeable trend is a low rate of unemployment in South Asia. There was just 3,9% of people without job.
+
+In terms of Middle East, the unemployment rate demonstrated a modest decrease from 11% in 2014 to 9,6% in 2015. It can be clearly seen that this change was the most significant for all regions throughout the whole time frame.
+
+Turning to the EU, we can emphisize a 0,4% increase from 7,5% in 2014 to 7,9% in 2015. In contrast, the unemployment rate in Latin America declined by 1% and accounted for 5,8% in 2015 instead of 6,8% in 2014.
+
+The worldwide unemployment level had the same indices in both years. It is noticeable that rates of unemployment in North America and average index of world had a considerable discrepancy - approximately 6,5% difference in both years.

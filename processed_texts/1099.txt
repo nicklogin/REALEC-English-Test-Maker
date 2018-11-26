@@ -1,0 +1,5 @@
+the information given represents the difference between monthly temperatures in two cities. I am going to analize data and give a conclusion.
+
+Graphs both have significant features. First of all, temperature in Rio de Janeiro remains comparatively stable for the whole year, while this in Yakutsk changes from -40 °C to +25 °C in July. Both diagrams have two similar trend lines, one for the maximum temperatures, one for the minimum ones. It can be mentioned that these two lines on each graph go along and do not have much difference. However, one important feature hides in the climate of these two cities: while hottest months in Yakutsk are June, July and August, those in Rio are December, January and February. That is clearly seen from trend lines which bent to opposite sides.
+
+To sum up, these two graphs have little in common, as they show the situation in completely different climate belts. Moreover, cities are situated in opposite hemispheres, so graphs have much more differences than they could.

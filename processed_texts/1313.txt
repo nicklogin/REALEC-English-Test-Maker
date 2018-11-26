@@ -1,0 +1,5 @@
+The pie charts illustrate the information about goods transported by rail and by road in Eastern Europe in 2008. Overall, it can be seen that the same goods transported in different amounts by trains and automobiles. 
+
+To begin with, it is more common to transport metals by rail than by road. Approximately <<a third**T1**Articles**None**5**third>> of transported goods by rail <<are**T3**Agreement_errors**Dependent_change**2**is>> <<metals**T2**Noun_number**Dependent_change**5**metal>>, whereas for goods transported by automobiles metals <<have**T4**lex_item_choice**None**2**is>> only 11%. The amount of manufactured goods for both ways of transportation is around <<a quarter**T5**Articles**None**7**quarter>> of all. 
+
+A more detailed look reveals that food products <<have**T6**Agreement_errors**None**3**has>> 11% of goods transported by road. The lowest amount has machinery transported by automobiles around 2%. In contrast, machinery has six <<times**T8**Noun_number**None**4**time>> <<bigger**T9**lex_item_choice**None**6**many n>> percentage for <<the railway transportation**T10**Articles**None**22**railway transportation>>.  

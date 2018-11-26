@@ -1,0 +1,6 @@
+The graph provides information about development of the book sales system in 4 different countries (USA, Germany, China, UK) in 2014 and predicts future perspectives of this industry in 2018.
+Generally speaking, it is observed a great increase of eBook on the market in the USA in 2018, which will surpass printed sources. By contrast, in other countries, except the UK, printed literature will remain constant position.
+Despite the fact that print dominated on the book market of the USA in 2014 and exceeded eBook by a half (10,5 to 5,5 respectively), in 2018 it is forecasted that benefit of print literature will shrink on 3 billion US dollars. At the same time the income of eBook will grow on 3 billion US dollars and will be the most selling source of literature (8,5 billion $ of Ebook as against 7,5 billion $ of print).
+In other countries the book market is not so developed as it in the USA. However, it is forecasted that in 2018 the ebook sales will slightly overtake printed book sales (2,3 to 2 respectively).
+In Germany and China printed books will be the most popular kind of literature (6 to 4,2 respectively), especially in Germany print indicators remain stable.
+But it also be a small growth in sales of Ebooks in these countries (from 1 to 1,5 in German and from 0,5 to 1 in China).

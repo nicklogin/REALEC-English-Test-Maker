@@ -1,0 +1,5 @@
+﻿The graph demonstrates the <<percentage of**T174**Prepositional_noun**None**10**percentage>> utilization of three various social networks by online adult users in the USA <<in relation to**T175**lex_part_choice**None**12**according to>> their age group. The <<vertical**T176**Spelling**None**9**vertiucal>> y-axis illustrates the number of users and the horizontal x-axis shows specific networks.
+
+It can be clearly seen from the graph, that Facebook enjoys the greatest popularity among American adults irrespective of their age. However, both Facebook and Instagram are more preffered by users from 18 to 29 years old. Whereas Americans from 30 up to 49 tend to be more active within LinkedIn, which can be explained by the need to communicate and collaborate in business sphere.N<<. No**T177**Spelling**None**3**.No>>onder, users from 65 and older seem to show the smallest interest in all represented social networks.
+
+To sum up, we can rule out a universal law out of this graph: activity of the users always depends on their age group, as well as on the specific functions provided by different online services.

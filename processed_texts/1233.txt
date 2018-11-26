@@ -1,0 +1,7 @@
+The given chart <<shows**T1**Agreement_errors**None**4**show>> the amount of goods transported by road and by rail in Eastern Europe in 2008.
+
+As it can be seen from the chart 1, metals are the most popular good which <<was**T2**Agreement_errors**None**4**were>> transported by rail, while in <<the chart**T3**Articles**None**5**chart>> 2 it is evident that this kind of goods is on the fifth place. In 2008 food products <<were in the lead**T4**Tense_form**None**12**were leading>> in <<the average amount**T5**Articles**None**17**an average amount>> of goods which were transported by road. Comparing two charts, it can be concluded that manufactured goods were transported both by rail and by road in the same amount.
+
+<<The chart**T6**Articles**None**5**Chart>> two shows that machinery goods <<take**T7**Agreement_errors**None**5**takes>> the least percent of goods transported by road, while this kind of goods was successfully transported by rail – it took 12% of an all amount of goods transported this way. 
+
+As it can be concluded  from the comparison of two charts, different goods need different ways of transportation. For example, it is more comfortable and less expensive to transport machinery goods by rail<< than**T8**Punctuation**None**6**, than>> by road, so this is why <<the two ways**T10**Articles**None**8**two ways>> of transportation have different <<percentages**T11**lex_item_choice**None**15**percent numbers>> of different transported goods during the same period.

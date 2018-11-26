@@ -1,0 +1,8 @@
+﻿The bar chart provides information about the three social networks used by online Americans over 18 years old divided into four different age groups.
+
+As can be seen from the graph, Facebook and Instagram are more preferable for adults from 18 to 29 years old, being chosen by 87 and 53 per cent of the pollee respectively, whereas LinkedIn is more widely used among those at the age of 30-49, reaching almost a third of the votes.
+However,the graph illustrates that older people over 65 years old are interested in all three social networks the least of all. Facebook captured practically a half of the users of this age group, Instagram includes only six per cent of them and LinkedIn - 22 per cent.
+
+It can be noticed from the chart, that Americans at the age of 30-49 and 50-64 are relatively similar in using all the networks. With slight differences, the persentage of users is approximately the same, 73 and 63 per cent respectively for Facebook, 25 and 11 for Instagram, 31 and 30 for LinkedIn.
+
+Overall, the persentage of the networks` users depends on their age, since yonger generation outnumbered the oler people.

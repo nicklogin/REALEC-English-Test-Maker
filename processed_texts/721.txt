@@ -1,0 +1,5 @@
+﻿This graph gives information about the popularity of three main social networks among adults in America by age groups.
+
+According to the given data, it can clearly be seen that Facebook and Instagram are used by the younger generation of 18-29 years. Almost 90 per cent of this cathegory use Facebook, and the percentage of Instagram users reached 57 per cent. The number of 18-29 and 65+ users of Linkedin are about 20 per cent. Both 30-49 and 50-65 aged people have the same number of users of Linkedin. The Instagram seems to be expremly unpopular among eldery people of 65+ years old and has only 6 per cent.The sutiation remains almost the same among the people of 50-65 years with only 11 per cents of Instagram users.
+
+We can say that the most popular social network all age cathegories of online users is Facebook.
