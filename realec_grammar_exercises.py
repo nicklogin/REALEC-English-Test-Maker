@@ -343,7 +343,7 @@ class Exercise:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
                 print("Errors: Something wrong! No notes or a double span", line)
 
-    def validate_answers(self, answer):
+    def validate_answers(self, answer, error):
         # TO DO: multiple variants?
         if answer.upper() == answer:
             answer = answer.lower()
@@ -359,6 +359,10 @@ class Exercise:
             answer = answer.split(' или ')[0]
         if answer.strip('? ') == '' or '???' in answer:
             return None
+        ##если убирается запятая, следим, чтобы исправление начиналось с пробела,
+        ##иначе дописываем его к исправлению:
+        if error[0] in '.,:' and answer[0] not in ' .,:':
+            answer = ' '+answer
         return answer
 
     def find_answers_indoc(self, line):
@@ -368,13 +372,8 @@ class Exercise:
                 t_error = annotation.split()[1]
                 err = self.current_doc_errors.get(t_error)
                 if err:
-                    validated = self.validate_answers(correction)
+                    validated = self.validate_answers(correction,err.get('Error'))
                     if validated is not None:
-                        ##если убирается запятая, следим, чтобы исправление начиналось с пробела,
-                        ##иначе дописываем его к исправлению:
-                        if ((err.get('Error') == 'Punctuation' or err.get('Error') == 'Defining') and 
-                        not validated.startswith(',') and not validated.startswith(' ') and err.get('Wrong').startswith(',')):
-                            validated = ' '+validated
                         self.current_doc_errors[annotation.split()[1]]['Right'] = validated
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))

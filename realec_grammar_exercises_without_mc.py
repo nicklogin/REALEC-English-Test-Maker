@@ -332,7 +332,7 @@ class Exercise:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
                 print("Errors: Something wrong! No notes or a double span", line)
 
-    def validate_answers(self, answer):
+    def validate_answers(self, answer, error):
         # TO DO: multiple variants?
         if answer.upper() == answer:
             answer = answer.lower()
@@ -348,6 +348,10 @@ class Exercise:
             answer = answer.split(' или ')[0]
         if answer.strip('? ') == '' or '???' in answer:
             return None
+        ##если убирается запятая, следим, чтобы исправление начиналось с пробела,
+        ##иначе дописываем его к исправлению:
+        if error[0] in '.,:' and answer[0] not in ' .,:':
+            answer = ' '+answer
         return answer
 
     def find_answers_indoc(self, line):
@@ -357,13 +361,8 @@ class Exercise:
                 t_error = annotation.split()[1]
                 err = self.current_doc_errors.get(t_error)
                 if err:
-                    validated = self.validate_answers(correction)
+                    validated = self.validate_answers(correction,err.get('Wrong'))
                     if validated is not None:
-                        ##если убирается запятая, следим, чтобы исправление начиналось с пробела,
-                        ##иначе дописываем его к исправлению:
-                        if ((err.get('Error') == 'Punctuation' or err.get('Error') == 'Defining') and 
-                        not validated.startswith(',') and not validated.startswith(' ') and err.get('Wrong').startswith(',')):
-                            validated = ' '+validated
                         self.current_doc_errors[annotation.split()[1]]['Right'] = validated
             except:
                 #print (''.join(traceback.format_exception(*sys.exc_info())))
@@ -630,12 +629,12 @@ class Exercise:
                     intersects.remove(saving)
                     if intersects:
                         to_change = intersects[-1]
+                        not_to_write_sym = saving['Index'][1] - saving['Index'][0]
                         if 'Right' not in to_change or to_change['Right'] == saving['Right']:
                             indexes_comp = saving['Index'][1] - saving['Index'][0]
-                            processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+'>>'
+                            processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+saving['Wrong']+'>>'
                         else: 
                             indexes_comp = len(to_change['Right'])
-                            not_to_write_sym = saving['Index'][1] - saving['Index'][0]
                             processed += '<<'+str(saving['Right'])+'**'+str(t_key)+'**'+str(saving['Error'])+'**'+str(saving['Relation'])+'**'+str(indexes_comp)+'**'+to_change['Right']+'>>'
                 else:
                     if 'Right' in intersects[-1]:
@@ -694,9 +693,6 @@ class Exercise:
         for i in sent:
             if '>>' in i:
                 right = i.split('**')[0]
-                wrong = i.split('**')[-1]
-                if wrong[0] in '.,' and not right[0] in ' .,':
-                    right = ' '+right
                 corrected_sent += right + i[i.find('>>')+2:]
             else:
                 corrected_sent += i
@@ -776,8 +772,6 @@ class Exercise:
                     rb += 2
                     if correction.count('**') == 5:
                         right_answer, err_index, err_type, relation, index, wrong = correction.split('**')
-                        if wrong[0] in '.,' and not right_answer[0] in ' .,':
-                            right_answer = ' '+right_answer
                     else:
                         print("'"+correction+"'")
                         continue
@@ -845,8 +839,6 @@ class Exercise:
                             if type(split_sent[i]) == list:
                                 # right_answer,err_index,index,relation,wrong, other = split_sent[i]['right_answer'],split_sent[i]['err_index'],split_sent[i]['index'],split_sent[i]['relation'],split_sent[i]['wrong'],split_sent[i]['other']
                                 right_answer, err_index, err_type, relation, index, wrong, other = split_sent[i]
-                                if wrong[0] in '.,' and not right_answer[0] in ' .,':
-                                    right_answer = ' '+right_answer
                             else:
                                 new_sent += split_sent[i]
                                 if self.make_two_variants and (ex_type == 'short_answer' or ex_type == 'multiple_choice'):
@@ -1170,7 +1162,7 @@ make_two_variants = False, exclude_repeated = False, hier_choice = True):
      ann = ann, text = text, error_types = error_types, bold=bold, context=context,mode=mode, maintain_log=maintain_log,
      show_messages=show_messages,use_ram = use_ram,
      make_two_variants = make_two_variants,
-     exclude_repeated=exclude_repeated, keep_processed = False, hier_choice = hier_choice)
+     exclude_repeated=exclude_repeated, keep_processed = True, hier_choice = hier_choice)
     e.make_data_ready_4exercise()
     # e.test_tokenizing()
     ## commented out for testing purposes:
