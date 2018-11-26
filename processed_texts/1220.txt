@@ -1,7 +1,0 @@
-The graphs below show the average maximum and minimum temperatures in Yakutsk, Russia and Rio de Janeiro, Brazil.
-
-To start off, the temperatures in Yakutsk fluctuate nearly throughout the year, ranging from +25*C in <<summer months**T1**Articles**None**17**the summer months>> to around -40*C in <<December-January period**T2**Absence_explanation**None**16**December-January>>. This is not the case for Rio de Janeiro, where temperatures are #DELETE#5#a lot more stable throughout, with the minimum being around +17*C in the summer to the maximum of +29-30*C in the winter. 
-
-Of course, the most obvious observation is that Rio de Janeiro is much warmer than Yakutsk, the temperature does not go below +15*C, which is not true for Yakutsk. 
-
-In both cities the maximum and the minimum temperatures in the same months do not differ very much. The average delta in Rio is around 8-12*C, while in Yakutsk it is around 12-13*C. There are, of course, <<several exceptions**T4**Absence_comp_sent**None**10**exceptions>>. For example, in March in Yakutsk the minimum and maximum temperatures can differ <<by**T5**Prepositions**None**3**for>> as much as 18*C.

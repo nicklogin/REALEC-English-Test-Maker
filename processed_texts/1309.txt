@@ -1,7 +1,0 @@
-The pie charts show information about goods which <<were**T1**Tense_choice**None**3**are>> transported between countries in Eastern Europe in 2008. The main trend reveals that many metal goods <<were**T2**Tense_choice**None**3**are>> transported by rail, whereas some food products <<were**T3**Tense_choice**None**3**are>> moved by road. 
-
-The charts have some things in common. Firstly, the number of transported manufactured goods remains at the same level with 25% of goods #DELETE#3#are transported by rail and 28% by road. Secondly, there is a very low level of transported chemicals from 11% #DELETE#8#ones are moved by rail and 16% by road. 
-
-In contrast, the level of machinery goods<<, which were transferred between countries in Eastern Europe in 2008 by road,**T7**Non_defining**None**77**, which were transferred between countries in Eastern  Europe in 2008 by road>> was about 2%, whereas there are 12% #DELETE#17#of ones which are transported by rail in Eastern Europe in 2008.
-
-Overall, there are many products which were transferred between countries in Eastern Europe in 2008 by rail and road with some specific highly important percentage of goods for each way of transportation.  

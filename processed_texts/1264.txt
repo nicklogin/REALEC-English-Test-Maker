@@ -1,7 +1,0 @@
-The presented two pie charts give the proportions of goods transported by rail and road in Eastern Europe during the year 2008. 
-
-To begin with, it <<can be seen clearly**T1**Standard**None**19**clearly can be seen>> that a big proportion in both ways of transportation consists of manufactured goods. Thus, they take about 25% in <<the rail transportation**T2**Articles**None**19**rail transportation>> and 28% in <<the road transportation**T3**Articles**None**19**road transportation>>. However, there are some differences between these ways. Firstly, the percentage of metals which is transported by rail is much higher than the same <<metals**T6**Noun_number**None**5**metal>> transported by road with 35% and 11% respectively. In contrast, food products take about 30% in <<the road transportation**T7**Articles**None**19**road transportation>> and just 11% in <<the rail one**T9**Articles**None**8**rail one>>. 
-
-As for other goods, they take approximately the same <<proportions**T10**Noun_number**None**10**proportion>>, about 12-16 each. However, <<the noticeable fact**T11**Articles**None**15**noticeable fact>> is  that machinery goods transported by road take only 2%, that is the lowest number among all. 
-
-To conclude it all, the most obvious fact is that metal goods are on the first position in the rail <<transportation**T13**lex_item_choice**None**9**transport>>, while food products take the first place in the road transportation.

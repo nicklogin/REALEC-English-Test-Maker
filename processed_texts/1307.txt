@@ -1,7 +1,0 @@
-The diagram illustrates the percentage of different types of products delivered by rail and road in Eastern Europe in 2008. Overall, it can be seen that the proportions of goods are different depending on <<the type**T1**Articles**None**4**type>> of transportation.
-
-Firstly, it is obvious that <<metals are more often transported**T2**Standard**None**33**more often metals are transported>> by rail: 35% from all goods compared to 11% from goods transported by road. In contrast, food products are more likely to be transported by road: 30% in contrast to 11% transported by rail. 
-
-Moreover, manufactured products are transported both by rail and by road in approximately <<the same proportions**T3**Articles**None**16**same proportions>>: 25% and 28%. Chemicals have <<a similar tendency**T4**Articles**None**16**similar tendency>>: the proportion of chemicals delivered by rail is 11% <<, and**T5**Punctuation**None**3**and>> it is 16% of chemicals in the whole amount of products transported by road.
-
-In conclusion, the pie charts show that there are both differences and similarities in the proportions of different types of goods delivered by road and by rail. 

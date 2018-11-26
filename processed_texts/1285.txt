@@ -1,9 +1,0 @@
-The illustrations demonstrate the percentage of goods that were transported using two different ways – by rail and by road in Europe in 2008. 
-
-Overall, the <<leader position**T1**lex_item_choice**None**4**bulk>> of railway transportation took metals, while the biggest amount of <<the transportation**T15**Articles**None**15**transportations>> by road is accounted for food products. Moreover, manufactured goods make a significant share of <<the transportation**T4**Articles**None**14**transportation>> both by rail and by road. 
-
-To begin with, the primary good delivered by rail is <<metals**T5**Noun_number**None**5**metal>>, making the third of all <<transportations**T6**Noun_number**None**19**the transportations>>. The second place hold manufactured goods, with 25% of all goods transported. Then, machinery, chemicals and food production together providing the 34% of all goods. The smallest number <<of**T7**Spelling**None**1**o>> transportations were made by non-metallic minerals. 
-
-At the same time 28% of manufactured goods and 30% of food products <<were**T8**Agreement_errors**None**3**was>> transferred by road in 2008. The chemicals <<are**T9**Agreement_errors**None**2**is>> accounted for 16%, while non-metallic minerals built 13% of total goods #DELETE#11#transferred. Metals and machinery <<make**T11**Agreement_errors**None**5**makes>> <<the minority**T12**Articles**None**8**minority>> of #DELETE#3#all the transportation by road. 
-
-All in all, metals took the leading position <<in**T14**Prepositions**None**2**on>> <<the transportation**T15**Articles**None**14**transportation>> by rail, and food production took the majority of road transportations. 

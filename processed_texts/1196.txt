@@ -1,9 +1,0 @@
-Every country <<has**T1**Agreement_errors**None**4**have>> a lot of people, <<and**T2**Spelling**None**3**ant>> these people need food. Some <<countries**T3**Noun_number**None**7**country>> produce a lot of food, some – a little. And some people think that countries should produce <<as much**T4**lex_item_choice**None**8**how much>> food as <<they**T5**Ref_device**None**5**their>> need and should import it as little as possible.
-
-I strongly disagree with that. I suppose that countries need to produce #DELETE#2#th food as much as <<they**T7**Spelling**None**4**thir>> can, and import or export food if they <<produce**T8**Spelling**None**7**produse>> it more/less than enough. 
-
-For example can be taken any city near the ocean. They produce a lot of <<fish**T9**Spelling**None**4**dish>> and oceanic products. But people <<cannot**T10**Inappropriate_register**None**5**can’t>> eat only fish. So, the city <<sells**T11**Agreement_errors**None**4**sell>> the fish and other products and <<buys**T12**Tense_choice**None**6**bought>> bread, meat. 
-
-Secondly, some cities <<are built**T13**Voice**None**7**builded>> only as military objects. They <<have**T14**Agreement_errors**None**3**has>> no facilitye to produce food, they can only import it. Finally, a lot of European countries <<have**T15**Agreement_errors**None**3**has>> not enough space to <<produce**T16**Spelling**None**7**produce>> as much food as they <<need.**T17**Punctuation**None**5**need,>> <<That is**T18**Inappropriate_register**None**6**That’s>> why they <<specialize**T19**Voice**None**11**specialized>> on machinery and refactoring. They sell machines and factories and buy food. 
-
-Overall, I think nowadays every thing works fine and countries should <<continue to trade**T20**Verb_Inf_Gerund**None**14**continue trade>> between <<each other**T21**lex_item_choice**None**4**then>>.

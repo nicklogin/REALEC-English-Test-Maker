@@ -1,7 +1,0 @@
-It is generally agreed today that in past years the number of health problems were caused and increased by the widespread use of modern technology. Let us start by considering the facts. 
-
-Some people think that mobile phones can cause cancer because of special radio waves <<produced**T1**Category_confusion**None**9**producing>> by them. Parents teach their children not to sleep near the mobile phones and not to put them in pockets near the body. But large number of people <<know nothing**T2**Negation**None**19**do not know nothing>> about different scientist’s researches that <<prove**T3**Agreement_errors**None**6**proves>> <<the safety**T4**Articles**None**6**safety>> of radio waves used in phones. So that is why cancer <<cannot**T5**Spelling**None**7**can not>> be <<caused by**T6**Confusion_of_structures**None**21**caused as a result of>> using modern technologies. 
-
-But <<, on the other side of a coin,**T7**Punctuation**None**27**on the other side of a coin>> there is a serious health problem which usually appears after <<the widespread use**T8**Articles**None**14**widespread use>> of modern technology. Experts claim that watching TV and playing video games can make <<a person's vision**T9**Articles**None**15**person’s vision>> lower. But there are lots of ways to reduce this problem. First of all, experts say that you should wath TV not more than 2 hours a day.
-
-In conclusion it must be <<said**T10**Spelling**None**4**sait>> that modern technology are the.

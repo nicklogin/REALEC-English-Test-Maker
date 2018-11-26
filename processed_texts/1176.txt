@@ -1,7 +1,0 @@
-The graphs illustrate the average temperatures in Yakutsk <<that is**T1**Absence_comp_sent**None**4**that>> located in Russia and Rio de Janeiro, Brazil.
-
-It is clear #DELETE#6#to see that the warmest month in Yakutsk is July with nearly 25*C of maximum temperature and a little bit more than 10*C of minimum. But in Brazil it is the coldest month in year with 23*C of maximum and 17*C of minimum. 
-
-In the beginning of <<a year**T3**Articles**None**4**year>> in Yakutsk <<the temperature**T4**Articles**None**11**temperature>> surely increased from nearly 35*C – 45*C to 23*C – 11*C of maximum and minimum in July. <<After reaching a peak**T6**Absence_explanation**None**10**After peak>> <<the average temperature**T7**Articles**None**19**average temperature>> <<drops**T8**Agreement_errors**None**4**drop>> #DELETE#4#down and <<returns**T10**Agreement_errors**None**6**return>> to the <<elementary**T11**lex_item_choice**None**8**begining>> index. 
-
-In Brazil <<the changes**T12**Category_confusion**None**8**changing>> of average temperature <<are more calm**T13**Absence_comp_sent**None**9**more calm>> than in similar <<months**T15**Noun_number**None**5**month>> in Russia. In February temperature <<did not**T16**Inappropriate_register**None**6**didn’t>> change <<comparing to**T17**Prepositional_verb**None**9**comparing>> January. 

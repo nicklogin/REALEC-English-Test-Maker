@@ -1,5 +1,0 @@
-The bar graph presents the distribution of online users by age in three social networks: Facebook, Instagram, LinkedIn.
-As we can see, Facebook is the most popular network of these three. 87% of 18-29 age group users have Facebook account. It is 44% more than Instagram users and 4 times more than LinkedIn users do. All the other groups' percentage for Facebook is more than twice higher compared to other two social networks.
-There is a difference between LinkedIn and other two - it is used mostly by middle-age adults and older (30-64 years), while Facebook and Instagram attract young population. This happens because LinkedIn is a social network for working adults - collegues, etc. And FB and Instagram are used mostly for the entertainment features.
-So, the chart shows that Facebook is the most usable social network in US, because more than 50% of every adult group use it. Instagram is popular between young people: more than 50% of 18-29 age group use it.
-LinkedIn is used by older people, still, even in 30-64 age group Facebook has higher indicator.

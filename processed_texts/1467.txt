@@ -1,7 +1,0 @@
-The bar chart illustrates the unemployment rates in six regions of the world, both in 2014 and 2015. 
-
-It is apparent that the proportion of unemployment for two consecutive years decreased except for EU. 3 other regions: N.Africa, S.Asia and worldwide remained stable, but only <<Middle East's rate**T1**Possessive**None**16**Middle East rate>> got worse. 
-
-Latin America had recorded the words fall of unemployment level among other countries as it had 6,8 percent in 2014 but <<the proportion**T3**lex_item_choice**None**4**this>> decreased by 1 percent in 2015, but the maximum level of <<decrease**T4**Category_confusion**None**9**decreased>> showed Middle East – 1,4%. EU was <<the only region which had**T6**Punctuation**None**26**the only region, which had>> an increasing percentage of unemployment from 7,5 in 2014 to 7,9 in 2015 year.
-
-The most stable positions belong to N.Africa, J.Asia and Worldwide, where the percentage of unemployment <<did not**T7**Inappropriate_register**None**6**didn’t>> change in a year, but there <<was**T8**Agreement_errors**None**4**were>> a great contrast between N.Africa (12,5%) and S.Asia (3,9%). S.Asia recorded the lowest unemployment rate in this period, <<the stability**T9**Articles**None**9**stability>> of unemployment rate was the main trend in selected world regions.

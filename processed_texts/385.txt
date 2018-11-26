@@ -1,7 +1,0 @@
-﻿The given graph demonstrates the frequency of using various social networks (Facebook, Instagram and Linked In) among American adults aged from 18 to 65+.
-
-It could be clearly seen from the graph that Facebook is the major player in comparison with an<<other**T7**suggestion**None**7**another>>e<<websites**T1**Spelling**None**9**web sites>>Moreover, a considerable prevalence of young users of Instagram and Facebook sh<<has to be**T2**Modals**None**9**should be>>entioned.
-
-Obviously, there is a dramatic gap between the usage of Facebook and Instagram among the oldest group of 65+: while the <<the former**T10**Ref_device**None**13**the first one>> <<is popular with**T11**Word_choice**None**14**has a score of>>, Instagram is 10 times less popular. It is fare<<fair**T9**Spelling**None**4**fare>>mention that Facebook is twice as popular as Link<<linkedin**T3**Spelling**None**9**Linked In>>ng 50-64 adults. Moreover, Link<<linkedin**T4**Spelling**None**9**Linked In>> approximately same scores of usage among all groups (from 22 to 31%), while Instagram has stee<<huge**T5**lex_item_choice**None**5**steep>>s rais<<rising**T6**Often_confused**None**7**raising>>m the oldest group to the youngest.
-
-To sum up, Facebook is the major player of the rate, but nevertheless, every social network has its own specific audience.

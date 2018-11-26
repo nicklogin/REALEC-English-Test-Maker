@@ -1,7 +1,0 @@
-The pie charts demonstrate the <<proportions**T2**lex_item_choice**Dependent_change**6**amount>> of goods in <<percentages**T1**Noun_number**None**10**percentage>><< which were delivered to Eastern Europe by different transport in 2008**T4**Defining**None**71**, which were delivered to Eastern Europe by different transport in 2008>>. 
-
-Overall, the goods were transported either by rail or by road. The share of metals and machinery, delivered by trains was significantly larger<< than**T5**Punctuation**None**6**, than>> <<the amount**T6**Articles**None**6**amount>> of these goods transported by road.  The <<amounts**T7**Noun_number**Dependent_change**6**amount>> of other goods <<were**T8**Agreement_errors**Dependent_change**3**was>> supplied practically in equal shares. 
-
-In all the issues<< which**T9**Punctuation**None**7**, which>> were transported by trains, the transportation of metals made 35% of the whole share. This is three times larger in comparison with <<the share**T10**Articles**None**5**share>> of metals delivered by road. The amount of machinery transported by motor vehicle made only 2% out of 100, which is six times less than <<the transportation**T11**Articles**None**14**transportation>> of <<these**T12**Ref_device**None**4**this>> <<goods**T13**Noun_number**None**4**good>> by railways. 
-
-The <<shares**T14**Noun_number**None**5**share>> of manufactured goods, chemicals and non-metallic minerals did not change significantly, but the transportation of food products by road made 30%, while it made only 11%  by rail. 

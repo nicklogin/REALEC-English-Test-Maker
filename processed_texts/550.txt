@@ -1,9 +1,0 @@
-﻿Nowadays it is normal to think that British and American <<films are much more popular**T8**Absence_comp_sent**None**23**films much more popular>> all over the world than films produced in other countries. Although I do not consider this situation to be right, I agree with the statement and I can <<suppose**T3**lex_item_choice**None**7**suspend>> that there are many important reasons for this.
-
-Firstly, many countries trying to produce films are not able to spent so much money on this process as the USA and Great Britain. They merely do not have so much money. Be<<Because of this financial situation**T4**Punctuation**None**36**Because of this financial situation,>>ocal films there cannot include really amazing special effects like the Hollywood's movies have. Fortunately or unfortunately, for ma<<the majority**T5**Articles**None**8**majority>>f modern people the absence of special effects is a considerable film's di<<disadvantage**T2**Spelling**None**12**disatvantage>>so their preference of colourful British and American pictures is obvious.
-
-Secondly, the local directors ofte<<often**T6**Suffix**None**7**oftenly>> to show something special about their countries and so do their target auditory much smaller, because not many people are able and ready to understand another culture.
-
-However, I am sure that local film industry is one of the symbols of each country and, of course, needs <<needs government's financial support**T7**Redundant_comp**None**40**needs for government's financial support>>s not a secret that the process of globalization reaches its peak now, but it is not normal that cultures smaller and poorer than Amrican or Briain have to go down. Local films can save it and show their own reality for the whole world.
-
-To conclude, it is fact that local film industries are less popular even in countries they have been produced, but I am sure that government with their money can save their culture.

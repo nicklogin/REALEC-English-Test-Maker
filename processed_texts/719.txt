@@ -1,9 +1,0 @@
-﻿The bar chart shows the information about the useage of social networks by adults in the USA.
-
-As it clearly can be seen from the graph, Facebook is the most popular network among people of all groups,but especailly among people aged 18-29,
-In contrast Instagram isn't as popular as Facebook and Linked in and goes on the third place.It has popularity only among young generation.The percentage is about 53% whereas among elder people it's only a small number which consists of 6%.
-
-Linked in has almost iqual percentage of useage among people who are lived in the USA and it goes on the second place in popularity.
-Approximaely a quarter(22%) among people aged 18-29, 31% among people aged 30-49, 30% among people aged 50-64 and about a quarter among people aged 65+.
-
-To conclude we can notice an upward trend in usage of all types of social networks in the USA.But the most popular social network is Facebook.

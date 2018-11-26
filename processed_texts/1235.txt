@@ -1,5 +1,0 @@
-The pie charts show the percentage of different <<kinds**T1**Noun_number**None**4**kind>> of goods transported by rail and by road between countries in Eastern Europe in 2008. As can be seen from the charts, metals are usually transported by rail and food goods are delivered by road.
-
-What about the transportation of manufactured goods, it was approximately <<the same in both ways**T2**Absence_explanation**None**8**the same>>, #DELETE#2#at 25% and 28%. People also transported the same amount of chemicals between countries, 11% by rail and 16% by road. Governments decided to deliver only 2% of machinery by road, but they transported 12% of this good by rail. While by road people transported machinery in small <<amounts**T4**Noun_number**None**6**amount>>, they did the same with non-metallic minerals just by rail.
-
-Overall, the percentage of goods transported between countries by rail and road in Eastern Europe differs marginally.

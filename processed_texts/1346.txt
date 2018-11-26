@@ -1,9 +1,0 @@
-The charts illustrate the percentage of <<goods**T16**Articles**None**8**the good>> transported by rail and by road in Eastern Europe in 2008.
-
-It can be seen from the graph that manufactured goods have the second place in <<the transportation**T4**Articles**None**14**transportation>> #DELETE#12#respectively by rail #DELETE#11#and by road and the first one in general amount of <<transportations**T6**Noun_number**None**14**transportation>> both by rail and road.
-
-From <<a closer look**T7**Articles**None**11**closer look>> at the charts it is clear that machinery and metals are almost half of the goods transported by rail (12% and 35% respectively) <<, while**T8**Punctuation**None**5**while>> in <<the transportation**T9**Articles**None**14**transportation>> by road they <<take**T10**lex_item_choice**None**4**have>> less than <<a fifth part**T11**Articles**None**10**fifth part>> (2% and 11% respectively).
-
-<<On the other hand,**T12**Punctuation**None**17**On the other hand>> chemicals, non-metallic minerals and food products are the majority of goods transported by road (16%, 13% and 30%), whereas they are the <<smallest**T13**Spelling**None**8**smalless>> <<parts**T14**Noun_number**None**4**part>> #DELETE#13#of percentage of goods transported by rail (11% each).
-
-In conclusion, it is clearly seen that manufactured <<goods**T16**Noun_number**None**4**good>>, metal and food products are the most popular goods for transportation between countries in Eastern Europe in 2008.

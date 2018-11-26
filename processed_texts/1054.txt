@@ -1,7 +1,0 @@
-This bar chart shows unemployment rates of some regions of the world in 2014 and 2015.
-
-There are six regions in this chart and three of them had remained stable for two years. Unemployment rates in Midde East, EU and Latin America was different in 2014 and 2015.
-
-Northern Africa has the most highest unemployment rate in this table. but it is not fluctuate and stay stable with 12,5 percent in two years. Unemployment in the Middle East is too high but it feel gradually from 11 percent to 9,6. This rate in EU is not so high  like Northern African and Middle East but it rose gradually from 7,5 to 7,9 percent. Graphic shows a good tendention in Latin America. The unemployment rate in this region fell gradually from 6,8 to 5,8 percent. The lowest rate in this chart has South Asia and this region had showed their results for two years.
-
-The worldwide picture remained stable too with 5,9 percent of unemployment.

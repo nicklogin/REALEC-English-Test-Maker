@@ -1,7 +1,0 @@
-This bar chart shows us rate of unemployment from 2014 and 2015 in selected world regions.
-
-As we can see, the rate in most regions, that are selected for the chart, is quite stable from 2014 to 2015. We can see progress in many regions where percent of unempoyment is lower in 2015 than it is in 2014, but we also can see, that there are regions, where percent increased or don’t changed at all.
-
-I think, it is imoptant to say about Middle East, because this region has viewable progress. From all 11 percents in 2014 the rate fell to 9,6 percents in 2015. Also Latin America has good changes from 6,8 percents to 5,8 percenti. It is not as good as on Middle East, but it is progress as well.
-
-The only region that is not in progress, but in regress is EU. We can see on the chart growth of unemployment rate from 7,5 to 7,9 percents. Even it is not so bad for this region, because there is no strong difference in this two results, but it is dangerous because of tendency for rise of the percent next years.

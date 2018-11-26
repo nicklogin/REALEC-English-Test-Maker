@@ -1,3 +1,0 @@
-Many people have <<an opinion**T1**Spelling**None**7**opining>> that countries produce <<the food which its own population eats**T2**Defining**None**39**the food, which its own population eats>> and should aim to import as little as possible. <<In this essay**T4**Absence_comp_sent**None**10**This essay>> I <<talk**T5**lex_item_choice**None**3**say>> about my own opinion and <<whether I agree or disagree**T6**Confusion_of_structures**None**20**my agree or disagree>> from this <<point of view**T8**lex_item_choice**None**5**topic>>. 
-
-I agree <<completely**T9**lex_item_choice**None**5**apply>>. Firstly, it is important that countries produce <<food**T10**Articles**None**8**the food>>.  Secondly, countries should aim to import as little as possible.

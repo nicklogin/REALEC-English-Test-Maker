@@ -1,7 +1,0 @@
-The unemployment is a big problem for many countries and regions, so people conduct statistics on this. In this graph you can see the unemployment rate in selected world regions: N.Africa, Middle East, EU, Latin America, S.Asia, Worldwide in 2014 and 2015.
-
-<<The unemployment**T1**Articles**None**12**Unemployment>> is N Africa, S Asia and Worldwide <<is stable**T2**Absence_comp_sent**None**6**stable>> in 2014 and 2015. <<Percentages**T3**lex_item_choice**None**7**Procent>> in the <<Middle East**T4**Spelling**None**12**Middle, East>> and Latin America fell. And only the EU has <<an increasing result**T6**Articles**None**19**a increasing result>>. 
-
-<<It is interesting that**T9**Punctuation**None**23**It is interesting, that>> S Asia has the lowest unemployment rates. Next regions, Latin America has <<a higher rate**T10**Absence_explanation**None**8**a higher>> than S Asia. The rest by analogy and Worldwide increase the rate. 
-
-Finally, <<we can say that**T12**Punctuation**None**19**we can to say, that>> <<the chart**T13**Articles**None**5**chart>> #DELETE#17#unemployment rate has <<different indicators**T15**Articles**None**22**a different indicators>>. I think, this problem <<needs**T16**Agreement_errors**None**4**need>> to be <<addressed to**T17**Prepositions**None**12**addressed in>> differents regions, because only in S Asia <<there are good indicators**T18**Absence_comp_sent**None**15**good indicators>>.

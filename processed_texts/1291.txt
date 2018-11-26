@@ -1,7 +1,0 @@
-Pie charts show us the percentage of transported goods both by rail and by road. <<Overall,**T2**Punctuation**None**7**Overall>> <<it can**T3**Absence_comp_sent**None**3**can>> be seen<< that**T1**Punctuation**None**6**, that>> the most transportable good by rail is metals and by road is food products. 
-
-<<At first,**T5**Punctuation**None**8**At first>> the less transportable goods by rail are chemicals, food products, both <<have**T4**lex_item_choice**None**3**are>> 11%, and machinery, which <<has**T6**lex_item_choice**None**2**is>> only 12%. Furthermore, the less transportable goods by road is machinery, which contains only 2%. 
-
-<<Comparing these two charts,**T8**Punctuation**None**26**Comparing these two charts>> <<it should**T10**Absence_comp_sent**None**6**should>> be pointed out<< that**T7**Punctuation**None**6**, that>> <<the percentages**T18**Noun_number**None**10**percentage>> of manufactured goods, chemicals and non-metallic minerals are nearly equal. However, the <<numbers**T13**Noun_number**None**6**number>> of machinery, metals and food products are different. 
-
-To sum up, the most transportable goods are manufactured goods, because <<they**T14**Ref_device**Dependent_change**2**is>> <<have**T15**Agreement_errors**Dependent_change**3**has>> <<a nearly equal high percentage**T16**Articles**None**28**nearly equal high percentage>> <<on**T17**Prepositions**None**2**in>> both charts. Whereas the less transportable good is machinery, because <<it**T18**Spelling**None**2**in>> is only 12% transported by rail and 2% transported by road. 

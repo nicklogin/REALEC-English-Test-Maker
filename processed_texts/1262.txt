@@ -1,5 +1,0 @@
-The pie charts compare two types of delivering products to different countries of Eastern Europe in 2008. Overall, <<Metals**T1**Articles**None**10**the Metals>> took the dominant position among all goods transported by rail, while food products <<had**T2**Spelling**None**3**gad>> the biggest share in the products delivered by road within 2008. 
-
-To <<start**T3**lex_item_choice**None**5**begin>>, manufactured goods took the second big pattern after the ratio of 25 per cent and among the goods transported by road with 28 per cent. In contrast, the proportion of machinery in both types of transportation was significantly different, with 12% in goods delivered by rail and only 2% <<in the transported**T4**Absence_explanation**None**11**transported>> by road. However, chemicals <<took approximately the same position in two type of delivered good**T5**Standard**None**68**in two types of delivered goods took approximately the same position>> with 11 and 16 percent each. 
-
-In conclusion, metals took <<the greatest**T7**Superlative_adj**None**9**the great>> proportion of goods transported between European countries by rail and food products by road. 

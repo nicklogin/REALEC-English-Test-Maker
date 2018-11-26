@@ -1,7 +1,0 @@
-﻿The bar chart illustrates the current situation on paper and online book market in year 2014 in the USA, Germany, China and the UK <<and provides**T12**Linking_device**None**8**provides>> a forecast for year 2018.
-
-To start with, from the bar chart we can see that the amount of printed books accounts for the la<<larger**T1**Comparative_adj**None**7**largest>>raction in all 4 countries, but still there is a tendency that this number is going to fall dramatically th<<in future**T6**Absence_comp_sent**None**12**in the years>>What is more, the US can be named the most reading country fr<<of**T7**Prepositions**None**4**from>>h<<them all**T5**suggestion**None**14**the other ones>>Pe<<American people**T11**suggestion**None**6**People>>end to spend more money on book market. Another factor is that the number of eBook is rising slightly, even though not so drastically, but still.
-
-Returning to the chart, the amount of prin<<printed**T8**Spelling**None**8**printted>>ks rockets in the USA with 10,5 billion US dollar, when it is only 2,6 in the UK. As for the UK, it's<<its**T12**Often_confused**None**4**it's>>k market remains stable during the years. Figures stay approximately at the same level from 2,6 billion US dollars to 1,8.
-
-To sum up, the print market is going to decrease, while the eBook one will rise.

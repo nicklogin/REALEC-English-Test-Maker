@@ -1,7 +1,0 @@
-The bar chart illustrates how the unemployment rate in selected world regions changed in 2014 and 2015.
-
-First of all, it is noticeable that there are two regions where this indicator remained stable. In Northern Africa the percentage of unemployment was on the level of 12,5%. The same situation is in South Asia, where the indicator was 3,9%
-
-In other regions there is a decrepancy between two indicators. In the Middle East the number of unemployers dropped significantly and it is a positive trend. Whereas in Latin America the unemployment rate dropped slightly. The EU is unique region where the percentage of unemployment rised. But it is clear that the percentage did not increased sharply.
-
-We should also noticed that the highest unemployment rate in 2014 and 2015 was in North Africa and the lowest one in the same years in South Asia. Last two columns represent the worldwide rate of unemployment. It is clear that the percentage of unemployment in the world remained stable in 2014 and 2015.

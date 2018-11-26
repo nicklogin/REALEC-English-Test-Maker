@@ -1,5 +1,0 @@
-This chart gives information about percentage of unemployment around the world and it’s changes between 2014 and 2015. All in all, we can see a large discrapancy in numbers, comparing different world regions.
-
-The leading position in unemployment rate is take by N. Africa with 12,5%. Furthermore, the smallest numbers are shown by S. Asia, which are 3,9%. What is interesting, it can be clearly seen that there is a slight decriase in the data going from N. Africa throught Middle East, EU, Latin America and to S. Asia.
-
-Some numbers show significant fluctuation between years. For example, EU’s unemployment rate grew up from 7,5% to 8%. However, some other regions trend to show decline in thaty numbers. The biggest drop in 1,4% is shown by Middle East, whereas Latin America’s fall is only 1%. Another markable feature is that in N. Africa and S. Asia, which are two outstanding regions, the data remined stable throughout the years. Besides, worldwide the unemployment rate is also equall in both years, staying at the level of approximetely 6%, being close to the numbers shown by Latin America in 2015.

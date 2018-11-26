@@ -1,7 +1,0 @@
-The chart <<illustrates**T1**Agreement_errors**None**10**illustrate>> <<differences**T2**Spelling**None**11**differenses>> between unemployment rate in selected world parts in 2014 and 2015. Generally speaking, the <<percentage**T3**lex_item_choice**None**7**percent>> of people who <<do not**T4**Inappropriate_register**None**5**don’t>> have a job was stable or <<the changes**T5**Articles**None**7**changes>> were very <<small**T6**lex_item_choice**None**6**little>> over this period. There are two regions with unchanged <<rates**T7**lex_item_choice**None**6**number>>, and in one region the <<rate**T8**lex_item_choice**None**6**number>> went up, only in two <<regions**T9**Noun_number**None**6**region>> it decreased. 
-
-The persantage of unemployment <<stayed**T10**lex_item_choice**None**5**stood>> unchanged in N.Africa at 12,5%, in S.Asia at 3,9%. So in worldwide this number was stable at 5,9%.
-
-In Middle East <<the unemployment rate**T11**Articles**None**17**unemployment rate>> decreased steadily. It went down from 11% to 9,6%. In countries of Latin America the number of unemployment fell too. The <<percentage**T12**lex_item_choice**None**7**persent>> of people without job <<reduced**T13**Tense_choice**None**6**reduce>> from 6,8% to 5,8%.
-
-In contrast, the unemployment rate grew slowly in EU with little increase from 7,5% to 7,9%.

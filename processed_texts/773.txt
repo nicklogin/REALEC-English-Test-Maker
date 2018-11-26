@@ -1,4 +1,0 @@
-﻿Given charts provide information about tendencies in the USA population size and birth and death rate during the period from 1750 to 2000.
-First of all, birth and death rate have the same trends, despite some moments. In 1800 birth rate reach its highest level after which we can see a steady decrease till 1950, however from 1950 to 2000 it rises. During the same period number of death reaches highest point in 1750 and the lowest in 1950.
-Comparing birth and death rate with population size it's clear that overall trend in both charts is absolutely opposite, while USA population is growing the birth and death rate is having a downward trend. However, in 1950 birth rate is rising.
-To sum up, stable growth of USA population is connected with falling in number of death, while birth rate didn’t affect it a lot.

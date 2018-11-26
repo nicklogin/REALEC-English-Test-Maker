@@ -1,7 +1,0 @@
-﻿The bar chart reveals the information about the distribution of three various social networks in use between four main age groups of users in the Unites States - categories "18-29", "30-49", "50-64" and "65+".
-
-As can be seen, Facebook and Instagram are prevalent among young as well as middle-aged people (87% and 53%, 73% and 25%, respectively). In addition, the highest proprtions of adults from "30-49" and "50-64" age groups use the social network called LinkedIn.
-
-It is clear from the graph, that aged people, in contrast, choose Facebook and Instagram much more rarely that<<than**T1**Spelling**None**4**that>> younger generation, sharing 56% and just 6% of users in these networks. Quite noticeably, the percentage of the elderly in LinkedIn is also quite low and it actually amounts to the number of young people using Facebook (both 22% exactly).
-
-All in all, the majority of Internet users evidently prefer using social networks such as Facebook and Instagram irrespective of the age group they belong to.

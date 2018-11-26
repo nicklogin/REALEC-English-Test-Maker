@@ -1,7 +1,0 @@
-The given charts provide us with the information about <<goods**T1**Articles**None**9**the goods>> transported by rail and by road in Eastern Europe in 2008.
-
-It is evident that manufactured goods make up about a fourth of goods <<transported**T2**Category_confusion**None**14**transportation>> both by rail and by road – 25% in the first <<chart**T3**lex_item_choice**None**4**case>> and 28% in the second. 
-
-<<By looking at the charts,**T4**Punctuation**None**24**By looking at the charts>> we can also <<say**T5**lex_item_choice**None**4**tell>> that it is more convenient to transport <<metals**T6**Noun_number**None**5**metal>> by rail than by road because it makes up 35% of goods transported in the first chart and <<about**T7**lex_item_choice**None**6**a mere>> 11% in <<the second one**T8**Absence_explanation**None**9**the secon>>d, whereas for things like food products and non-metallic minerals <<the transportation**T9**Articles**None**14**transportation>> by road is <<, on contrast,**T10**Punctuation**None**11**on contrast>>, <<more**T11**lex_item_choice**None**6**almost>> popular #DELETE#5#means – 30% against 11% of rail transportation in the first <<chart**T13**Articles**None**4**case>> and 13% against about 5% of rail transportation.
-
-The <<proportions**T17**Noun_number**Dependent_change**14**transportation>> of chemicals, however, <<remain**T16**Agreement_errors**Dependent_change**7**remains>> almost the same in both charts – 11% of rail transportation and just a bit more – 16% of #DELETE#5#goods transportation by road. 

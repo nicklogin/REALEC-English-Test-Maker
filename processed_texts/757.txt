@@ -1,4 +1,0 @@
-﻿The graph below shows how usage of three social networks is distributed in USA by adults. The graph is divided into 4 different age groups and percentage of people in their age using these three social networks.
-To start with Facebook, it is seen that most of the adults in age 18-29 are using Facebook, after that in each group according to age amount of people slightly goes down. Finally, only 56 percent of internet users in age 65+ are using Facebook.
-Taking Instagram into consideration, it is easily seen that most of its audience is under 30 and when it comes to people 30+ years old amount of people drastically drops down.
-LinkedIn as it is described in the graph is much more popular in terms of being used by middle aged. People from 18 to 29 and 65+ are using it less, 22 percent on both sides. The main category of LinkedIn users are online adults in the age of 30 to 49 and 50 to 64, 31% and 30% respectively.

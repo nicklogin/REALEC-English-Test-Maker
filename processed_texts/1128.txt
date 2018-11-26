@@ -1,7 +1,0 @@
-The graph on the picture shows us the statistic of <<not working**T1**Absence_explanation**None**7**working>> people in different parts of the world and all over it. 
-
-The highest column on the left side is Africa and the smallest is South Asia. In <<both regions**T2**Articles**None**16**the both regions>> the size of <<columns**T3**Spelling**None**6**colums>> is the same <<, it shows**T5**Punctuation**None**8**it shows>> us that in 2014 and 2015 years the level of <<unemployment**T6**Spelling**None**12**unemploymant>> is the same.
-
-In <<Middle East**T8**Articles**None**15**the middle East>> and Latin America <<the level of unemployment**T9**lex_item_choice**None**9**unworking>> became less from 2014 to 2015, while in the EU people losed their <<jobs**T10**lex_item_choice**None**14**payment places>>. The <<difference**T11**Category_confusion**None**9**different>> is 0,4% in pointed years. 
-
-It shows that in North Africa the <<level**T12**lex_item_choice**None**8**position>> of unemployment is the <<highest**T13**lex_item_choice**None**4**most>>, but <<stable**T14**lex_item_choice**None**11**unchangable>>. The regions like Middle East and Latin America have a progress, but it is not so big to cover the regress of other world places. <<So,**T17**Punctuation**None**2**So>> <<if we look at the worldwide statistic,**T16**Punctuation**None**37**if we look at the worldwide statistic>> we will see the same <<size**T18**lex_item_choice**None**5**hight>> of colums in 2014 and 2015 years. <<They**T19**Ref_device**None**4**That>> do not show any progress at all.

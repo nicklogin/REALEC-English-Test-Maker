@@ -1,7 +1,0 @@
- The pie charts illustrate the amount of goods transported by rail and by road in Eastern Europe in 2008. Overall, it can be seen that metals is the main good transported by rail, while food products are mainly transported by road. 
-
-The rate of metals among goods transported by rail in Eastern Europe is high, <<it is**T1**Absence_comp_sent**None**2**at>> 35%. This is far higher than the rate of manufactured goods <<, which**T2**Punctuation**None**5**which>> rate is 25%. The rate of  chemicals as well as the rate of food products #DELETE#3#and is low among goods transported by rail. The rest is for non-metallic minerals and machinery <<, which**T4**Punctuation**None**5**which>> rates among all goods is the lowest. 
-
-Approximately one third of all goods transferred by road are food products, while the amount of manufactured goods is lower, at the rate of 28%. Less than 20% are for other chemicals, metals, non-metallic minerals and machinery. 
-
-Clearly, food products are basically transported by road. On the contrast, metals <<are**T5**Agreement_errors**None**2**is>> transferred by rail. 

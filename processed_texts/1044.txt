@@ -1,5 +1,0 @@
-This chart bar represents the idea of changing the amount of unemployed people in various world regions in periods of 2014 and 2015 years. Overall, from this chart we can see 5 selected world regions (North Africa, Middle East, EU, Latin America and South Asia) compared with the worldwide situation. Each region features two bars, which shows unemployment data from 2014 and 2015.
-
-As it is seen from the bar, the worldwide trend in unemployment is to remain stable. The same apes for North Africa because the percentage of unemployed people isn’t changing as if for South Asia. In Middle East we can see pozitive dynamics because the amount of people withot a job fell from 11 percents to 9,6 persents. The Same tendencies are followed in Latin America where the unemployment level got down by 1 percent. 
-
-Though EU is the only region where the negative process is seen because the level has gone up from 7,2 to 7,9 percents. North Africa has the highest rating of unemployed people in contrast with South Asia which is percentage is three times lower.

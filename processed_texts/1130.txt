@@ -1,7 +1,0 @@
-The graph below provides information about changes in the unemployment rate that have been made from 2014 to 2015 in specific regions, such as N.Africa, Middle East, EU, Latin America, S.Asia and Worldwide. 
-
-Clearly, we <<do not**T1**Inappropriate_register**None**5**don’t>> see any changes in the <<percentages**T2**Noun_number**None**10**percentage>> of unemployment rate in N.Africa. The <<proportion**T3**lex_item_choice**None**6**number>> of 12,5% is the same for both 2014 and 2015. Also, it is the highest percentage of unemployment rate among other world regions.  In <<Middle East**T4**Articles**None**15**the Middle East>> <<the rate**T5**Articles**None**4**rate>> <<fell**T6**Tense_choice**None**7**is fall>> slightly from 11% in 2014 to 9,6% in 2015. In the EU <<the rate**T7**Articles**None**4**rate>> <<rose**T8**Tense_choice**None**7**is rise>> from 7,5% in 2014 to 7,9% in 2015. In contrast, the rate in Latin America <<fell**T9**Tense_choice**None**4**fall>> from 6,8% in 2014 to 5,8% in 2015.
-
-<<Both**T10**Spelling**None**3**Bot>> S.Asia and Worldwide <<do not have**T11**Negation**None**8**have not>> any changes in their rates from 2014 to 2015. It is 3,9% during 2014 and 2015 in S.Asia and 5,9% during 2014 and 2015 worldwide. 
-
-All in all, N.Africa has the biggest percentage of unemployment rate during 2014 and 2015, while S.Asia has only 3,9% of unemployment rate during that period of time.

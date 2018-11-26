@@ -1,7 +1,0 @@
-The charts below provide <<the information**T1**Articles**None**11**information>> about goods transported by rail and road between countries in Eastern Europe in 2008.
-
-The <<percentages**T10**Noun_number**None**7**percent>> of manufactured goods transported by rail and road <<were**T4**Agreement_errors**Dependent_change**3**was>> approximately similar (25% and 28%). By contrast, the percentage of metals transported by rail was 35%, while the percentage of metals transported by road was only 11%.
-
-A more detailed look at the charts reveals that chemicals and food products transported by rail had <<an equal percentage**T6**Articles**None**16**equal percentage>> (11%). Likewise, non-metallic minerals and metals transported by road had also approximately equal <<percentages**T7**Noun_number**None**10**percentage>>. Besides, <<the transportation**T8**Articles**None**14**transportation>> of machinery by road had the lowest persentage (2%), while <<the transportation**T9**Articles**None**14**transportation>> of machinery by rail was 12% and had approximately equal <<percentages**T10**Noun_number**None**10**percentage>> with food products (11%) and chemicals (11%).
-
-All in all, metals transported by rail had the biggest percentage, while the most popular good transported by road was food products.

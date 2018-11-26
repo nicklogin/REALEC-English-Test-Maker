@@ -1,5 +1,0 @@
-﻿These pie charts provide data on the percentage of different items in Eastern Europe in 2008 transported by rail and by road.
-
-We may see that the most popular goods in rail transportation are metals (35%), meanwhile cars are used by#DELETE#9# people more often for food products (30%). The most "uncomfortable" item for road is machinery (2%), although by rail it is transported quite often (12%), but car is the best way to deliver food (30%). However, there are common features. For example, the second popular material for both ways of transportation is<<are**T2**Agreement_errors**None**2**is>>anufactured goods (25% and 28%). Moreover, companies did not deliver non-metallic minerals as mu<<often**T3**lex_item_choice**None**4**much>>s previous kind of products - it is about 10%.
-
-To conclude, when people need to transport a huge amount of things which won't lose quality while they are delivering, they usually use a train. For others goals both transportation ways are equally useful.

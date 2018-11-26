@@ -1,5 +1,0 @@
-﻿In the bar chart#DELETE#1#, we can #DELETE#9#evidently see the dominance of Facebook <<across**T5**lex_item_choice**None**5**among>> all age groups; over 50 percent of online adults in the USA use it.
-
-Pr<<The preferences**T2**Articles**None**11**Preferences>>or other social networks vary. Instagram is used by more than half of the 18-29 year old age group, but it is clearly unpopular among older adults. Starting with people aged 30 and above, it drastically falls in popularity, with only one quarter of adults aged 30-49 using it, and then dropping to roughly 10% for adults aged 50 and above.
-
-This trend is reversed with<<in case of**T6**Word_choice**None**4**with>>kedIn. Young people do not use it as much as they use Facebook or Instagram, with only 22 percent of adults aged 18-29 reporting that they use it. However, being a professional network, it is reported that it is used by roughly one third of adults aged 30 to 64, falling to 22% for adults older than 65.

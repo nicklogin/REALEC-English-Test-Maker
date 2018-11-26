@@ -1,5 +1,0 @@
-the bar chart provides information about the unemployment rate in different world regions in 2014 and 2015.
-
-The most permanent feature is the highest percentage of unemployment people in North Africa. It remained stable in 2015 (12,5% as in 2014).
-
-Speaking about Middle East and Latin America, there was a downward trend in the unemployment rate (for nearly 1,5% and 2% respectively). Whereas in EU there was an increase in people without a job for 0,4%. It is the only region where we can see an upward trend in the unemployment rate. What about South Africa, it has the lowest number of unemployments among demonstrated regions, it accounts for 3,9% in both years. The worldwide rate is 5,9% for both years too, and South Asia is the only region where this percenage is less in 2014 and in 2015. Likewise the quantity of unemployment in Latin America becomes lower than worldwide rate, but only in 2015.
