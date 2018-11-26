@@ -865,9 +865,6 @@ Number''')
             #     print(sentence)
         var1 = True
         for sent2 in sentences:
-            if 'unamployment' in sent2:
-                print(sent2)
-                exit()
             # c += 1
             single_error_in_sent = False
             to_skip = False

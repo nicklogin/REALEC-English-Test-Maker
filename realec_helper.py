@@ -43,6 +43,7 @@ class realecHelper:
     def download_folder(self, path_to_folder='/exam/', path_to_saved_folder='.',make_current=True):
         '''путь к папке с данными realec, которые будут скачаны, нужно задавать именно здесь'''
         ##нужно что-то делать с повторяющимися именами
+        print('downloading collection {} ...'.format(path_to_folder))
         folder_request, folder_name =  self.form_folder_request(path_to_folder, return_folder_name = True)
         t = tarfile.open(fileobj=urllib.request.urlopen(folder_request), mode='r:gz')
         print('downloaded, extracting... ')

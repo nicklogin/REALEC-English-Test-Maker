@@ -9,6 +9,8 @@ import time
 import realec_helper
 import io
 import html
+import wordforms
+from hierarchy import hierarchy
    
 
 """Script that generates grammar exercises from REALEC data 
@@ -242,9 +244,7 @@ class Exercise:
         # print(self.error_type)
         self.hier_choice = hier_choice
         if self.hier_choice:
-            with open (self.file_prefix + 'hierarchy.json','r',encoding='utf-8') as inp:
-                self.hierarchy = json.load(inp)
-            self.get_hierarchy = lambda x: self.hierarchy[x] if x in self.hierarchy else 0
+            self.get_hierarchy = lambda x: hierarchy[x] if x in hierarchy else 0
             self.hier_sort = lambda x: sorted(x,key = self.get_hierarchy, reverse = True)
         self.make_two_variants = make_two_variants
         self.exclude_repeated = exclude_repeated
@@ -315,8 +315,7 @@ class Exercise:
         }
         if not self.use_ram:
             os.makedirs(self.file_prefix+'processed_texts', exist_ok=True)
-        with open(self.file_prefix + 'wordforms.json', 'r', encoding="utf-8") as dictionary:
-            self.wf_dictionary = json.load(dictionary)  # {'headword':[words,words,words]}
+        self.wf_dictionary = wordforms.wordforms  # {'headword':[words,words,words]}
 
     def find_errors_indoc(self, line):
         """
@@ -694,7 +693,11 @@ class Exercise:
         corrected_sent = ''
         for i in sent:
             if '>>' in i:
-                corrected_sent += i.split('**')[0] + i[i.find('>>')+2:]
+                right = i.split('**')[0]
+                wrong = i.split('**')[-1]
+                if wrong[0] in '.,' and not right[0] in ' .,':
+                    right = ' '+right
+                corrected_sent += right + i[i.find('>>')+2:]
             else:
                 corrected_sent += i
         return corrected_sent
@@ -758,9 +761,6 @@ class Exercise:
             #     print(sentence)
         var1 = True
         for sent2 in sentences:
-            if 'unamployment' in sent2:
-                print(sent2)
-                exit()
             # c += 1
             single_error_in_sent = False
             to_skip = False
@@ -776,6 +776,8 @@ class Exercise:
                     rb += 2
                     if correction.count('**') == 5:
                         right_answer, err_index, err_type, relation, index, wrong = correction.split('**')
+                        if wrong[0] in '.,' and not right_answer[0] in ' .,':
+                            right_answer = ' '+right_answer
                     else:
                         print("'"+correction+"'")
                         continue
@@ -843,6 +845,8 @@ class Exercise:
                             if type(split_sent[i]) == list:
                                 # right_answer,err_index,index,relation,wrong, other = split_sent[i]['right_answer'],split_sent[i]['err_index'],split_sent[i]['index'],split_sent[i]['relation'],split_sent[i]['wrong'],split_sent[i]['other']
                                 right_answer, err_index, err_type, relation, index, wrong, other = split_sent[i]
+                                if wrong[0] in '.,' and not right_answer[0] in ' .,':
+                                    right_answer = ' '+right_answer
                             else:
                                 new_sent += split_sent[i]
                                 if self.make_two_variants and (ex_type == 'short_answer' or ex_type == 'multiple_choice'):
@@ -1147,12 +1151,12 @@ class Exercise:
         if self.maintain_log:
             self.write_log()
         if self.file_output:
-            print('done, saved to' + self.output_path)
+            print('done, saved to: ' + self.output_path)
         else:
             print('done, saved in RAM as BytesIO object')
 
     def write_log(self):
-        path_to_save = self.output_path+'/{}log.csv'.format(self.log_name)
+        path_to_save = self.output_path+os.sep + '{}log.csv'.format(self.log_name)
         with open(path_to_save,'w',encoding='utf-8') as l:
             writer = csv.DictWriter(l,self.fieldnames)
             writer.writeheader()
@@ -1180,23 +1184,25 @@ def console_user_interface():
 HSE University,
 Moscow.
 ''')
-    path_to_data = input('Enter path to corpus data:    ')
-    exercise_types = input('Enter exercise types separated by gap:    ').lower().split()
-    if 'multiple_choice' in exercise_types:
-        print('''
-Warning! Multiple choice feature is experimental and not available for all type of erros.
-To proceed, enter either 'Number','Preposotional_noun Prepositional_adjective Prepositional_adv Prepositional_verb',
-'Choice_in_cond Form_in_cond Incoherent_in_cond' in the next field.
-''')
-    error_types = input('Enter error types separated by gap:    ').split()
-    output_path = input('Enter path to output files:     ')
-    context = input('Do you want to include contexts?     ').strip().lower()
-    if context == 'yes':
+    path_to_collection = input('Enter path to collection in REALEC corpus (default - collection "/exam/"): ').strip()
+    path_to_data = input('Enter path to store corpus data (default - texts will be downloaded to current folder):    ').strip()
+    exercise_types = input('Enter exercise types (short_answer, word_form, open_cloze) separated by gap:    ').lower().split()
+    error_types = input('Enter error types separated by gap (default - all error tags will be included):    ').split()
+    output_path = input('Enter path to output files (default - create folder "moodle exercises" in current folder):     ')
+    context = input('Do you want to include contexts?  y/n:   ').strip().lower()
+    if context == 'y' or 'yes':
         context = True
     else:
         context = False
     from datetime import datetime
     startTime = datetime.now()
+    r = realec_helper.realecHelper()
+    if not path_to_data:
+        path_to_data = '.'
+    if not path_to_collection:
+        path_to_collection = '/exam/'
+    r.download_folder(path_to_folder=path_to_collection, path_to_saved_folder=path_to_data)
+    path_to_data = r.path
     main(path_to_data, exercise_types, output_path, error_types,mode='folder',context=context,bold = True,
     make_two_variants=True, hier_choice=True)
     print('finished in '+str(datetime.now() - startTime))
@@ -1279,4 +1285,4 @@ def download_folder_and_make_exercises(folder_name, output_path=None):
 
 if __name__ == '__main__':
     console_user_interface()
-#    console_user_interface()
+
