@@ -372,7 +372,7 @@ class Exercise:
                 t_error = annotation.split()[1]
                 err = self.current_doc_errors.get(t_error)
                 if err:
-                    validated = self.validate_answers(correction,err.get('Error'))
+                    validated = self.validate_answers(correction,err.get('Wrong'))
                     if validated is not None:
                         self.current_doc_errors[annotation.split()[1]]['Right'] = validated
             except:
